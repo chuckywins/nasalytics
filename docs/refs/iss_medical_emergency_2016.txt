@@ -1,0 +1,2655 @@
+Description of document:  National Aeronautics and Space Administration (NASA)
+                          Emergency Medical Procedures Manual for the
+Requested date:           International Space Station (ISS) [partial], 2016
+Released date:
+Posted date:              24-December-2015
+Source of document:
+                          14-March-2016
+
+                          21-March-2016
+
+                          FOIA Request
+                          NASA Headquarters
+                          300 E Street, SW
+                          Room 5Q16
+                          Washington, DC 20546
+                          Fax: (202) 358-4332
+                          Email: foia@hq.nasa.gov
+                          Online FOIA Form
+
+The governmentattic.org web site ("the site") is noncommercial and free to the public. The site and materials
+made available on the site, such as this file, are for reference only. The governmentattic.org web site and its
+principals have made every effort to make this information as complete and as accurate as possible, however,
+there may be mistakes and omissions, both typographical and in content. The governmentattic.org web site and
+its principals shall have neither liability nor responsibility to any person or entity with respect to any loss or
+damage caused, or alleged to have been caused, directly or indirectly, by the information provided on the
+governmentattic.org web site or in this file. The public records published on the site were obtained from
+government agencies using proper legal channels. Each document is identified as to the source. Any concerns
+about the contents of the site should be directed to the agency originating the document in question.
+GovernmentAttic.org is not responsible for the contents of documents published on the website.
+National Aeronautics and Space Administration
+
+Lyndon B. Johnson Space Center
+2101 NASA Parkway
+Houston, Texas 77058-3696
+
+                                       March 14, 2016
+
+Replytoattn.of AD91 l/JSC FOIA Office
+
+RE: 16-JSC-F-00174
+
+Thank you for your Freedom oflnformation Act (FOIA) request dated December 24, 2015, and
+received at the NASA Headquarters FOIA Office on December 28, 2015. Your request was
+transferred to our office and received on January 4, 2016. Your request was assigned FOIA Case
+Number 16-JSC-F-00174 and was for:
+
+            Under the provisions of the Freedom of Information Act, I request a copy of the following
+            documents regarding the International Space Station.
+
+           1. The dental emergencies procedure manual for the astronauts on the International Space
+            Station.
+            2. The appendectomy emergency procedure manual for the astronauts on the International
+            Space Station.
+            3. The cholecystectomy (gall bladder) emergency procedure manual for the astronauts on the
+            International Space Station.
+           4. The emergency medical manual for the astronauts on the International Space Station.
+            5. The inventory/stock list for the space station medical kit.
+            6. The manual for the space station medical kit.
+            7. The NASA official procedure manual for burial in space (such as from the International Space
+            Station).
+
+           This is an individual noncommercial request. I agree to pay up to $100 for applicable fees if
+            necessary.
+
+In accordance with NASA's FOIA regulations (14 CFR §1206.305), a diligent search was
+conducted for the records you requested, and no responsive records exist for items #2, 3, 6 and 7.
+16-JSC-F-00174  2
+
+Please be advised that the responsive records for items #1, 4 and 5 of your request are enclosed.
+We are releasing 62 pages to you in full.
+
+You have the right under 14 CFR §1206.700 to appeal this determination within 30 days from the
+date of this letter. Your appeal must be in writing and should be addressed to:
+
+         Administrator
+         NASA Headquarters
+         Executive Secretariat
+         MS 9Rl7
+         Washington, DC 20546
+         ATTN: FOIA Appeals
+
+The appeal should be marked "Appeal under the Freedom oflnformation Act" both on the
+envelope and the face of the letter. A copy of your initial request must be enclosed along with a
+copy of the adverse determination and any other correspondence with the FOIA office. In order
+to expedite the appellate process and ensure full consideration of your appeal, your appeal should
+contain a brief statement of the reasons you believe this initial decision to be in error.
+
+Since the processing fees are less than $50.00 they are not being charged in accordance with
+NASA FOIA regulations 14 CFR §1206.504(±).
+
+I am the official responsible for the partial denial of your request. If I can be of further assistance,
+please contact me at Jessica.A.Cordero@nasa.gov or (281) 483-8252.
+
+Sincerely,
+
+JssicaCor~
+
+ SC FOIA Officer
+
+Enclosures
+1.101 SEVERE ALLERGIC REACTION                Page 1 of 2 pages
+
+(MED CL/HTV5 - ALL/FIN 2/Paper on ISS/T)
+
+OBJECTIVE:
+To rapidly treat a severe allergic reaction.
+
+ITEMS:
+Gray Tape
+Emergency Medical Treatment Pack (Red):
+
+    Epinephrine (EpiPen)
+
+1. DEPLOYING AND USING EPINEPHRINE (EPIPEN)
+    1.1 Remove Epinephrine (EpiPen) from protective plastic tubing.
+           (Figure 1)
+
+                                 Figure 1.- Epinephrine (EpiPen).
+
+           1.2 Form a fist around Epinephrine (EpiPen) with thumb closest to safety cap.
+
+           1.3 Activate auto injector by pulling off safety cap.
+                 (Figure 2)
+
+                                                        WARNING
+
+                   1. Do not put fingers over needle end of Epinephrine (EpiPen) to
+                        prevent injection into finger.
+
+                   2. Do not give shot through clothing to prevent needle contamination.
+
+23 MAR 15                                     1.101_M_22808.doc
+1.101 SEVERE ALLERGIC REACTION            Page 2 of 2 pages
+
+(MED CL/HTV5 - ALL/FIN 2/Paper on ISS/T)
+
+                    Figure 2.- Activating Epinephrine (EpiPen).
+    1.4 Using a jabbing motion, press the needle end perpendicular to and firmly
+
+             against patient's outer thigh until a click is heard or felt.
+           Hold firmly against thigh for 10 seconds.
+           (Figure 3)
+
+                  Figure 3.- Positioning of Epinephrine (EpiPen).
+    1.5 Discard used Epinephrine (EpiPen) in original protective plastic tubing;
+
+             secure in tube with Gray Tape and discard.
+           Call MCC-H to request PMC.
+    1.6 Epinephrine (EpiPen) may be repeated every 20 minutes if symptoms recur
+
+             or progress.
+2. Go to 2.0.403 ALLERGIC REACTION, all (SODF: MED CL: EXAMS,
+
+      PROCEDURES, AND TREATMENT).
+
+23 MAR 15                                 1.101_M_22808.doc
+MED C/L          1.102 AED ASSISTED CPR
+
+                 (MED CL/HTV5 - ALL/FIN 3/Paper on ISS/T) Page 1 of 1 page
+
+If one            1 ASSESS                                                         Updated via P&I in 44-0397
+ rescuer         1. Assess environment for safety
+ available                                                                   2 TRANSPORT /
+                     hazards.                                                    PROVIDE CARE
+If two           2. Assess patient status.
+ rescuers                                                                   1. Relocate to and
+ available       Patient unresponsive and breathing                             restrain patient on the
+                 normally                                                       Crew Medical Restraint
+Rescuer 1                                                                       System.
+                 Patient unresponsive and not breathing
+Rescuer 2        or no normal breathing (only gasping)                      2. Page additional
+                                                                                crewmember for
+Deploy AED,       3 PERFORM CPR                                                 assistance.
+ then:            Perform 30 chest compressions for
+                                                                            3. Call MCC-H to request
+Go to 1.103 ALS      every 2 breaths (1 second each                             PMC.
+ ALGORITHIM,         breath) for 5 cycles (approximately
+ block 1 (SODF:      2 minutes).                                            4. Go to 1.103 ALS
+ MED CL:                                                                        ALGORITHM, block
+ EMERGENCY)      1. As required, relocate to and restrain                       13, page 5, Respiratory
+                     patient on the Crew Medical                                Assessment (SODF:
+                     Restraint System.                                          MED CL:
+                                                                                EMERGENCY).
+                 2. Page additional crewmember for
+                     assistance.
+
+                 3. Call MCC-H to request PMC.
+
+                  4 DEPLOY AED
+
+                 1. Connect AED electrodes to patient's
+                     chest. (Figure 1)
+
+                 2. AED `ON' (green)  Press
+                 3. Follow verbal prompts.
+                 4. If verbal prompts inaudible, read
+
+                     prompts on screen.
+
+                  5 MONITOR PATIENT RESPONSE                                    Figure 1.- AED
+                                                                            Electrode Placement.
+                 After AED prompts 'Start CPR'
+                      Perform a 10-second pulse check.
+                                                                        No
+
+                 Is pulse detected?
+
+                 Yes
+
+                 6 ASSIST PATIENT                                           7 PERFORM CPR
+
+                 If patient begins spontaneous breathing                     Perform 30 chest
+                 or a pulse is detected                                        compressions for every
+                                                                               2 breaths (1 second
+                     Stop chest compressions.                                  each breath) until
+                     Assist breathing as necessary.                            prompted by AED.
+                 If second rescuer assisting
+                     Stop medication administration.                         Repeat block 5 after
+                                                                               each `Start CPR'
+                     Go to 1.103 ALS ALGORITHM,                                prompt from AED.
+                        block 13, page 5, Respiratory
+                        Assessment (SODF: MED CL:
+                        EMERGENCY).
+
+09 APR 15
+
+                                                                                                       1.102_M_22809.doc
+   MED C/L          1.103 ALS ALGORITHM
+
+                 1  (MED CL/HTV5 - ALL/FIN 3/Paper on ISS/T) Page 1 of 7 pages
+ If two
+  rescuers                      INTRAOSSEOUS DEVICE INSERTION                               1
+  available
+ Rescuer 2                                      18 23                                     If pulse returns,
+ Rescuer 1                                                                    1           stop chest
+                                                                                          compressions
+Go to 1.102         1 PREPARE INTRAOSSEOUS DEVICE                                         and medication
+ AED                                                                                      administration.
+ ASSISTED           1. Unstow                                                             Give breaths
+ CPR, all                 Emergency Medical Treatment Pack                                and go to block
+ (SODF: MED               (Red):                                                          13, page 5,
+ CL:                         Scissors - Trauma                                            Respiratory
+ EMERGENCY)                  Intraosseous Device Start Kit:                               Assessment.
+                                Intraosseous Injection Device
+                                IV Cap
+                                Medical Tape
+                                Syringe 10 mL
+
+                    2. Tear off two 10 cm pieces of Medical
+                        Tape and set aside.
+
+                    3. Attach IV Cap to Syringe. (Figure 1)
+                    4. Expose leg to knee [Scissors - Trauma].
+
+                                                                   Figure 1.- Syringe IV
+                                                                      Cap Assembly.
+
+                    2 IDENTIFY INTRAOSSEOUS SITE
+                    1. Place finger on bony protrusion identified
+
+                        by circle. (Figure 2)
+                    2. Move finger 2 cm towards the inner leg.
+                    3. Move finger 1 cm up towards knee,
+
+                      identified by "+". (Figure 2)
+
+                                                3
+
+                                                                        Figure 2.-
+                                                                   Intraosseous Site.
+
+20 APR 15                                                                                 1.103_M_22810.doc
+MED C/L    1.103 ALS ALGORITHM
+
+           (MED CL/HTV5 - ALL/FIN 3/Paper on ISS/T) Page 2 of 7 pages
+
+                                      2                                                                    1
+                                                                                                          If pulse
+                                                                      1                                   returns, stop
+           3 POSITION INTRAOSSEOUS DEVICE                                                                 chest
+                                                                                                          compressions
+                                WARNING                                                                   and
+                                                                                                          medication
+                 Needle could eject from end of                                                           administration.
+                 blue barrel becoming a projectile                                                        Give breaths
+                                                                           Figure 3.- Positioning and go to
+           1. Remove Intraosseous Device from                              Intraosseous Device. block 13, page
+               packaging and place blue barrel on                                                         5, Respiratory
+               insertion point. (Figure 3)                                                                Assessment.
+
+            4 ACTIVATE INTRAOSSEOUS DEVICE                                  Figure 4.- Activating
+                                                                           Intraosseous Device.
+           1. Remove safety latch and stow for later use.
+           2. Maintain positive pressure of blue barrel                  Figure 5.- Intraosseous
+                                                                           Needle with Safety
+               perpendicular to skin at insertion point.                      Latch in Place.
+               (Figure 3)
+           3. Place palm of other hand over the gray end                     Figure 6.- Syringe
+               of Intraosseous Device and apply gentle                            Attached to
+               pressure to activate. A click will sound as
+               the device activates. (Figure 4)                            Intraosseous Needle.
+           4. Gently lift Intraosseous Device, exposing
+               the needle unit.
+           5. Place safety latch between skin and hub of
+               Intraosseous needle. (Figure 5)
+           6. Place Medical Tape over safety latch to
+               secure. (Figure 6)
+
+            5 POST INSERTION STEPS
+
+           1. Stabilize Intraosseous needle with hand;
+               with other hand, remove inner needle.
+
+           2. Remove sterile cover from IV Cap, then
+               attach Syringe and IV Cap assembly to
+               Intraosseous needle. (Figure 6)
+
+           3. Pull back on plunger of Syringe  5 mL,
+               then disconnect Syringe from blue IV Cap.
+               Blood or fluid return may or may not be
+               seen. This action will potentially clear bone
+               fragments from the needle. (Figure 7)
+
+           6
+
+20 APR 15                                                                Figure 7.- Intraosseous
+                                                                            Needle, Secured.
+
+                                                                                                                        1.103_M_22810.doc
+MED C/L      1.103 ALS ALGORITHM
+
+             (MED CL/HTV5 - ALL/FIN 3/Paper on ISS/T) Page 3 of 7 pages            1
+
+                                      DRUG ADMINISTRATION                          If pulse
+                                                                                   returns, stop
+                                       5                                           chest
+                                                                    1              compressions
+                                                                                   and
+           6 ADMINISTER EPINEPHRINE                                                medication
+           1. Retrieve Epinephrine from ALS                                        administration.
+                                                                                   Give breaths
+               Medication Kit [Emergency Medical                                   and go to
+               Treatment Pack (Red)].                                              block 13, page
+           2. Prepare one Epinephrine Syringe.                                     5, Respiratory
+               (Figure 8)                                                          Assessment.
+           3. Attach to IV Cap on Intraosseous needle.
+           4. Administer contents of Syringe into
+               Intraosseous needle.
+
+                                                        Figure 8.- Epinephrine
+                                                                Syringes.
+
+           7 Did the medicine flow through the No       8
+               Intraosseous needle?                      Go to block 20, page 7,
+
+           24  Yes                                         Intraosseous Needle
+                                                           Troubleshooting.
+           9 ADMINISTER ATROPINE OR
+                LIDOCAINE                               10 ADMINISTER
+                                                             EPINEPHRINE
+            Wait for next AED rhythm analysis.
+                                                         Wait for next AED
+           1. If no shock advised, administer              rhythm analysis.
+               Atropine.
+               (a) Prepare one Atropine Syringe [ALS    1. Prepare one
+                     Medication Kit].                       Epinephrine Syringe
+               (b) Attach Syringe to IV Cap on              [ALS Medication Kit].
+                     Intraosseous needle.
+               (c) Administer contents of Syringe into  2. Attach to IV Cap on
+                     Intraosseous needle.                   Intraosseous needle.
+
+           2. If shock advised, administer Lidocaine.   3. Administer contents of
+               (a) Prepare one Lidocaine Syringe [ALS       Syringe into
+                     Medication Kit].                       Intraosseous needle.
+               (b) Attach Syringe to IV Cap on
+                     Intraosseous needle.
+               (c) Administer contents of Syringe into
+                     Intraosseous needle.
+
+                                                        11
+
+20 APR 15                                                                          1.103_M_22810.doc
+MED C/L    1.103 ALS ALGORITHM
+
+           (MED CL/HTV5 - ALL/FIN 3/Paper on ISS/T) Page 4 of 7 pages  1
+
+                                       10                              If pulse
+                                                                    1  returns, stop
+                                                                       chest
+           11 ADMINISTER ATROPINE OR                                   compressions
+                LIDOCAINE                                              and
+                                                                       medication
+             Wait for next AED rhythm analysis.                        administration.
+           1. If no shock advised, administer                          Give breaths
+                                                                       and go to
+                Atropine.                                              block 13, page
+               (a) Prepare one Atropine Syringe [ALS                   5, Respiratory
+                                                                       Assessment.
+                     Medication Kit].
+               (b) Attach Syringe to IV Cap on
+
+                     Intraosseous needle.
+               (c) Administer contents of Syringe into
+
+                     Intraosseous needle.
+           2. If shock advised, administer Lidocaine.
+
+               (a) Prepare one Lidocaine Syringe [ALS
+                     Medication Kit].
+
+               (b) Attach Syringe to IV Cap on
+                     Intraosseous needle.
+
+               (c) Administer contents of Syringe into
+                     Intraosseous needle.
+
+           12 CPR TERMINATION
+
+           1. Coordinate with
+               Surgeon, if available.
+
+           2. Consider CPR
+               termination if all of the
+               following conditions
+               apply:
+
+                At least 10 minutes
+                  of CPR since last
+                  dose of medication,
+                 and
+
+                No pulse or
+                  spontaneous
+                  breathing, and
+
+                At least 45 minutes
+                  elapsed since start of
+                  resuscitation.
+
+20 APR 15                                                              1.103_M_22810.doc
+MED C/L    1.103 ALS ALGORITHM
+
+           (MED CL/HTV5 - ALL/FIN 3/Paper on ISS/T) Page 5 of 7 pages
+
+                       RESPIRATORY ASSESSMENT                                          2
+
+           1.102 AED ASSISTED CPR, all                                                 If AED advises
+           (SODF: MED CL: EMERGENCY)                                                   `PUSH
+
+                                           2                                           SHOCK
+                                                                                       BUTTON', or
+           13 CHECK PATIENT RESPONSE             Yes                                   pulse is not
+                                                                                       detected,
+           Is patient awake and able to                                                follow AED
+                                                                                       prompts and
+           speak?                                                                      go to block 1,
+                                                                                       page 1,
+                   No                                                                  Intraosseous
+                                                                                       Device
+           14 ASSESS BREATHING                                                         Insertion.
+           Are any of the following true?
+
+            Skin of lips, face, or hands         No to all
+              blue/gray.
+                                                    15 PROVIDE OXYGEN WITH
+            Breathing rate < 12 or > 30                   MASK
+              breaths per minute.
+                                                    1. Unstow
+            Patient snoring or having                       Respiratory Support Pack
+              difficulty inhaling.
+                                                    2. Locate Cue Card in lid pocket.
+                                   Yes to any       3. Provide oxygen by performing
+
+           16 ASSIST BREATHING AND                       3.201 RESPIRATORY
+                PROVIDE OXYGEN USING                     SUPPORT PACK - CUE CARD,
+                AMBU BAG                                 Oxygen Via Low Flow Non
+                                                         Rebreather Mask (SODF: MED
+           1. Assist breathing using mouth to            CL: REFERENCE), then:
+               mouth breaths or AMBU Bag.
+               (Administer breaths at a rate of                            17
+               one breath every 5 seconds).
+
+           2. Unstow
+                  Respiratory Support Pack
+
+           3. Locate Cue Card in lid pocket.
+           4. Provide oxygen using AMBU
+
+               Bag by performing 3.201
+               RESPIRATORY SUPPORT
+               PACK - CUE CARD, Oxygen
+               Via AMBU Bag (SODF: MED
+               CL: REFERENCE), then:
+
+                   17
+
+20 APR 15                                                                              1.103_M_22810.doc
+MED C/L    1.103 ALS ALGORITHM
+
+           (MED CL/HTV5 - ALL/FIN 3/Paper on ISS/T) Page 6 of 7 pages         2
+
+                                     16 15                                    If AED advises
+                                                                           2  `PUSH
+
+           17 LUNG ASSESSMENT                                                 SHOCK
+                                                                              BUTTON', or
+           1. Retrieve Stethoscope                                            pulse is not
+                [Emergency Medical Treatment Pack (Red)].                     detected,
+                                                                              follow AED
+           2. Verify presence of breath sounds on both                        prompts and
+                sides of the chest [Stethoscope].                             go to block 1,
+                                                                              page 1,
+           18 ADMINISTER IV FLUIDS                                            Intraosseous
+                                                                              Device
+           If Intraosseous Device is inserted                                 Insertion.
+            Give IV fluids via Intraosseous needle by
+
+              performing 2.14.306 INJECTIONS & IV ­
+              GIVING IV FLUIDS AND MEDICATIONS, all
+              (SODF: MED CL: EXAMS, PROCEDURES,
+              AND TREATMENT), then:
+
+           If Intraosseous Device is not inserted
+            Insert Intraosseous Device by performing
+
+              blocks 1 to 5, pages 1 and 2, then:
+            Give fluids via Intraosseous needle by
+
+              performing 2.14.306 INJECTIONS & IV ­
+              GIVING IV FLUIDS AND MEDICATIONS, all
+              (SODF: MED CL: EXAMS, PROCEDURES,
+              AND TREATMENT), then:
+
+           19 ATTACH MONITORING EQUIPMENT
+
+           1. Unstow
+                 BP/ECG
+                 Medical Diagnostic Pack (Blue):
+                    Blood Oximeter
+
+           2. Insert four AA Batteries into Blood Oximeter
+               and attach to patient.
+
+           3. Perform 2.7.301 CHEST PROCEDURE ­
+               OBTAIN ELECTROCARDIOGRAM (ECG), all
+               (SODF: MED CL: EXAMS, PROCEDURES,
+               AND TREATMENT), then:
+
+           4. Call MCC-H to request PMC.
+
+20 APR 15                                                                     1.103_M_22810.doc
+MED C/L    1.103 ALS ALGORITHM
+
+           (MED CL/HTV5 - ALL/FIN 3/Paper on ISS/T) Page 7 of 7 pages
+
+           INTRAOSSEOUS NEEDLE TROUBLESHOOTING                                   1
+
+                                   8         1       21                          If pulse
+                                                Yes  1. Attach Syringe 10 mL     returns, stop
+           20                                                                    chest
+           Have two attempts at placing the              to IV Cap on failed     compressions
+           Intraosseous device been made?                Intraosseous            and
+                                                         Device(s).              medication
+                                     No              2. Pull back on plunger     administration.
+                                                         of Syringe 10 mL        Give breaths
+           22 PREPARE FOR SECOND                          5 mL, then             and go to
+                INTRAOSSEOUS DEVICE                      disconnect Syringe      block 13, page
+                INSERTION USING OTHER LEG                10 mL from blue IV      5, Respiratory
+                                                         Cap. Blood or fluid     Assessment.
+           Retrieve Intraosseous Device Start            may or may not be
+           Kit with Second Intraosseous Device           seen. This action will
+           [Emergency Medical Treatment Pack             potentially clear bone
+           (Red].                                        fragments from the
+                                                         needle.
+           23
+                                                      24
+           1. Go to block 1, page 1,                   Attempt to re-administer
+               Intraosseous Device Insertion, and      medication.
+               perform steps using other leg.
+                                                      1. If successful, go to
+                                                           block 9, page 3.
+
+                                                      2. If unsuccessful,
+                                                           Support AED
+                                                           Assisted CPR and
+                                                           report results to
+                                                           Surgeon, if able.
+
+20 APR 15                                                                        1.103_M_22810.doc
+1.104 AED TROUBLESHOOTING
+
+(MED CL/HTV5 - ALL/FIN 1/Paper on ISS/T) Page 1 of 2 pages
+
+OBJECTIVE:
+To identify problem conditions that may be encountered during use of the AED, and
+provide possible solutions.
+
+           Observation              Possible Cause                       Action
+CONNECT ELECTRODES         Poor AED Electrode-to-skin    1. Firmly press AED
+voice prompt is heard      contact
+                                                              Electrodes on patient's skin.
+CHECK CONNECTOR AND        AED Electrodes are dry or     2. If this does not correct
+ELECTRODES voice prompt    damaged
+is heard                   AED Electrodes are not             problem and large amount
+MOTION DETECTED and        removed from the liner             of chest hair present
+STOP MOTION voice prompts
+are heard                  Connection to the AED is               Swiftly remove AED
+                           inadequate                             Electrodes and any
+STATUS DISPLAY is blank                                           attached chest hair.
+MAIN DISPLAY blank and ON  Patient movement because of   3. Place new set of AED
+LED lit                    breathing                          Electrodes on chest.
+                           CPR being performed during    Replace the AED Electrode
+                           analysis                      pads.
+                           Electrical/radio frequency    Remove the AED Electrodes
+                           interference                  from the liner and apply them to
+                           The AED has been turned on    the patient's chest.
+                                                         Check to be sure that the AED
+                           LCD not operating properly    Electrode connector is inserted
+                           MAIN DISPLAY not functioning  completely.
+                           properly                      Check patient for normal
+                                                         breathing.
+                                                         Stop CPR during analysis.
+
+                                                         Move suspected devices away
+                                                         from the AED when possible.
+                                                         Normal condition when AED is
+                                                         in use
+                                                         Notify MCC-H.
+                                                         1. AED may still operate. If
+
+                                                              needed, continue to use
+                                                              device to treat patient.
+                                                         2. Notify MCC-H.
+
+17 MAR 15                                                   1.104_M_22811.doc
+1.104 AED TROUBLESHOOTING
+
+(MED CL/HTV5 - ALL/FIN 1/Paper on ISS/T) Page 2 of 2 pages
+
+           Observation                Possible Cause                      Action
+AED does not deliver visual  Low AED Battery (one bar or
+prompts, voice prompts, or   less left in MAIN DISPLAY)   1. Continue CPR if patient is
+auditory tones after it is                                     not responding, not
+powered on, or the voice     Low AED Battery (one bar or       breathing normally, and
+prompts sound faint or       less left in MAIN DISPLAY)        showing no signs of
+distorted                                                      circulation.
+                             Depleted AED Battery
+REPLACE BATTERY voice                                     2. Check Battery indicator in
+prompt is heard or visual                                      MAIN DISPLAY.
+prompt is seen
+                                                          3. Replace AED Battery at
+AED cannot deliver the                                         earliest opportunity.
+required shock
+Flashing STATUS DISPLAY                                   4. Notify MCC-H.
+
+                                                                           NOTE
+                                                           AED can deliver 30 shocks
+                                                           and 75 minutes of monitoring
+                                                           if Battery shows one bar in
+                                                           the MAIN DISPLAY.
+
+                                                          1. Continue CPR if patient is
+                                                               not responding, not
+                                                               breathing normally, and
+                                                               showing no signs of
+                                                               circulation.
+
+                                                          2. Check Battery indicator in
+                                                               MAIN DISPLAY.
+
+                                                          3. Replace AED Battery at
+                                                               earliest opportunity.
+
+                                                          4. Notify MCC-H.
+                                                          1. Continue CPR if patient is
+
+                                                               not responding, not
+                                                               breathing normally, and
+                                                               showing no signs of
+                                                               circulation.
+                                                          2. Replace AED Battery.
+                                                          3. Notify MCC-H.
+
+17 MAR 15                                                   1.104_M_22811.doc
+MED C/L          1.105 CHOKING
+
+                 (MED CL/HTV5 - ALL/FIN 2/Paper on ISS/T) Page 1 of 1 page
+
+                 OBJECTIVE:
+                 To rapidly clear airway obstruction.
+
+Patient Choking   1 CHECK PATIENT RESPONSE
+                                                                            NO
+
+                 Is patient awake?
+
+                 YES
+
+                 2 PERFORM ABDOMINAL THRUSTS
+
+                 1. Position behind patient.                 PATIENT             3 CLEAR AIRWAY / GIVE BREATHS
+                 2. Make fist.
+                 3. Place fist above belly button but        BECOMES            1. Open airway using Head tilt-Chin lift.
+                                                             UNCONSCIOUS            (Figure 2)
+                     below ribcage. (Figure 1)
+                 4. Pull sharply inward and upward.                             2. Inspect for foreign object and
+                 5. Repeat until object clears or patient                           remove, if easily accessible.
+
+                     becomes unconscious.                                       3. Pinch nose and attempt to give
+                                                                                    breaths.
+                 OBJECT CLEARS
+                                                                                Go to 1.102 AED ASSISTED CPR, all
+                  4 OBTAIN VITAL SIGNS                                           (SODF: MED CL: EMERGENCY).
+
+                 1. Unstow
+                      Medical Diagnostic Pack (Blue):
+                          Blood Pressure Cuff (select
+                          appropriate size)
+                          Blood Pressure Monitor
+
+                 2. Take pulse, respiratory rate, and blood
+                     pressure.
+
+                 3. Record data for later reporting to
+                     Surgeon.
+
+                  5 CONSULT SURGEON
+                  Call MCC-H to request PMC.
+
+                                                                                Figure 1.- Abdominal Thrust.
+
+                                                                                Figure 2.- Head Tilt-Chin Lift.
+
+20 APR 15                                                                                                                  1.105_M_22812.doc
+1.106 TOXIC EXPOSURE                              Page 1 of 2 pages
+
+(MED CL/HTV5 - ALL/FIN 3/Paper on ISS/T)
+
+OBJECTIVE:
+To decontaminate and treat after toxic exposure.
+
+ITEMS:
+Drink Bag
+Towel
+
+TOOLS:
+Digital Camera
+
+           1. RESCUER SAFETY
+               To minimize the number of crew exposed, take respiratory, eye, and skin
+                 precautions prior to removing patient from exposure.
+
+           2. DECONTAMINATING PATIENT
+               2.1 Skin Exposure
+                      Quickly remove soiled clothes.
+                      Brush off visible particulate and wipe liquids off patient with Towel.
+                      Irrigate contaminated areas with water.
+
+           2.2 Eye Exposure
+                 If wearing contact lenses
+                      Remove and discard.
+
+                If eye exposure occurs
+                    Immediately flush with water from Drink Bag.
+                    Configure eyewash station in the SM at the CBO-3B port, then irrigate
+                      eye until pain resolves or directed to stop by Surgeon.
+                    If required, refer to 2.3.304 EYE PROCEDURE - EYEWASH KIT USE,
+                      all (SODF: MED CL: EXAMS, PROCEDURES, AND TREATMENT).
+
+           2.3 Respiratory Exposure
+                 If difficulty breathing
+                      Perform 1.108 DIFFICULTY BREATHING, all (SODF: MED CL:
+                       EMERGENCY PROCEDURES), then:
+
+           3. PERFORMING EXAM
+               3.1 Call MCC-H to request PMC.
+
+11 JUN 15                                                            1.106_M_22813.doc
+1.106 TOXIC EXPOSURE                      Page 2 of 2 pages
+
+(MED CL/HTV5 - ALL/FIN 3/Paper on ISS/T)
+
+           3.2 If comm unavailable
+                      For eye exposure
+                           Perform 2.3.101 EYE EXAM - GENERAL EXAM, steps 1 to 5
+                            (SODF: MED CL: EXAMS, PROCEDURES, AND TREATMENT),
+                            then:
+
+           For all other exposures
+               Perform 2.0.105 EXAM ­ SICK CALL, all (SODF: MED CL: EXAMS,
+                 PROCEDURES, AND TREATMENT), then:
+
+           4. OBTAINING HISTORY
+               Collect information regarding exposures to chemicals, medication, or other new
+                 exposures.
+
+           5. PHOTO DOCUMENTING
+
+                                                    NOTE
+           It is important to keep individuals' data separate by making separate
+           folders that are labeled with crew name and GMT day.
+
+           5.1 Photo document affected body parts [Digital Camera].
+
+           5.2 Downlink photos for Surgeon.
+                 If required, refer to 1.480 D4 SETUP ­ MEDICAL IMAGERY, all (SODF: ISS
+                   PTV: NIKON D4).
+
+11 JUN 15                                                            1.106_M_22813.doc
+1.107 SEIZURE                                  Page 1 of 3 pages
+
+(MED CL/HTV5 - ALL/FIN 3/Paper on ISS/T)
+
+OBJECTIVE:
+To give medication to suppress seizure activity. Seizures will cause loss of consciousness and
+
+ uncontrolled muscle contraction.
+
+ITEMS:
+AA Batteries (four)
+Respiratory Support Pack
+Medical Diagnostic Pack (Blue):
+
+    Blood Oximeter
+Oral Medication Pack (Purple):
+
+    Phenytoin (Dilantin ER)
+Topical & Injectable Medication Pack (Brown):
+
+    Diazepam (Valium)
+
+TOOLS:
+Digital Camera
+
+           1. PROTECTING FROM INJURY
+               Protect patient from injury by preventing impact of the body with hard structures.
+               Attempt to locate the patient in the center of a module away from structures.
+
+                                                               NOTE
+                1. Never attempt to pry open or put anything in the mouth during a seizure.
+
+                2. Seizures typically last less than a minute.
+
+           2. ADMINISTERING INTRAMUSCULAR SHOT
+
+                                                                       NOTE
+                Step 2 and step 3 may be performed in parallel if multiple CMOs are available.
+
+           2.1 Configure Medication for Injection
+                 Prepare 2 mL Diazepam (Valium) 5 mg/mL for a total of 10 mg [Topical &
+                   Injectable Medication Pack (Brown)].
+
+11 JUN 15                                                         1.107_M_22814.doc
+1.107 SEIZURE                                 Page 2 of 3 pages
+
+(MED CL/HTV5 - ALL/FIN 3/Paper on ISS/T)
+
+           If Diazepam (Valium) supplied in a prefilled syringe
+               Perform 2.14.302 INJECTIONS AND IV ­ MEDICINE PREPARATION
+                 FOR INJECTION, all (SODF: MED CL: EXAMS, PROCEDURES, AND
+                 TREATMENT), then:
+               Go to step 2.2.
+
+           If Diazepam (Valium) supplied in a vial
+               Perform 2.14.303 INJECTIONS AND IV - DRAWING UP MEDICINE
+                 FROM VIAL, all (SODF: MED CL: EXAMS, PROCEDURES, AND
+                 TREATMENT), then:
+               Go to step 2.2.
+
+           2.2 Administer Injection of Medication
+                 Give 2 mL intramuscular shot of Diazepam (Valium) 5 mg/mL.
+                 If required, refer to 2.14.304 INJECTIONS AND IV - INTRAMUSCULAR
+                   SHOT, all (SODF: MED CL: EXAMS, PROCEDURES, AND
+                   TREATMENT).
+
+           If seizure continues for > 5 minutes or for repeated seizures, repeat
+            medication administration in 10 minutes.
+
+           3. APPLYING BLOOD OXIMETER
+
+           Batteries | Blood Oximeter [Medical Diagnostic Pack (Blue)]
+
+           Blood Oximeter Sensor | Blood Oximeter
+
+           pb Power  Press
+
+           pb [Display]  Press until red dot is shown over SpO2 in top display window
+
+           Record SpO2 reading from display.
+
+           pb Power  Press and hold
+
+           If required, refer to 2.0.305 PROCEDURE - BLOOD OXIMETER USE, steps 2.4
+
+           through 3 (SODF: MED CL: EXAMS, PROCEDURES, AND TREATMENT).
+
+           4. ADMINISTERING OXYGEN AND OBTAINING IV ACCESS
+               4.1 Administer Oxygen
+                      Retrieve Respiratory Support Pack.
+                      Locate Cue Card in lid pocket.
+                      Provide oxygen via Low Flow Non-Rebreather Mask.
+                      Perform 3.201 RESPIRATORY SUPPORT PACK - CUE CARD, Oxygen via
+                        Low Flow Non-Rebreather Mask (SODF: MED CL: REFERENCE), then:
+
+11 JUN 15                                                        1.107_M_22814.doc
+1.107 SEIZURE                                  Page 3 of 3 pages
+
+(MED CL/HTV5 - ALL/FIN 3/Paper on ISS/T)
+
+           4.2 Obtain IV Access
+                 Perform 2.14.305 INJECTIONS AND IV - IV ACCESS, all (SODF: MED CL:
+                   EXAMS, PROCEDURES, AND TREATMENT), then:
+
+           5. PERFORMING A TARGETED PHYSICAL EXAM
+
+                                                         NOTE
+                  After a seizure, the patient will be confused for several minutes.
+
+           Examine the head, extremities, teeth and tongue for injuries.
+
+           6. PHOTO DOCUMENTING INJURIES WITH DIGITAL CAMERA
+               Photo document any injuries [Digital Camera].
+
+           7. ADMINISTERING MEDICATION
+               7.1 Call MCC-H to request PMC.
+
+           7.2 When awake, coherent, and able to swallow, give one capsule of Phenytoin
+                   (Dilantin ER) by mouth, as directed by Surgeon [Oral Medication Pack
+                   (Purple)].
+
+           7.3 After two hours, give a second dose of Phenytoin (Dilantin ER) by mouth, or
+                   as directed by Surgeon.
+
+           8. OBTAINING HISTORY
+               8.1 Collect information about the seizure event and the use of medications.
+
+                                                    NOTE
+           It is important to keep individuals' data separate by making separate
+
+            folders that are labeled with crew name and GMT day.
+
+           8.2 Downlink photos for Surgeon.
+                 If required, refer to 1.480 D4 SETUP ­ MEDICAL IMAGERY, all (SODF: ISS
+                   PTV: NIKON D4).
+
+           9. DIRECTION FROM SURGEON
+
+               When directed by Surgeon
+               Batteries | Blood Oximeter and restow
+
+11 JUN 15                                                         1.107_M_22814.doc
+1.108 DIFFICULTY BREATHING                         Page 1 of 3 pages
+
+(MED CL/HTV5 - ALL/FIN 2/Paper on ISS/T)
+
+OBJECTIVE:
+To evaluate and start treatment for difficulty breathing.
+
+ITEMS:
+AA Batteries (four)
+
+Respiratory Support Pack
+
+Medical Diagnostic Pack (Blue):
+    Blood Oximeter
+    Blood Pressure Cuff (select appropriate size)
+    Blood Pressure Monitor
+    Stethoscope
+
+Topical & Injectable Medication Pack (Brown):
+    Albuterol (Proventil HFA)
+
+           1. STARTING TREATMENT
+               1.1 Count Pulse and Respiratory Rate
+                      Measure each by counting for 15 seconds and multiplying by four.
+                      Record data for later reporting to Surgeon.
+
+           1.2 Administer Oxygen
+                 Retrieve Respiratory Support Pack.
+                 Locate Cue Card in lid pocket.
+                 Provide oxygen via Low Flow Non-Rebreather Mask.
+                 Perform 3.201 RESPIRATORY SUPPORT PACK - CUE CARD, Oxygen via
+                   Low Flow Non-Rebreather Mask (SODF: MED CL: REFERENCE), then:
+
+           1.3 Administer Inhaled Albuterol (Proventil HFA)
+                 Shake the Albuterol (Proventil HFA) Inhaler to mix medication and then
+                   remove cap [Topical & Injectable Medication Pack (Brown)].
+                 Have patient fully exhale and place inhaler in mouth.
+                 Have patient begin to inhale slowly through the mouth and then activate the
+                   inhaler.
+                 Have patient hold breath for 8 to 10 seconds before exhaling.
+                 Deliver a second dose.
+
+20 APR 15                                                             1.108_M_22815.doc
+1.108 DIFFICULTY BREATHING                 Page 2 of 3 pages
+
+(MED CL/HTV5 - ALL/FIN 2/Paper on ISS/T)
+
+           2. APPLYING BLOOD OXIMETER
+
+               Batteries | Blood Oximeter [Medical Diagnostic Pack (Blue)]
+
+              Blood Oximeter Sensor | Blood Oximeter
+
+               pb Power  Press
+
+               pb [Display]  Press until red dot is shown over SpO2 in top display window
+               Record SpO2 reading from display.
+
+               pb Power  Press and hold
+               If required, refer to 2.0.305 PROCEDURE- BLOOD OXIMETER USE, steps 2.4
+
+                 through 3 (SODF: MED CL: EXAMS, PROCEDURES, AND TREATMENT).
+           3. PERFORMING AIRWAY EXAM
+
+               3.1 Inspect Airway
+                      Inspect the mouth and nose, neck and chest looking for changes in normal
+                        anatomy and for increased secretions. Look for increased work of
+                        breathing.
+
+           3.2 Assess Lungs
+                 Listen to the lungs on both sides of the chest, front and back [Stethoscope].
+                 Are lung sounds present? Are they of a higher or lower pitch than normal?
+                 If required, refer to 2.0.302 PROCEDURE - STETHOSCOPE USE, all
+                   (SODF: MED CL: EXAMS, PROCEDURES, AND TREATMENT).
+
+           3.3 Record data for later reporting to Surgeon.
+
+           4. OBTAINING BLOOD PRESSURE
+
+               Blood Pressure Cuff | Blood Pressure Monitor [Medical Diagnostic Pack
+                 (Blue)]
+
+               Blood Pressure Cuff | bare arm (using placement markings as guidelines)
+
+               pb [On/Off]  Press
+               Record pulse and blood pressure from display.
+               If required, refer to 2.0.304 PROCEDURE - BLOOD PRESSURE MONITOR
+
+                 USE, all (SODF: MED CL: EXAMS, PROCEDURES, AND TREATMENT).
+
+           5. OBTAINING HISTORY
+               5.1 Collect information about the events related to development of symptoms,
+                        use of medications, history of fever and cough, and difficulty of breathing
+                        severity.
+
+           5.2 Call MCC-H to request PMC.
+
+20 APR 15                                                     1.108_M_22815.doc
+1.108 DIFFICULTY BREATHING                Page 3 of 3 pages
+
+(MED CL/HTV5 - ALL/FIN 2/Paper on ISS/T)
+
+           6. DIRECTION FROM SURGEON
+               When directed by Surgeon
+
+               Batteries | Blood Oximeter and restow
+
+20 APR 15                                                    1.108_M_22815.doc
+2.6.001 MOUTH ANATOMY    Page 1 of 1 page
+(ISS MED/E27 - ALL/FIN)
+
+OBJECTIVE:
+Demonstrate anatomy of mouth and teeth.
+
+       1. IDENTIFYING ANATOMIC LANDMARKS
+
+                         Figure 1. Mouth Anatomy.
+
+                         Figure 2. Tooth Numbering.
+                          Figure 3. Tooth Anatomy.
+
+04 MAR 11
+
+                                                     2.6.001_M_22968.xml
+2.6.101 MOUTH EXAM          Page 1 of 1 page
+(MED CL/E44 - ALL/FIN 4/T)
+
+OBJECTIVE:
+To perform an examination of the mouth and teeth.
+
+TOOLS:
+Digital Camera
+SSC
+
+           1. PERFORMING EXAM
+
+               Inspect mouth and photo document [Digital Camera].
+               To view anatomic reference images of the mouth and teeth, refer to Mouth
+                Anatomy.
+
+SSC             Downlink photos for Surgeon.
+                If required, refer to 1.480 D4 SETUP - MEDICAL IMAGERY, all (SODF: ISS
+                 PTV: NIKON D4).
+
+25 JUN 15
+
+                                                   2.6.101_M_22891.xml
+2.6.301 DENTAL PROCEDURE - NERVE BLOCK
+
+(MED CL/SpX-6 - ALL/FIN 1/T)  Page 1 of 3 pages
+
+OBJECTIVE:
+To place a nerve block for dental procedures.
+
+ITEMS:
+LED Head Lamp P/N SEZ33103989-301
+Medical Supply Pack (Green):
+
+   Gauze 4"x4"
+   Medical Tape
+   Needle 25G
+   Nitrile Gloves (select appropriate size)
+   Syringe 10 mL
+Minor Treatment Pack (Pink):
+   Sharps Container
+Topical & Injectable Medication Pack (Brown):
+   Benzocaine Swabstick
+   Lidocaine (Xylocaine)
+
+       1. PREPARING A WORKSPACE
+            Create workstation using Gray Tape and temporarily stow hardware on tape.
+            Use Ziplock Bag for trash stowage during procedure.
+
+       2. Place a Benzocaine Swabstick topical numbing stick on injection site [Topical &
+             Injectable Medication Pack (Brown)].
+            Leave in place for 5 to 10 minutes prior to injections.
+
+       3. CONFIGURING SYRINGE FOR DENTAL INJECTION
+
+                                                                  NOTE
+             1. A standard Syringe 10 mL will be modified to allow for one-handed aspiration (or
+
+                pulling back on plunger).
+             2. Aspiration allows operator to make sure the needle is not in a blood vessel.
+
+            3.1 Tear off an 8-inch strip of Medical Tape [Medical Supply Pack (Green)].
+                  Twist the middle of the tape around itself.
+                  Pull plunger out of syringe.
+                  Apply the ends of the tape to the plunger.
+                  (Figure 1)
+
+15 APR 15
+
+                                                 2.6.301_M_22895.xml
+2.6.301 DENTAL PROCEDURE - NERVE BLOCK
+
+(MED CL/SpX-6 - ALL/FIN 1/T)  Page 2 of 3 pages
+
+                       Figure 1. Modification to Make Aspirating Syringe.
+
+    3.2 Draw up 10 mL of Lidocaine (Xylocaine) into Syringe 10 mL.
+          If required, refer to 2.14.303 INJECTIONS AND IV - DRAWING UP MEDICINE
+           FROM VIAL, all (SODF: MED CL: EXAMS, PROCEDURES, AND TREATMENT).
+
+4. PREPARING PATIENT
+    Don Nitrile Gloves and LED Headlamp for adequate lighting.
+    Pack Gauze 4"x4" between gum and teeth to assist in visualizing injection location.
+
+5. SELECTING INJECTION LOCATION
+    If using upper nerve block
+          Go to step 5.1.
+
+    If using lower nerve block
+          Go to step 5.2.
+
+    5.1 Upper Injection Technique
+          Needle 25G | Syringe 10 mL
+          Remove needle cap and temporarily stow on workspace.
+          Place needle at height of moveable membrane (muccobuccal fold) above fixed
+           gum tissue.
+          (Figure 2)
+
+15 APR 15                            Figure 2. Upper Nerve Block.
+           Insert needle, directing needle toward root of tooth to be anesthetized.
+           Gently pull back on syringe plunger and inspect chamber to ensure no blood in
+            chamber.
+           Inject 2 to 3 mL of Lidocaine (Xylocaine) directly over the root of the tooth.
+           Withdraw needle; recap it using one-handed technique and temporarily stow.
+
+                                                                                                                                     2.6.301_M_22895.xml
+2.6.301 DENTAL PROCEDURE - NERVE BLOCK
+
+(MED CL/SpX-6 - ALL/FIN 1/T)  Page 3 of 3 pages
+
+           Wait 5 minutes. Pain should subside.
+           If pain does not subside
+
+                Repeat step 5.1.
+
+5.2 Lower Injection Technique
+
+      Needle 25G | Syringe 10 mL
+      Remove needle cap and temporarily stow.
+      Place thumb in deepest portion of coronoid notch.
+      (Figure 3)
+
+                                Figure 3. Lower Nerve Block.
+      Insert needle just anterior at point where seam between cheek and throat turns
+       upward toward maxilla.
+      (Figure 3)
+
+                                                         NOTE
+
+      Barrel of syringe is kept over teeth 3 and 4 on opposite side of injection.
+
+      Insert needle until bone is contacted (and only 5 to 10 mm of needle is left
+       exposed.)
+      If no bone contact
+
+           Withdraw needle slightly, reposition needle with syringe barrel over teeth 4
+             and 5.
+
+      If bone is contacted and more than 5 to 10 mm of needle exposed
+           Reposition needle with syringe barrel over teeth 2 and 3.
+
+      Gently pull back on syringe plunger and inspect chamber to ensure no blood in
+       chamber.
+      Inject 2 to 3 mL of Lidocaine (Xylocaine) directly over the root of the tooth.
+      Withdraw needle; recap it using one-handed technique and temporarily stow.
+      Wait 5 minutes. Pain should subside.
+      If pain does not subside
+
+           Repeat step 5.2.
+
+Place used hardware, contaminated gloves, and packaging materials in Ziplock Bag
+ and discard.
+
+15 APR 15
+
+                                                         2.6.301_M_22895.xml
+2.6.302 DENTAL PROCEDURE - TEMPORARY DENTAL FILLING
+
+(MED CL/E44 - ALL/FIN 4/T)  Page 1 of 2 pages
+
+OBJECTIVE:
+
+To repair dental filling.
+
+ITEMS:
+Medical Supply Pack:
+
+   Nitrile Gloves (select appropriate size)
+   Gauze 4"x4"
+Topical & Injectable Medication Pack:
+   Temporary Tooth Filling
+Minor Treatment Pack:
+   Dental Tools Kit
+
+TOOLS:
+Digital Camera
+SSC
+
+                  1. PHOTO DOCUMENTING DENTAL FILLING
+                       Photo document tooth and displaced dental filling [Digital Camera].
+                       To view anatomic reference images of the mouth and teeth, refer to Mouth
+                        Anatomy.
+                       If required, refer to 1.480 D4 SETUP - MEDICAL IMAGERY, all (SODF: ISS
+                        PTV: NIKON D4).
+
+                  2. REPLACING DENTAL FILLING
+
+                       2.1 Don Nitrile Gloves (select appropriate size).
+                             Inspect tooth for debris and remove any debris found.
+                             Have subject brush teeth to assist in any debris removal.
+
+                       2.2 Puncture end of Temporary Tooth Filling.
+                             Squeeze Temporary Tooth Filling material onto finger.
+                             Roll material into a ball.
+
+                       2.3 Place Temporary Tooth Filling into the tooth cavity and gently form to
+                              tooth.
+                             Wipe off excess with Gauze 4"x4".
+                             Have subject firmly bite down on Temporary Tooth Filling for 2 minutes,
+                              allowing the Temporary Tooth Filling to form to the surfaces of the tooth
+                              and to harden.
+                             Adjust filling by removing and smoothing excess filling using Gauze 4"x4"
+                              and Dental Carver File (G).
+
+                             Filling will achieve initial set in 5 minutes.
+                             Subject may resume drinking in approximately 1 hour.
+                             Limit solid or hard food consumption on the affected side of the mouth for
+                              first 12 to 24 hours as filling hardens.
+
+                                                       NOTE
+
+           It is important to keep individuals' data separate by making separate
+           folders that are labeled with crewname and GMT day.
+
+30 JUN 15
+
+                                                     2.6.302_M_22896.xml
+2.6.302 DENTAL PROCEDURE - TEMPORARY DENTAL FILLING
+
+(MED CL/E44 - ALL/FIN 4/T)  Page 2 of 2 pages
+
+SSC        3. PHOTO DOCUMENTING REPAIR
+
+               3.1 Photo document tooth and repaired filling [Digital Camera].
+                     To view anatomic reference images of the mouth and teeth, refer to Mouth
+                      Anatomy.
+
+               3.2 Downlink photos for Surgeon.
+                     If required, refer to 1.480 D4 SETUP - MEDICAL IMAGERY, all (SODF:
+                      ISS PTV: NIKON D4).
+
+30 JUN 15
+
+                                                     2.6.302_M_22896.xml
+2.6.303 DENTAL PROCEDURE - DENTAL CROWN REPLACEMENT
+
+(MED CL/E44 - ALL/FIN 4/T)  Page 1 of 3 pages
+
+OBJECTIVE:
+To replace an intact dental crown.
+
+ITEMS:
+Ziplock Bag, for trash
+Ziplock Bag, Small
+Medical Supply Pack:
+
+   Gauze 4"x4"
+   Nitrile Gloves (select appropriate size)
+Topical & Injectable Medication Pack:
+   Dental Adhesive Tip
+   Dental Adhesive
+Minor Treatment Pack:
+   Dental Tools Kit
+
+TOOLS:
+Digital Camera
+SSC
+
+                  1. PHOTO DOCUMENTING LOST CROWN
+                       Photo document tooth and broken fragment [Digital Camera].
+                       To view anatomic reference images of the mouth and teeth, refer to Mouth
+                        Anatomy.
+                       If required, refer to 1.480 D4 SETUP - MEDICAL IMAGERY, all (SODF: ISS
+                        PTV: NIKON D4).
+
+                       If no dental pain or sensitivity
+                             Place crown in a Ziplock Bag and stow in a known location in sleep
+                              station.
+
+                             Go to step 4.
+
+                       If dental pain or sensitivity present
+                             Go to step 2.
+
+30 JUN 15  2. PREPARING EQUIPMENT
+               Create workstation using Gray Tape and temporarily stow hardware on tape.
+
+               2.1 Preparing Dental Adhesive
+                     To review additional use information on this product, refer to Dental
+                      Adhesive Use.
+                     Remove Dental Adhesive from packaging.
+                     Remove cap from Dental Adhesive ().
+                     Press on the plunger to dispense small amount of material onto a Gauze
+                      4"x4", ensuring flow from both chambers of the Dental Adhesive syringe.
+                     Wipe residual material away from syringe.
+                     Align v-shaped notches on the Dental Adhesive syringe and Dental
+                      Adhesive Tip.
+                     Dental Adhesive | Dental Adhesive Tip ()
+                     (Figure 1 and Figure 2)
+
+                                                                                                                                    2.6.303_M_22897.xml
+2.6.303 DENTAL PROCEDURE - DENTAL CROWN REPLACEMENT
+
+(MED CL/E44 - ALL/FIN 4/T)       Page 2 of 3 pages
+
+                                 Figure 1. Dental Adhesive Equipment.
+
+                       Figure 2. Connecting Dental Tip.
+
+3. REPLACING DENTAL CROWN
+    Don Nitrile Gloves.
+
+    3.1 Preparing Loose Crown
+          Remove residual cement from crown and tooth utilizing Dental Carver File
+           (G).
+          Carefully check fit of crown by placing on tooth and having subject bite
+           down.
+          Remove crown and dry off with Gauze 4"x4".
+          Temporarily stow crown in Gauze 4"x4".
+
+    3.2 Replacing Crown
+          Coat the surfaces of the crown that will contact tooth with Dental
+           Adhesive.
+          Place crown over tooth, ensuring proper orientation.
+          Place a Cotton Swab over crown and have subject gently bite down on
+           Cotton Swab and crown for 3 to 5 seconds to fully seat the crown.
+          Remove Cotton Swab and have subject bite down a second time to
+           determine if crown is fully seated.
+
+    3.3 Confirming Crown Placement
+          If crown fully seated
+                Place Cotton Swab back over crown and have subject bite down and
+                 apply moderate pressure for 2 to 3 minutes.
+
+          If crown not fully seated
+
+                              ~
+30 JUN 15
+
+                                                                       2.6.303_M_22897.xml
+2.6.303 DENTAL PROCEDURE - DENTAL CROWN REPLACEMENT
+
+(MED CL/E44 - ALL/FIN 4/T)  Page 3 of 3 pages
+
+           ~
+                 Carefully remove crown by prying up at crown margins with Dental
+                 Crown Remover (D).
+                Repeat steps 3.1 to 3.3.
+
+           Gently clean remaining cement from around gums with Dental Explorer
+            Probe (E) and dental floss.
+
+SSC                                                                NOTE
+
+                      It is important to keep individuals' data separate by making separate
+                      folders that are labeled with crewname and GMT day.
+
+           4. PHOTO DOCUMENTING REPAIR
+               Photo document tooth and repaired crown [Digital Camera].
+               Downlink photos for Surgeon.
+               If required, refer to 1.480 D4 SETUP - MEDICAL IMAGERY, all (SODF: ISS
+                PTV: NIKON D4).
+
+30 JUN 15
+
+                                                     2.6.303_M_22897.xml
+2.6.304 DENTAL PROCEDURE - EXPOSED DENTAL PULP
+
+(MED CL/E44 - ALL/FIN 5/T)  Page 1 of 2 pages
+
+OBJECTIVE:
+To treat a fractured tooth showing exposed pulp.
+
+ITEMS:
+Ziplock Bag, 12"x12" for trash
+Convenience Medication Pack (White):
+
+   Ibuprofen (Motrin)
+Medical Supply Pack (Green):
+
+   Gauze 4"x4"
+   Nitrile Gloves (select appropriate size)
+Oral Medication Pack (Purple):
+   Hydrocodone and Acetaminophen (Vicodin HP)
+Topical & Injectable Medication Pack (Brown):
+   Eugenol
+
+TOOLS:
+Digital Camera
+SSC
+
+                  1. PHOTO DOCUMENTING BROKEN TOOTH
+
+           1.1 Photo document tooth and broken fragment [Digital Camera].
+                 To view anatomic reference images of the mouth and teeth, refer to Mouth
+
+                  Anatomy.
+
+SSC        1.2 Downlink photos for Surgeon.
+                 If required, refer to 1.480 D4 SETUP - MEDICAL IMAGERY, all (SODF:
+                  ISS PTV: NIKON D4).
+
+           2. Take two (2) tablets Ibuprofen (Motrin) (400mg per tablet) [Convenience
+                Medication Pack (White)] and one (1) tablet Hydrocodone and
+                Acetaminophen (Vicodin HP) (10mg/300mg per tablet) [Oral Medication Pack
+                (Purple)] for pain control.
+               If required, refer to 2.0.402 TREATING PAIN, all (SODF: MED CL: EXAMS,
+                PROCEDURES, AND TREATMENT).
+               Consult with Surgeon on type of block to place.
+               Perform 2.6.301 DENTAL PROCEDURE - NERVE BLOCK, all (SODF: MED
+                CL: EXAMS, PROCEDURES, AND TREATMENT), then:
+
+           3. TREATING WITH EUGENOL
+
+                                                      WARNING
+
+           Minimize contact between the Eugenol and skin or gums to prevent tissue
+           damage.
+
+           3.1 Don Nitrile Gloves.
+                 Moisten a small portion of a Gauze 4"x4" with Eugenol [Topical &
+
+                  Injectable Medication Pack (Brown)].
+
+30 JUN 15
+
+                                                     2.6.304_M_23053.xml
+2.6.304 DENTAL PROCEDURE - EXPOSED DENTAL PULP
+
+(MED CL/E44 - ALL/FIN 5/T)  Page 2 of 2 pages
+
+           Squeeze excess Eugenol out of Gauze 4"x4" onto a second piece of
+            Gauze 4"x4" or a Dry Wipe.
+
+           3.2 Place moistened portion of Gauze 4"x4" over exposed pulp.
+                 Have patient hold gauze with teeth for 1 to 2 minutes.
+
+               3.3 Additional placement of Eugenol should not require additional local
+                      anesthesia.
+
+           4. Avoid chewing on affected side and keep food out of cavity.
+
+30 JUN 15
+
+                                                2.6.304_M_23053.xml
+2.6.305 DENTAL PROCEDURE - LOSS OF TOOTH
+
+(MED CL/E44 - ALL/FIN 5/T)  Page 1 of 1 page
+
+OBJECTIVE:
+
+To stop bleeding and control pain.
+
+ITEMS:
+Convenience Medication Pack (White):
+
+   Ibuprofen (Motrin)
+Medical Supply Pack (Green):
+
+   Gauze 4"x4"
+Oral Medication Pack (Purple):
+
+   Hydrocodone and Acetaminophen (Vicodin HP)
+
+TOOLS:
+Digital Camera
+SSC
+
+                  1. CONTROLLING BLEEDING
+                       Apply direct pressure to the tooth socket with Gauze 4"x4".
+                       Hold continuous pressure until bleeding stops.
+
+                  2. TREATING PAIN
+                       Take two (2) tablets Ibuprofen (Motrin) (400 mg per tablet) ) [Convenience
+                        Medication Pack (White)] and one (1) tablet Hydrocodone and
+                        Acetaminophen (Vicodin HP) (10 mg/300 mg per tablet) [Oral Medication
+                        Pack (Purple)] for pain control.
+                       If required, refer to 2.0.402 TREATING PAIN, all (SODF: MED CL: EXAMS,
+                        PROCEDURES, AND TREATMENT).
+
+                       If pain severe or immediate relief required
+                             Perform 2.6.301 DENTAL PROCEDURE - NERVE BLOCK, all (SODF:
+                              MED CL: EXAMS, PROCEDURES, AND TREATMENT), then:
+
+SSC        3. Place tooth in Ziplock Bag and temporarily stow.
+
+           4. PHOTO DOCUMENTING BROKEN TOOTH
+
+               4.1 Photo document tooth and mouth [Digital Camera].
+                     To view anatomic reference images of the mouth and teeth, refer to Mouth
+                      Anatomy.
+
+               4.2 Downlink photos for Surgeon.
+                     If required, refer to 1.480 D4 SETUP - MEDICAL IMAGERY, all (SODF:
+                      ISS PTV: NIKON D4).
+
+           5. Discard Ziplock Bag.
+
+30 JUN 15
+
+                                              2.6.305_M_23054.xml
+2.6.401 DENTAL TREATMENT - TOOTH PAIN
+
+(MED CL/SpX-6 - ALL/FIN 2/T)  Page 1 of 1 page
+
+OBJECTIVE:
+
+To treat dental pain.
+
+ITEMS:
+Convenience Medication Pack (White):
+
+   Ibuprofen (Motrin)
+Oral Medication Pack (Purple):
+
+   Hydrocodone and Acetaminophen (Vicodin HP)
+
+       1. TREATING PAIN
+            Take Medication
+            Take two (2) tablets Ibuprofen (Motrin) (400 mg per tablet) [Convenience Medication
+             Pack (White)] and one (1) tablet Hydrocodone and Acetaminophen (Vicodin HP) (10
+             mg/300 mg per tablet) [Oral Medication Pack (Purple)] for pain control.
+            If required, refer to 2.0.402 TREATING PAIN, all (SODF: MED CL: EXAMS,
+             PROCEDURES, AND TREATMENT).
+
+            If pain severe or immediate relief required
+                  Go to 2.6.301 DENTAL PROCEDURE - NERVE BLOCK, all (SODF: MED CL:
+                   EXAMS, PROCEDURES, AND TREATMENT).
+
+10 APR 15
+
+                                                2.6.401_M_22900.xml
+3.001 MEDICAL KIT- CONTENTS AND REFERENCE
+
+(MED CL/SpX-6 - ALL/FIN/T)  Page 1 of 27 pages
+
+OBJECTIVE:
+To provide a contents list of each medical pack including medications, potential medication side effects, other contents, locations,
+and supportive information.
+
+Table 1. Convenience Medication Pack (White)
+Table 2. Emergency Medical Treatment Pack - Medications (Red)
+Table 3. Emergency Medical Treatment Pack - Other Contents (Red)
+Table 4. IV Supply Pack (Gray)
+Table 5. Medical Diagnostic Pack (Blue)
+Table 6. Medical Supply Pack (Green)
+Table 7. Minor Treatment Pack (Pink)
+Table 8. Oral Medication Pack (Purple)
+Table 9. Physician Equipment Pack (Yellow)
+Table 10. Topical & Injectable Medication Pack - Medications (Brown)
+Table 11. Topical & Injectable Medication Pack - Other Contents (Brown)
+
+09 APR 15                                                                3.001_M_26501.doc
+            3.001 MEDICAL KIT- CONTENTS AND REFERENCE
+
+            (MED CL/SpX-6 - ALL/FIN/T)  Page 2 of 27 pages
+
+                                              Table 1. Convenience Medication Pack (White)
+
+               Item     Strength,       Route of Qty in     Unit    Possible Side Effects                Comments                 Location
+                         Volume
+                                        Use      Pack
+
+Antibiotic
+
+Bacitracin              500             Topical            unit                                                                        Spine
+                        units/gm,                30 dose No significant side effects
+                        0.9 gm
+                                                           pack
+
+Antidiarrheal
+
+                                                                                                         Use for nonbloody
+
+                                                                    Abdominal discomfort, nausea,        diarrhea.
+
+Loperamide (Imodium)    2 mg            Oral     40 tablet vomiting, constipation, drowsiness, No more than 8                          B2
+
+                                                                    dizziness, dry mouth                 tablets every 24
+
+                                                                                                         hours.
+
+Antihistamine
+
+                                                                                                         Do not use with other
+
+                                                                    Headache, vomiting, fatigue,         antihistamines.
+
+                                                                    somnolence, dizziness, fever, pain, Do not drink
+
+Fexofenadine (Allegra)  180 mg Oral              100 tablet drowsiness, diarrhea, nausea, upset grapefruit juice 1                     B2
+
+                                                                    stomach, muscle aches, back pain, hour before or 2
+
+                                                                    pain in extremities                  hours after taking the
+
+                                                                                                         medication.
+
+Loratadine (Claritin)   10 mg           Oral     375 tablet         Headache, drowsiness, dizziness,                                   A2
+                                                                    fatigue, dry mouth
+
+                                                                                                         Remove contact
+
+                                                                                                         lenses before use.
+
+Olopatadine (Pataday)   0.2 %,          Eye      6          bottle  Blurred vision, eye pain, stinging,  After instilling drops,       A3
+                        2.5 mL                                      burning, headache                    wait at least 10
+                                                                                                         minutes before
+
+                                                                                                         inserting contact
+
+                                                                                                         lenses.
+
+            09 APR 15                                                                                               3.001_M_26501.doc
+3.001 MEDICAL KIT- CONTENTS AND REFERENCE
+
+(MED CL/SpX-6 - ALL/FIN/T)         Page 3 of 27 pages
+
+                 Item     Strength, Route of Qty in    Unit           Possible Side Effects          Comments              Location
+Decongestant
+                          Volume   Use         Pack                                                                            A1
+ Oxymetazoline (Afrin)
+                                                                                                     Do not use more           B1
+ Pseudoephedrine
+ (Sudafed 12 Hour)        0.05 %,                              Transient burning, stinging, dryness than 3 consecutive         A4
+                          15 mL                                                                                                A4
+Lubricant                          Intranasal  10 bottle of the nasal mucosa, sneezing,              days. Rebound             A4
+ Carboxymethylcellulose   120 mg   Oral                                                                                        A2
+ (Refresh Plus)                                                cough                                 congestion with           B4
+ Hypromellose                                                                                                                  B4
+ (Nature's Tears)                                                                                    prolonged use.
+ Mineral Oil and White
+ Petrolatum (Refresh PM)                       100 tablet      Dizziness, rapid heart rate, high
+ Sodium Chloride                                               blood pressure, restlessness,
+ (AYR Saline)                                                  tremor, headache, loss of appetite,
+                                                               may impair ability to concentrate,
+Pain Reliever                                                  dry mouth, insomnia,
+ Acetaminophen (Tylenol)                                       photosensitivity
+
+ Aspirin                  0.5 %,   Eye                   unit                                        Remove contact
+                          0.4 mL   Eye         40 dose Temporary blurred vision                      lenses prior to use.
+                                   Eye
+                          0.4 %,   Intranasal            pack
+                          15 mL
+                          42.5 %;              2 bottle Temporary blurred vision
+                          57.3 %,
+                          3.5 gm               2       tube    Temporary blurred vision
+                          0.9 %,
+                          22 mL                3       bottle  No significant side effects within
+                                                               prescribed dose
+
+                          325 mg Oral          150 tablet      No significant side effects within    No more than 12
+                          325 mg Oral          60 tablet       prescribed dose                       tablets every 24
+                                                                                                     hours.
+
+                                                               Upset stomach, dizziness, ringing in  Take with food.
+                                                               ears, blood in stool
+
+09 APR 15                                                                                            3.001_M_26501.doc
+3.001 MEDICAL KIT- CONTENTS AND REFERENCE
+
+(MED CL/SpX-6 - ALL/FIN/T)      Page 4 of 27 pages
+
+                 Item  Strength, Route of   Qty in  Unit             Possible Side Effects              Comments         Location
+ Ibuprofen (Motrin)                         Pack                                                                             B3
+Sleep                  Volume   Use                         Dizziness, nervousness, upset         No more than 8
+ Melatonin                                                  stomach, nausea, vomiting, rash,      tablets every 24
+ Zaleplon (Sonata)     400 mg Oral          400 tablet      ringing in the ears                   hours.
+                                                                                                  Take with food.
+ Zolpidem (Ambien)
+Steroid                3 mg     Oral        60      tablet  Headache, nausea, drowsiness,         Do not use with other  A4
+                                                            dizziness                             sleep meds.
+ Hydrocortisone
+ Mometasone (Nasonex)                                       Headache, dizziness, drowsiness, Do not take with a
+Stimulant
+                       10 mg    Oral        100     bottle  short-term memory impairment, or high fat meal.              A4
+ Caffeine (Vivarin)                                         lack of coordination, nausea, upset Do not use with other
+
+                                                            stomach, muscle weakness              sleep meds.
+
+                                                            Drowsiness, dizziness, headache,
+
+                       10 mg    Oral        200 tablet      abnormal dreams, insomnia,            Do not use with other  A3
+                                                            memory impairment, visual and         sleep meds.
+
+                                                            attention disturbance
+
+                       1 %,     Topical               unit                                                               B1
+                       0.9 gm               60 dose No significant side effects
+
+                                                      packet
+
+                       50 mcg,  Intranasal  3 bottle Headache, cough                                                     A1
+                       17 gm
+
+                                                            Diarrhea, dizziness, fast heartbeat,
+
+                                                            low blood sugar, high blood sugar,
+
+                                                            blurred vision, dry mouth, flushed
+
+                       200 mg Oral          100 tablet skin, increased urination, loss of                                A3
+
+                                                            appetite, nausea, stomachache,
+
+                                                            anxious feeling, agitation, cold
+
+                                                            sweats, nervousness, insomnia
+
+09 APR 15                                                                                         3.001_M_26501.doc
+3.001 MEDICAL KIT- CONTENTS AND REFERENCE
+
+(MED CL/SpX-6 - ALL/FIN/T)     Page 5 of 27 pages
+
+                 Item  Strength, Route of  Qty in  Unit             Possible Side Effects        Comments  Location
+                                           Pack                                                                A3
+ Modafinil (Provigil)  Volume  Use                         Headache, nervousness, dizziness,                   B2
+Stool Softener                                             anxiety, insomnia, chest pain, rapid
+                       200 mg Oral         40 tablet       heart rate, diarrhea, upset stomach,
+ Bisacodyl (Dulcolax)                                      dry mouth, lack of appetite
+
+                       5 mg    Oral        40      tablet  Mild abdominal cramps, nausea,
+                                                           vomiting, dizziness
+
+09 APR 15                                                                                        3.001_M_26501.doc
+3.001 MEDICAL KIT- CONTENTS AND REFERENCE
+
+(MED CL/SpX-6 - ALL/FIN/T)            Page 6 of 27 pages
+
+                                      Table 2. Emergency Medical Treatment Pack - Medications (Red)
+
+               Item       Strength,   Route of Use   Qty in  Unit                  Possible                       Comments  Location
+ALS Medication Kit         Volume                    Pack                        Side Effects                                   B1
+                                                                                                                                B1
+ Atropine                                                             Rapid heart rate, dilated pupils, dry skin
+                                                                                                                                B1
+ Epinephrine                                                          and mouth, cardiac arrhythmias,                           B1
+
+ Lidocaine                0.1 mg/mL,  Intraosseous   2       syringe  flushing, low blood pressure, headache,                   B3
+Severe Allergic Reaction  10 mL                                       insomnia, slowed GI motility, nausea,
+
+ Epinephrine (EpiPen)                                                 dry mouth, urinary hesitancy and
+
+                                                                      retention
+
+                          1:10,000;   Intraosseous                            Rapid heart rate and palpitations,
+                          0.1 mg/mL,  Intraosseous   2 syringe flushing, dizziness, headache,
+                          10 mL
+                                                                              nervousness, dry mouth
+                          2 %;
+                          20 mg/mL,                                   Low blood pressure, flushing,
+                          5 mL
+                                                     2       syringe  drowsiness, disorientation, muscle
+                                                                      twitching, dizziness, metallic taste,
+
+                                                                      nausea, vomiting
+
+                          1:1000,     Intramuscular                           Rapid heart rate and palpitations,
+                          0.3 mL                     3 syringe flushing, dizziness, headache,
+
+                                                                              nervousness, dry mouth
+
+09 APR 15                                                                                                         3.001_M_26501.doc
+3.001 MEDICAL KIT- CONTENTS AND REFERENCE
+
+(MED CL/SpX-6 - ALL/FIN/T)              Page 7 of 27 pages
+
+                                  Item  Table 3. Emergency Medical Treatment Pack - Other Contents (Red)  Location
+Basic Airway Management                                                       Qty in Pack
+                                                                                                              A1
+ AMBU Bag                                                                            1                        A3
+ Nasal Airway Kit                                                                    -                        A3
+                                                                                     1                        A3
+   Nasal Airway 6 mm                                                                 1                        A4
+   Nasal Airway 7 mm                                                                 2                        A2
+ Oral Airway                                                                         -                        A2
+Biohazard Trash Bags                                                                 5                        A2
+ Biohazard Trash Bag                                                                 5                        A2
+    Level 1 Hazardous Material Decal                                                 5
+    Level 2 Hazardous Material Decal                                                                        Spine
+General Use                                                                          1                      Spine
+ Scissors - Trauma                                                                   1
+ Sharps Container                                                                    1                        A1
+ Stethoscope                                                                         1                        A1
+ Stethoscope Holder                                                                  4                        B2
+ Surgical Lubricant                                                                  -                        B4
+Intraosseous Device Start Kit                                                       10                        B4
+ Gauze 4"x4"                                                                         2                        B4
+ Intraosseous Injection Device                                                       2                        B4
+ Iodine Swabstick                                                                    2                        B4
+ IV Cap                                                                              1                        B4
+ Medical Tape                                                                        1                        B4
+ Syringe 10 mL
+
+09 APR 15                                                                                                 3.001_M_26501.doc
+3.001 MEDICAL KIT- CONTENTS AND REFERENCE
+
+(MED CL/SpX-6 - ALL/FIN/T)              Page 8 of 27 pages
+
+                                  Item  Table 4. IV Supply Pack (Gray)  Location
+Bandages                                             Qty in Pack
+                                                                            A2
+ Clear Bandage                                              4               A2
+ Gauze 4"x4"                                                4               B1
+ Medical Tape                                               1
+IV Insertion & Fluid Administration                                       A3/A4
+ IV Administration Set                                      3               B2
+ IV Cap                                                     5               A1
+ IV Catheters                                               -               A1
+                                                            2               A1
+   IV Catheter 14G                                          4               A1
+   IV Catheter 18G                                          4               A1
+   IV Catheter 20G                                          4               A1
+   IV Catheter 22G                                          1
+   Sharps Container - IV Catheter                           8             B3/B4
+ IV Fluid - 500 mL                                          0             B3/B4
+ IV Fluid 1L                                                1
+ IV Pressure Infusor                                        1               A2
+ Tourniquet                                                                 B2
+Skin Preparation Items                                      4
+ BZK Wipe                                                                   B1
+
+09 APR 15                                                               3.001_M_26501.doc
+3.001 MEDICAL KIT- CONTENTS AND REFERENCE
+
+(MED CL/SpX-6 - ALL/FIN/T)              Page 9 of 27 pages
+
+                                  Item  Table 5. Medical Diagnostic Pack (Blue)       Location
+Physical Exam Hardware                                     Qty in Pack
+                                                                                          B1
+ Blood Oximeter                                                   1                       B2
+ Blood Pressure Cuff - Large                                      1                       B2
+ Blood Pressure Cuff - Small                                      1                       B4
+ Blood Pressure Monitor                                           1              with Locator Card
+ Eye Chart                                                        1                       A4
+ Eye Simulator                                                    1                       A4
+ Eye Simulator Cornea                                             1                     Spine
+ Otoscope Bulb                                                    1                       A2
+ Otoscope Head                                                    1                     A1/A3
+ Otoscope Speculum                                               80                       A2
+ Otoscope USB Cable                                               1                     Spine
+ Panoptic Bulb                                                    2                       A2
+ Panoptic Handle                                                  1                       A1
+ Panoptic Head                                                    1                       B1
+ Stethoscope                                                      1                       B3
+ Stethoscope Earpieces                                         1 pair                     B1
+ Stethoscope Holder                                               1                       B3
+ Thermometer                                                      1                       A4
+ Tonometer                                                        1                   Spine/A4
+ Tonometer Battery                                                2                     A3/A4
+ Tonometer Tip Cover                                            150
+Therapeutic Items                                                                       Spine
+ Ear Curette                                                      2                       B3
+ Hot/Cold Pack                                                    1
+
+09 APR 15                                                                        3.001_M_26501.doc
+3.001 MEDICAL KIT- CONTENTS AND REFERENCE
+
+(MED CL/SpX-6 - ALL/FIN/T)              Page 10 of 27 pages
+
+                                  Item  Table 6. Medical Supply Pack (Green)  Location
+Bandages                                                 Qty in Pack
+                                                                                Spine
+ Bandaid 1"x3"                                                  10                A3
+ Gauze 4"x4"                                                    36                B2
+ Medical Tape                                                    2                B1
+Biohazard Trash Bags                                             -                B1
+ Biohazard Trash Bag                                            10                B1
+ Level 1 Hazardous Material Decal                               10                B1
+ Level 2 Hazardous Material Decal                               10
+General Use                                                                     Spine
+ Cotton Swab                                                     6                B2
+ Ear Wick                                                        6
+Gloves                                                                            B4
+ Nitrile Gloves Large                                        10 pair              B2
+ Nitrile Gloves Medium                                       10 pair              B2
+ Nitrile Gloves Small                                        10 pair
+Injection Items                                                                   A1
+ Carpuject Injector                                              2                A3
+ Needle 23G                                                     20              Spine
+ Needle 25G                                                      4                A2
+ Needle Plastic                                                 10                A4
+ Syringe 3 mL                                                   20                A2
+ Syringe 5 mL                                                    6                A1
+ Syringe 10 mL                                                   5
+Skin Preparation Items                                                            B3
+ BZK Wipe                                                       56                B3
+ Iodine Swabstick                                               12
+                                                                                             3.001_M_26501.doc
+09 APR 15
+3.001 MEDICAL KIT- CONTENTS AND REFERENCE
+
+(MED CL/SpX-6 - ALL/FIN/T)              Page 11 of 27 pages
+
+                                  Item  Table 7. Minor Treatment Pack (Pink)  Location
+Bandages                                                 Qty in Pack
+                                                                                  A1
+ Bandaid 2"x3"                                                  5                 A1
+ Bandaid Dot                                                   10                 A1
+ Bandaid Knuckle                                                5                 A4
+ Burn Bandage                                                  10                 B4
+ Clear Bandage                                                  5                 A4
+ Nasal Packing                                                 10                 A4
+ Nonstick Bandage                                              20                 A1
+ Rolled Gauze                                                   2                 B1
+Dental Tools Kit                                                 -                B1
+ Dental Amalgam File (F)                                        1                 B1
+ Dental Carver File (G)                                         1                 B1
+ Dental Crown Remover (D)                                       1                 B1
+ Dental Elevator (I)                                            1                 B1
+ Dental Elevator (J)                                            1                 B1
+ Dental Explorer Probe (E)                                      1                 B1
+ Dental Forceps (A)                                             1                 B1
+ Dental Forceps (B)                                             1                 B1
+ Dental Forceps (C)                                             1                 B1
+ Dental Mirror (H)                                              1                 B1
+ Trash Bag                                                      1
+General Use                                                                     Spine
+ Mirror                                                         1               Spine
+ Scissors - Bandage                                             1               Spine
+ Sharps Container                                               2
+ Syringe 60 mL                                                  1                 B2
+Gloves
+ Sterile Gloves                                                  -                A3
+                                                             2 pairs              A3
+   Sterile Gloves Large                                      2 pairs              A3
+   Sterile Gloves Medium
+                                                                                             3.001_M_26501.doc
+09 APR 15
+3.001 MEDICAL KIT- CONTENTS AND REFERENCE
+
+(MED CL/SpX-6 - ALL/FIN/T)              Page 12 of 27 pages
+
+                                  Item                       Qty in Pack  Location
+   Sterile Gloves Small                                         2 pairs       A3
+Musculoskeletal
+ ACE Bandage 2"                                                     1         A3
+ ACE Bandage 3"                                                     1         A3
+ ACE Bandage 4"                                                     1         A3
+ Finger Splint                                                      1         A3
+ Leg/Arm Splint                                                     1         A3
+Surgical Tools Kit                                                  -         B1
+ Hemostat (CC)                                                      1         B1
+ Needle Driver (AA)                                                 1         B1
+ Scalpel #11                                                        2         B1
+ Smooth Forceps (DD)                                                1         B1
+ Suture Scissors (BB)                                               1         B1
+ Toothed Forceps (EE)                                               1         B1
+ Trash bag                                                          1         B1
+Sutures
+ Absorbable Suture 3-0                                              2         A2
+ Nylon Suture 2-0                                                   2         A2
+ Nylon Suture 5-0                                                   2         A2
+Urinary
+ Urine Catheters                                                    -         B3
+   Urine Catheter Coude                                             2         B3
+   Urine Catheter Foley                                             2         B3
+   Urine Catheter Straight                                          2         B3
+ Urine Catheter Short                                              10         B3
+ Urine Collection Bag                                               2         B3
+Wound Repair
+ Skin Stapler                                                       2         A2
+ Skin Staple Remover                                                1         A2
+ Wound Packing                                                      3         B4
+
+09 APR 15                                                                                3.001_M_26501.doc
+3.001 MEDICAL KIT- CONTENTS AND REFERENCE
+
+(MED CL/SpX-6 - ALL/FIN/T)             Page 13 of 27 pages
+
+                                             Table 8. Oral Medication Pack (Purple)
+
+                 Item       Strength,  Route of Qty in      Unit    Possible                           Comments          Location
+Altitude Sickness            Volume       Use Pack                Side Effects
+                                                                                                                             A4
+ Acetazolamide (Diamox)     250 mg Oral      100 tablet           Flushing, tingling sensation in
+                                                                  extremities, loss of appetite,                             B1
+Antibiotic                                                        increased urine output, drowsiness,                        B1
+ Amoxicillin (Amoxil)                                             dizziness, confusion,                                      B1
+ Azithromycin (Zithromax)                                         photosensitivity, hearing                                Spine
+ Clindamycin (Cleocin)                                            disturbances, kidney stones
+                                                                                                                             B2
+ Doxycycline (Vibramycin)   500 mg Oral      100 capsule          nausea, vomiting, diarrhea, rash                           B2
+                            250 mg Oral      18 tablet                                                                       B1
+ Levofloxacin (Levaquin)    300 mg Oral      100 capsule          Diarrhea, nausea, abdominal pain,
+                                                                  vomiting
+ Metronidazole (Flagyl)     100 mg Oral      50 capsule
+ Sulfamethoxazole and                                             Abdominal pain, nausea, vomiting,
+ Trimethoprim (Bactrim DS)  500 mg Oral      50 tablet            diarrhea, rash
+                                             100 tablet
+                            500 mg Oral      40 tablet            Diarrhea, severe headache, blurred
+                                                                  vision, skin rash, redness of the skin
+                            800 mg,    Oral                       (sunburn), itching, loss of appetite,
+                            160 mg                                upset stomach, stomach pain,
+                                                                  extreme tiredness or weakness,
+                                                                  confusion, decreased urination
+
+                                                                  Headache, insomnia, dizziness,
+                                                                  nausea, constipation, diarrhea,
+                                                                  vomiting, abdominal pain, rash,
+                                                                  photosensitivity
+
+                                                                  Headache, dizziness, nausea,
+                                                                  vomiting, diarrhea, loss of appetite, Take with food.
+                                                                  metallic taste, rash
+
+                                                                  Headache, dizziness, insomnia,
+                                                                  stomach upset, diarrhea, nausea,
+                                                                  vomiting, photosensitivity, rash
+
+09 APR 15                                                                                              3.001_M_26501.doc
+3.001 MEDICAL KIT- CONTENTS AND REFERENCE
+
+(MED CL/SpX-6 - ALL/FIN/T)        Page 14 of 27 pages
+
+                 Item     Strength, Route of Qty in    Unit          Possible                       Comments             Location
+Antifungal                                                         Side Effects
+                          Volume  Use Pack
+
+                                                             Headache, dizziness, nausea,
+
+Fluconazole (Diflucan)    150 mg Oral   5 tablet             abdominal pain, vomiting, diarrhea,                         B2
+
+                                                             rash
+
+Antihistamine
+
+Diphenhydramine (Benadryl) 25 mg  Oral  60 capsule           Drowsiness, sedation, inability to     May cause            A1
+                                                             concentrate, dry mouth, blurred        sedation and impair
+                                                             vision, rash, headache, rapid heart    performance.
+                                                             rate, dizziness, fatigue,              Do not use with
+                                                             photosensitivity, urinary retention,   sleep meds.
+                                                             ringing in the ears, nasal stuffiness
+
+                                                                                                    Do not use with
+
+Fexofenadine (Allegra)    180 mg Oral   400 tablet           Headache, vomiting, fatigue,           other                A2
+                                                             somnolence, dizziness, fever, pain,    antihistamines.
+                                                             drowsiness, diarrhea, nausea, upset    Do not drink
+                                                             stomach, muscle aches, back pain,      grapefruit juice 1
+                                                             pain in extremities                    hour before or 2
+                                                                                                    hours after taking
+
+                                                                                                    the medication.
+
+Antiseizure               300 mg Oral   30 capsule           Tingling sensation in extremities,     Swallow whole; do    B4
+ Phenytoin (Dilantin ER)                60 tablet            drowsiness, dizziness, blurred         not crush or chew.
+                                                             vision, slurred speech
+Antiviral
+ Valacyclovir (Valtrex)   1 gm    Oral                       Headache, nausea, vomiting,                                 B2
+                                                             fatigue, dizziness, rash
+
+09 APR 15                                                                                           3.001_M_26501.doc
+         3.001 MEDICAL KIT- CONTENTS AND REFERENCE
+
+         (MED CL/SpX-6 - ALL/FIN/T)  Page 15 of 27 pages
+
+                 Item     Strength, Route of Qty in       Unit              Possible                    Comments         Location
+Behavioral Health                                                         Side Effects
+                          Volume     Use Pack
+
+                                                                Headache, agitation, insomnia,
+
+                                                                anxiety, tremor, restlessness,
+
+Aripiprazole (Abilify)    5 mg       Oral  60 tablet            sedation, dizziness, nausea,                               B3
+                                                                constipation, vomiting, abdominal
+
+                                                                discomfort, dry mouth, blurred
+
+                                                                vision, nasal congestion
+
+                                                                Drowsiness, slowed breathing, low
+
+                                                                blood pressure, sedation, dizziness,
+
+Lorazepam (Ativan)        1 mg       Oral  60 tablet            headache, memory impairment,                               A1
+
+                                                                nausea, changes in appetite, visual
+
+                                                                disturbances, headache
+
+                                                                Headache, drowsiness, dizziness,
+
+                                                                insomnia, nervousness, anxiety,
+
+Sertraline (Zoloft)       50 mg      Oral  60 tablet            nausea, dry mouth, loss of appetite,                       B3
+                                                                constipation, tremor, weakness,
+
+                                                                visual difficulty, sweating, rash,
+
+                                                                tinnitus
+
+                                                                Headache, drowsiness, dizziness,
+
+Venlafaxine (Effexor XR)  75 mg      Oral  60 tablet            insomnia, nervousness, anxiety, Swallow whole; do          B3
+                                           100 tablet           nausea, dry mouth, loss of appetite, not crush or chew.
+
+                                                                constipation, weakness, sweating
+
+Cardiac
+
+                                                                Headache, low blood pressure,
+
+                                                                dizziness, fatigue, diarrhea, nausea,
+
+Lisinopril (Zestril)      10 mg      Oral                       vomiting, abdominal pain, cough,                           B4
+                                                                blurred vision, decrease in urine
+
+                                                                output or urine-concentrating ability,
+
+                                                                sweating, weakness
+
+         09 APR 15                                                                                      3.001_M_26501.doc
+3.001 MEDICAL KIT- CONTENTS AND REFERENCE
+
+(MED CL/SpX-6 - ALL/FIN/T)           Page 16 of 27 pages
+
+Item                        Strength, Route of Qty in     Unit                    Possible                  Comments        Location
+                                                                               Side Effects                                     B4
+                            Volume   Use Pack                                                          Swallow whole; do        B4
+                                                                Slow heart rate, dizziness,            not crush or chew.
+Metoprolol XL (Toprol XL) 50 mg      Oral  60 tablet            weakness, insomnia, diarrhea,
+                                                                blurred vision, shortness of breath,
+ Nitroglycerin (Nitrostat)  0.4 mg   Oral  25 tablet            fatigue, confusion, memory loss
+Decongestant                               100 tablet           (short-term), sleep disturbances,
+                                                                rash, itching, photosensitivity
+ Pseudoephedrine
+ (Sudafed)                                                      Flushing, headache, dizziness,
+                                                                nausea, vomiting, dry mouth
+Hormone
+                                                                Dizziness, rapid heart rate, high
+
+                                                                blood pressure, restlessness,
+
+                            30 mg    Oral                       tremor, headache, loss of appetite,                         A1
+                                                                may impair ability to concentrate,
+
+                                                                dry mouth, insomnia,
+
+                                                                photosensitivity
+
+ Medroxyprogesterone        10 mg    Oral  100 tablet           Dizziness, headache, nervousness,                           Spine
+ (Provera)                                                      bloating, acne, breast pain                                 Spine
+
+ Norgestrel and Ethinyl                                         Elevated blood pressure, headache,
+ Estradiol (Ogestrel)
+                            0.5 mg,                    unit dose pack dizziness, nervousness, nausea,
+Pain Reliever               0.05 mg
+                                     Oral  2 (21 tablets abdominal cramps, blood clots,
+ Hydrocodone and
+ Acetaminophen                                         each)    appetite changes, bloating, breast
+ (Vicodin HP)
+                                                                pain
+
+                                                                Slower heart rate, dizziness,          May cause
+                                                                drowsiness, mental impairment,
+                            10 mg,                              sedation, nausea, vomiting,            sedation and impair
+                            300 mg                              constipation, urinary retention
+                                     Oral  30 tablet                                                   performance.         A2
+
+                                                                                                       Do not use with
+
+                                                                                                       sleep meds.
+
+09 APR 15                                                                                              3.001_M_26501.doc
+3.001 MEDICAL KIT- CONTENTS AND REFERENCE
+
+(MED CL/SpX-6 - ALL/FIN/T)         Page 17 of 27 pages
+
+Item                     Strength, Route of Qty in      Unit    Possible                              Comments             Location
+                                                              Side Effects
+                         Volume    Use Pack
+
+Space Motion Sickness/Anti-Nausea
+
+                                                                                                      May cause
+
+                                                              Drowsiness, headache, fatigue,          sedation and impair
+
+Meclizine (Antivert)     25 mg     Oral  20 tablet            nervousness, dizziness, dry mouth, performance.              A2
+
+                                                              blurred vision                          Do not use with
+
+                                                                                                      sleep meds.
+
+                                                              Headache, fatigue, drowsiness,
+
+Ondansetron (Zofran ODT) 8 mg      Oral  30 tablet            dizziness, anxiety, constipation,                            A2
+
+                                                              diarrhea, urinary retention, itching
+
+Promethazine (Phenergan) 25 mg     Oral  100 tablet           Sedation, inability to concentrate,     May cause            A2
+                                                              drowsiness, dizziness, blurred or       sedation and impair
+                                                 dose pack    double vision, nausea, dry mouth,       performance.
+                                          4 (21 tablets       urinary retention, constipation, rash,  Do not use with
+                                                              agitation, photosensitivity,            sleep meds.
+                                                 each)        uncontrolled muscle spasms
+                                         40 tablet
+Steroid                                                       Headache, dizziness, insomnia,
+                                         30 tablet
+ Methylprednisolone      4 mg      Oral                       restlessness, depression, anxiety,                           A4
+ (Medrol)                                80 chewable          sweating, mood changes, hair
+
+ Prednisone (Deltasone)                                       growth, flushing, acne
+Stimulant
+                         20 mg     Oral                       Headache, fluid retention, vertigo,     Take with food.      A4
+ Modafinil (Provigil)                                         high blood pressure, mood changes
+
+Stomach                                                       Headache, nervousness, dizziness,
+ Bismuth Subsalicylate
+ (Pepto Bismol)          200 mg Oral                          anxiety, insomnia, chest pain, rapid                         A1
+                                                              heart rate, diarrhea, upset stomach,
+
+                                                              dry mouth, lack of appetite
+
+                         262 mg Oral                                                                  May darken tongue    A3
+                                                                                                      and stool.
+
+09 APR 15                                                                                             3.001_M_26501.doc
+3.001 MEDICAL KIT- CONTENTS AND REFERENCE
+
+(MED CL/SpX-6 - ALL/FIN/T)     Page 18 of 27 pages
+
+Item                   Strength, Route of Qty in    Unit                    Possible             Comments  Location
+                                                                         Side Effects                          A4
+                       Volume  Use Pack                   Headache, dizziness, rash,                           A3
+                                                          flatulence, diarrhea, abdominal
+Omeprazole (Prilosec)  20 mg   Oral  90 capsule           pain, nausea, vomiting,                              A4
+                                                          constipation, joint pain
+ Ranitidine (Zantac)   150 mg Oral   60 tablet            Dizziness, headache, insomnia,
+Urinary                                                   abdominal discomfort, blurred vision
+
+Tamsulosin (Flomax)    0.4 mg  Oral  10 capsule           Headache, dizziness, drowsiness,
+                                                          diarrhea, nausea, weakness, back
+                                                          pain, blurred vision, inflammation of
+                                                          the nasal membranes, runny nose,
+                                                          cough
+
+09 APR 15                                                                                        3.001_M_26501.doc
+3.001 MEDICAL KIT- CONTENTS AND REFERENCE
+
+(MED CL/SpX-6 - ALL/FIN/T)              Page 19 of 27 pages
+
+                                  Item  Table 9. Physician Equipment Pack (Yellow)  Location
+Advanced Airway Management Hardware                          Qty in Pack
+                                                                                        A2
+ Endoctracheal Tubes                                                 -                  A2
+   Bougie ET Tube Introducer                                         1                  A2
+   Endotracheal Stylet                                               1                  A2
+   Endotracheal Tube 7.0                                             1                  A2
+   Endotracheal Tube 8.0                                             1                  B1
+                                                                     -                  B1
+ ILMA Hardware                                                       1                  B1
+   ILMA Endotracheal Tube 7.0                                        1                  B1
+   ILMA Endotracheal Tube 7.5                                        1                  B1
+   ILMA Large                                                        1                  B1
+   ILMA Small                                                        1                Spine
+   ILMA Stabilizer Rod                                               1                  B4
+                                                                     -                  B4
+ Laryngoscope                                                        1                  B4
+ Suction Device                                                      1                  B4
+                                                                     1                  B4
+   Suction Cartridge                                                 1                  B4
+   Suction Collection Bag                                            1                  B4
+   Suction Syringe                                                   1                  A1
+   Suction Tip - Mouth                                               -                  A1
+   Suction Tubing - Endotracheal Tube                                1                  A1
+   Suction Tubing - Gastric Tube                                     1                  A1
+ Variable Oxygen System                                              1
+   VOS Intubated Patient Hardware                                                       B2
+   VOS Non-Intubated Patient Hardware                                1
+   VOS Spare Parts                                                                    Spine
+Ear Hardware                                                         4                  B1
+ Otoscope Head Manual                                                1
+General Use                                                                                        3.001_M_26501.doc
+ Surgical Lubricant
+ Syringe 35 mL
+
+09 APR 15
+3.001 MEDICAL KIT- CONTENTS AND REFERENCE
+
+(MED CL/SpX-6 - ALL/FIN/T)               Page 20 of 27 pages
+
+                                Table 10. Topical & Injectable Medication Pack - Medications (Brown)
+
+                    Item        Strength,      Route of Use   Qty in  Unit               Possible             Comments Location
+Anesthetic                       Volume                       Pack                     Side Effects
+
+ Dental                         20 %,          Topical        24 swab No significant side effects                                    B3
+   Benzocaine Swabstick         0.15 mL
+                                                                                                                                     A2
+ Eye                                                                                                          Remove contact
+                                                                                                                                     B4
+   Tetracaine                   0.5 %,                                        Burning, stinging, redness of lenses prior to          B2
+                                15 mL                                                                                                B4
+ Local                                         Eye            1 bottle the eye, light sensitivity,            administration and     A1
+   Lidocaine and Epinephrine                                                                                                         B1
+   (Xylocaine and Epinephrine)                                                tearing                         wait 15 minutes      Spine
+
+   Lidocaine (Xylocaine)                                                                                      before reinserting.
+ Urinary
+                                2 % with                             multi    Burning, stinging, blanching,
+   Lidocaine Jelly              1:100,000 epi, Subcutaneous   2 dose          tissue death
+Antibiotic                      20 mL
+                                                                     vial     Burning, stinging, blanching,
+ Bacitracin                     1 %,           Subcutaneous                   tissue death
+                                10 mL                                multi
+ Ceftriaxone (Rocephin)                                       3 dose
+
+ Ciprofloxacin and                                                   vial
+ Dexamethasone (Ciprodex)
+                                2 %,           Topical        3 tube Irritation, itching, rash
+                                30 mL
+
+                                500 units/gm,  Topical        4 tube No significant side effects
+                                28 gm
+
+                                1 gm           Intramuscular  3       single  Thickening of tissue at
+                                                                      dose    injection site, rash, diarrhea
+                                                                      vial
+
+                                0.3 %;                                        Ear discomfort, ear pain, ear
+                                                                              itching
+                                0.1 %,         Ear            2       bottle
+
+                                7.5 mL
+
+09 APR 15                                                                                                     3.001_M_26501.doc
+3.001 MEDICAL KIT- CONTENTS AND REFERENCE
+
+(MED CL/SpX-6 - ALL/FIN/T)          Page 21 of 27 pages
+
+                    Item      Strength,  Route of Use    Qty in  Unit                 Possible                       Comments       Location
+                               Volume                    Pack                      Side Effects                                         B1
+ Ertapenem (Invanz)                                                                                             Contact lenses          A1
+                           1 gm          Intramuscular          single  Headache, altered mental                should not be worn      A1
+ Erythromycin                                            6 dose         status, insomnia, nausea,               during therapy.
+ Moxifloxacin (Vigamox)    0.5 %,                                       vomiting, diarrhea, abdominal
+ Mupriocin (Bactroban)     3.5 gm                               vial    pain, constipation, cough
+ Tobramycin and
+ Dexamethasone (Tobradex)  0.5 %,        Eye             1 tube         Hypersensitivity, minor eye
+Antifungal                 3 mL                                         irritation, redness
+                                         Eye             4 bottle
+                           2 %,                                         Dry eye, eye pain, itching eye,
+                           22 gm                                        tearing, visual acuity
+                           0.3 %;                                       decreased
+                           0.1 %,
+                           10 mL         Topical         2 tube         Skin irritation, itching                                    A1
+
+                                                                        Eye redness, increased                  Contact lenses
+
+                                         Eye             1 bottle       intraocular pressure, tearing, should not be worn A1
+
+                                                                        lid itching, lid swelling               during therapy.
+
+Clotrimazole (Lotrimin)    1 %,          Topical         2 tube Skin irritation, itching                                            A2
+                           30 gm
+
+Antihistamine
+
+                                                                        Increase in sneezing, burning,
+
+Cromolyn (Nasalcrom)       5.2 mg,       Intranasal                          stinging or irritation inside the                      A3
+                           26 mL                         4 bottle nose, headache, unpleasant
+
+                                                                             taste, hoarseness, cough,
+
+                                                                        post-nasal drip
+
+09 APR 15                                                                                                       3.001_M_26501.doc
+3.001 MEDICAL KIT- CONTENTS AND REFERENCE
+
+(MED CL/SpX-6 - ALL/FIN/T)            Page 22 of 27 pages
+
+                    Item        Strength,  Route of Use    Qty in  Unit                  Possible                     Comments     Location
+ Diphenhydramine (Benadryl)      Volume                    Pack                       Side Effects                                     B4
+Behavioral Health                                                                                                May cause
+ Aripiprazole (Abilify)      50 mg/mL,     Intramuscular          single   Drowsiness, sedation, inability       sedation and          B4
+                             1 mL                          6 dose          to concentrate, dry mouth,            impair                B1
+ Diazepam (Valium)                                                         blurred vision, rash,                 performance.          A3
+Breathing                                                         vial     headache, rapid heart rate,           Do not take with
+                                                                           dizziness, fatigue,                   sleep meds.
+ Albuterol (Proventil HFA)                                                 photosensitivity, urinary
+                                                                           retention, ringing in the ears,
+                                                                           nasal stuffiness
+
+                                                                           Headache, agitation,
+
+                                                                           insomnia, anxiety, tremor,
+
+                             7.5 mg/mL,    Intramuscular   2       single  restlessness, sedation,
+                             1.3 mL                                dose    dizziness, nausea,
+                                                                   vial    constipation, vomiting,
+                                                                           abdominal discomfort, dry
+
+                                                                           mouth, blurred vision, nasal
+
+                                                                           congestion
+
+                             5 mg/mL,      Intramuscular                       Drowsiness, fatigue,
+                             2 mL                                              headache, memory loss,
+                                                                               confusion, slurred speech,
+                                                           4 syringe slower breathing rate, nausea,
+                                                                               slow heart rate, blurred vision,
+                                                                               constipation, dry mouth,
+                                                                               urinary retention
+
+                             90 mcg,       Inhaler                             Tremors, palpitations, fast
+                             6.7 gm                        3 inhaler heart rate, dizziness,
+
+                                                                               nervousness
+
+09 APR 15                                                                                                        3.001_M_26501.doc
+3.001 MEDICAL KIT- CONTENTS AND REFERENCE
+
+(MED CL/SpX-6 - ALL/FIN/T)            Page 23 of 27 pages
+
+                    Item         Strength,   Route of Use  Qty in  Unit                   Possible             Comments             Location
+ Fluticasone (Flovent HFA)        Volume    Inhaler        Pack                        Side Effects                                     A4
+ Salmeterol (Serevent)        220 mcg,      Inhaler                                                                                     A3
+Dental                        12 gm                        2 inhaler        Fatigue, headache, throat
+                                                                            irritation, oral yeast infection,
+ Eugenol                      50 mcg                              Multi     cough, hoarseness, abdominal
+                                                           1 dose           discomfort, nausea, vomiting,
+Earwax Removal                                                              muscle pain, rash, itching
+ Carbamide Peroxide (Debrox)                                      inhaler
+                                                                            Headache, muscle pain, high
+                                                                            blood pressure, dizziness,
+                                                                            sleep disturbance, anxiety,
+                                                                            rash, throat irritation, nausea,
+                                                                            dry mouth
+
+                                                                                                               Warning:
+
+                                                                                                               DO NOT swallow.
+
+                                                                                                               Medication is very
+
+                                                                                                               damaging to the
+
+                                                                                                               esophagus and
+
+                              1 mL          Topical        2       oral     Gum and skin irritation            stomach.             B3
+                                                                   syringe                                     Precaution:
+
+                                                                                                               Do not pour the
+
+                                                                                                               entire syringe into
+
+                                                                                                               mouth at once. Use
+
+                                                                                                               small amounts in
+
+                                                                                                               increments.
+
+                              6.5 %,        Ear            2 bottle Irritation, redness in the ear                                  A4
+                              15 mL
+
+09 APR 15                                                                                                      3.001_M_26501.doc
+3.001 MEDICAL KIT- CONTENTS AND REFERENCE
+
+(MED CL/SpX-6 - ALL/FIN/T)         Page 24 of 27 pages
+
+                    Item    Strength,   Route of Use    Qty in  Unit      Possible                        Comments Location
+Eye                          Volume                     Pack            Side Effects
+
+ Cyclopentolate (Cyclogyl)  2 %,        Eye             1 bottle        Transient irritation, blurred     Remove contact             A2
+ Fluorescein Strip          15 mL                       20 strip        vision, sensitivity to light,     lenses prior to          Spine
+ Tropicamide (Mydriacyl)                                2 bottle        increased intraocular pressure    administration and
+Intubation                  1 mg        Eye                                                               wait 15 minutes            A2
+ Glycopyrrolate (Robinul)                                               No significant side effects       before reinserting.
+                            1 %,        Eye                                                               Remove contact
+ Ketamine (Ketalar)         15 mL                                       Blurred vision, burning,          lenses before
+                                                                        temporary stinging, increased     using.
+                                                                        intraocular pressure; dry
+                                                                        mouth, headache, light            Remove contact
+                                                                        sensitivity                       lenses before
+                                                                                                          using.
+
+                                                                        Flushing, dizziness,
+
+                            0.2 mg/mL,  Intramuscular   5       single  drowsiness, headache, fast        For use by               B2
+                            2 mL                                dose    heartbeat, nausea, vomiting,      Physician CMO
+                                                                vial    constipation, loss of taste, dry  Only
+                                                                        mouth, blurred vision, urinary
+
+                                                                        retention, photosensitivity
+
+                                                                        Cardiac arrhythmia, visual
+
+                                                                        hallucinations, vivid dreams,
+
+                            50 mg/mL,                          multi    confusion, increased              For use by
+                            10 mL                       4 dose          intraocular pressure,
+                                        Intramuscular                   increased intracranial            Physician CMO            B2
+                                                               vial
+                                                                                                          Only
+
+                                                                        pressure, nausea, vomiting,
+
+                                                                        increased salivation
+
+09 APR 15                                                                                                       3.001_M_26501.doc
+3.001 MEDICAL KIT- CONTENTS AND REFERENCE
+
+(MED CL/SpX-6 - ALL/FIN/T)         Page 25 of 27 pages
+
+                    Item           Strength,  Route of Use   Qty in  Unit       Possible                        Comments         Location
+Pain Reliever                       Volume                   Pack             Side Effects                                           B2
+                                                                                                                                     B4
+                                                                              Drowsiness, dizziness,                                 B4
+                                                                                                                                     B2
+                                                                              fatigue, headache, sedation, May cause                 A2
+
+                                                                              nausea, slow heart rate,          sedation and
+
+Hydromorphone (Dilaudid)   2 mg/mL,           Intramuscular  18      syringe  blurred vision, nausea,           impair
+                           1 mL               Intramuscular                   vomiting, constipation, dry       performance.
+
+                                                                              mouth, tinnitus, urinary          Do not use with
+
+                                                                              retention, abnormal dreams, sleep meds.
+
+                                                                              agitation, mood
+
+Ketorolac (Toradol)        30 mg/mL,                         3       single   Headache, nausea, upset
+                           2 mL                                      dose     stomach, diarrhea, dizziness,
+                                                                     vial     drowsiness, elevated blood
+                                                                              pressure, swelling
+
+Space Motion Sickness/Anti-Nausea
+
+                                                                              Sedation, inability to
+
+                                                                              concentrate, drowsiness,
+
+Promethazine (Phenergan)   25 mg/mL,          Intramuscular  24      single   dizziness, blurred or double      May cause
+                           1 mL                                      dose     vision, nausea, dry mouth,        sedation and
+                                                                     vial     urinary retention, constipation,  impair
+                                                                              rash, agitation,                  performance.
+
+                                                                              photosensitivity, uncontrolled
+
+                                                                              muscle spasms
+
+Steroid                    10 mg/mL,          Intramuscular  20      single   High blood pressure, slow
+ Dexamethasone (Decadron)  1 mL               Topical                dose     heart rate, headache, vertigo,
+ Fluocinonide (Lidex)                                                vial     insomnia, mood swings,
+                           0.05 %,                                            increased intraocular pressure
+                           30 gm
+                                                             3 tube Skin irritation, itching
+
+09 APR 15                                                                                                       3.001_M_26501.doc
+3.001 MEDICAL KIT- CONTENTS AND REFERENCE
+
+(MED CL/SpX-6 - ALL/FIN/T)                 Page 26 of 27 pages
+
+              Item          Strength,      Route of Use         Qty in  Unit    Possible                    Comments Location
+                             Volume                             Pack          Side Effects
+                                                                                                                                       A2
+Wound Repair                                                                                                                           A2
+
+Chemical Cautery
+
+Silver Nitrate and Potassium 75 %;         Topical              10 each       Burning and skin irritation,
+Nitrate (Silver Nitrate Applicators) 25 %  Topical                            staining of the skin
+
+Skin Adhesive
+
+Cyanoacrylate (Dermabond) 0.5 mL                                2 swab Skin irritation, itching
+
+09 APR 15                                                                                                   3.001_M_26501.doc
+3.001 MEDICAL KIT- CONTENTS AND REFERENCE
+
+(MED CL/SpX-6 - ALL/FIN/T)              Page 27 of 27 pages
+
+                                  Item  Table 11. Topical & Injectable Medication Pack - Other Contents (Brown)  Location
+Dental                                                                          Qty in Pack
+                                                                                                                     B3
+ Dental Adhesive                                                                        1                            B3
+ Dental Adhesive Tip                                                                    4                            B1
+ Temporary Tooth Filling                                                                1
+Urine Testing Hardware                                                                                             Spine
+ EPT                                                                                    2                            B3
+ Urine Chemstrip                                                                       10                            B3
+ Urine Color Chart                                                                      1
+
+09 APR 15                                                                                                        3.001_M_26501.doc
+

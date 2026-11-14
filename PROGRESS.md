@@ -119,3 +119,11 @@ Her adım buraya kısa notla eklenir (en yeni en altta).
 - "*" kuralının tam metni: acil durumda veya iletişim kopukken tedaviye başla, cerrahı en kısa sürede ara → kilit metnine eklendi (Mars gecikmesi sorununu NASA kuralı çözer).
 - NASA-STD-3001 V2 Rev B indirildi: kıyafet PICO₂ Tablo 23 (≤4: 14 sa … >15 asla). EVA CO₂ senaryosu, kıyafet göstergesi ve anlatım bu tabloya göre; eski "kıyafet 4,5 kritik" varsayımı kaldırıldı.
 - Test: C-21 (nabız 151, KB 150/95, uyku 4,2 sa) + CMO belirti "göğüste baskı, sol kola yayılıyor, terleme" → AI planı: aspirin (JSC-48031 1-37, WARNING 6-3) + kütüphane dışı "nitrat sınıfı · miktar uçuş cerrahına göre"; kartlar göğüs ağrısı, şok, hipertansif kriz, uykusuzluk.
+
+## 2026-11-15 00:01 — ISS 2016 tıbbi el kitabı + AHA 2024 ilk yardım entegrasyonu (Fable planı)
+- Kullanıcı erişemediğim 3 kaynağı getirdi: ISS acil tıbbi prosedürleri (FOIA 2016), AHA 2024 ilk yardım, AHA yüksek tansiyon (AI Türkçe özet).
+- Alerji, nöbet, solunum kartları Shuttle 2008 yerine ISS 2015 prosedürlerine geçti (birebir doz satırları). ISS'te kilit yok: EpiPen/Diazepam/Albuterol kilitsiz, Phenytoin "as directed by Surgeon". Kilit metni kaynak türüne göre ayrıldı.
+- ISS ilaç kiti (3.001, 27 kalem) eklendi: AI kütüphanede olmayan ama kitte bulunan ilacı kitId ile önerir; ekranda "ISS KİTİNDE (2015) · prosedür yayımlanmadı · kit birimi, doz değil · miktar uçuş cerrahına göre". Kitte yoksa "KAYNAKSIZ". Test: göğüs ağrısında Nitroglycerin (Nitrostat) 0,4 mg artık "kitte" etiketiyle; alerjide ISS EpiPen + Albuterol + kitten Benadryl.
+- Düzeltme: şok kısmi yerçekimi adımında "ağrı yaparsa kaldırma (Sınıf 3: zarar)" yanlıştı → AHA 2024: sırtüstüne geri al (2b), açı ≈30°–45°, bilinç azalmışsa derlenme pozisyonu (2a).
+- Tansiyon: "en az 1 dk bekle, tekrar ölç"; terimler AHA 2025 ("şiddetli hipertansiyon" / "hipertansif acil durum"). Hipoglisemi: ADA 15 g ve AHA ≥20 g ayrı kaynaklarla; yutamayana ağızdan verilmez; 10 dk'da düzelmezse üst düzey.
+- Sunucu: model metnindeki tüm doz kalıpları artık siliniyor (izin listesi kaldırıldı; doz yalnız kütüphane/kit satırından gelir).

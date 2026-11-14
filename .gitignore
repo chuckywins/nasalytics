@@ -9,3 +9,6 @@ data/raw/bleo_dose_hourly.csv
 *.log
 
 backend/tts_cache/
+
+# AHA metinleri telifli (dağıtım izni yok): yerelde kalır, URL SOURCES.md içinde
+docs/refs/aha_*

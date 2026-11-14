@@ -132,8 +132,8 @@ IV_TOOL = {
             "required": ["id", "why"]}},
         "plan": {"type": "array", "maxItems": 6, "description": "Ordered do-now actions. Use drugId to prescribe a library medication (the screen shows its verbatim name, dose and page). Use protocol for a non-drug card.",
                  "items": {"type": "object", "properties": {"drugId": {"type": "string"}, "protocol": {"type": "string"}, "why": {"type": "string", "description": "Why this now; no amounts."}}, "required": ["why"]}},
-        "offFormulary": {"type": "array", "maxItems": 3, "description": "Optional: a medication or class NOT in the library that a clinician might consider. Name only, never an amount.",
-                         "items": {"type": "object", "properties": {"name": {"type": "string"}, "why": {"type": "string"}}, "required": ["name", "why"]}},
+        "offFormulary": {"type": "array", "maxItems": 3, "description": "Optional: a medication with no library procedure that a clinician might consider. If it is in the ISS kit list, set kitId (the screen shows its kit strength); otherwise name/class only. Never an amount.",
+                         "items": {"type": "object", "properties": {"kitId": {"type": "string"}, "name": {"type": "string"}, "why": {"type": "string"}}, "required": ["name", "why"]}},
         "summary": {"type": "string", "description": "Max 2 sentences: overall situation and the single most important next action."},
         "escalate": {"type": "string", "enum": ["self", "crew", "ground"]}},
         "required": ["ranked", "plan", "summary", "escalate"]},
@@ -339,22 +339,24 @@ async def interventions(req: Request):
     t0 = time.time()
     rules = ("You support a Crew Medical Officer (CMO) and a ground flight surgeon in a hackathon prototype with simulated data. "
              "OVERRIDE for this tool only: you MAY prescribe library medications, but ONLY by their drugId from the library; the screen "
-             "renders the verbatim name, dose and page from NASA's Shuttle Medical Checklist (JSC-48031), so never write an amount yourself. "
+             "renders the verbatim name, dose and page from NASA's ISS emergency medical procedures (2015, FOIA 2016) or the Shuttle Medical Checklist (JSC-48031), so never write an amount or number of units yourself. "
+             "The 'kit' list is the ISS medical kit (2015): for a medicine in it that has no library drugId, use offFormulary with its kitId. "
              "Rank candidate cards (you may add other library ids if symptoms/snapshot support them), then give an ordered do-now plan. "
-             "Respect each drug's 'condition' and locked flag (locked = flight-surgeon approval; in an emergency or loss of signal treatment may begin). "
+             "Respect each drug's 'condition' and locked flag (Shuttle '*' = flight-surgeon approval, in an emergency or loss of signal treatment may begin; ISS 'as directed by Surgeon'). "
              "Vital signs alone never prove a diagnosis: say what the CMO must confirm. offFormulary: name/class only, never amounts. "
              "Answer in language: " + lang)
-    lib_doses = {str(d.get("dose", "")) for x in lib for d in x.get("drugs", [])}
+    kit = body.get("kit", []) or []
+    kit_ids = {k.get("id") for k in kit}
     drug_ids = {d.get("id") for x in lib for d in x.get("drugs", [])}
 
-    def clean(txt):  # yalnız kütüphane dozlarında geçen doz kalıplarına izin ver; diğer sayısal dozlar silinir
-        t = str(txt)[:400]
-        return DOSE_RE.sub(lambda m: m.group(0) if any(m.group(0) in d for d in lib_doses) else "…", t)
+    def clean(txt):  # doz kalıbındaki HER sayı silinir: dozu ekranda kütüphane/kit satırı gösterir, model asla
+        return DOSE_RE.sub("…", str(txt)[:400])
 
     msg = await run_in_threadpool(client.messages.create,
         model=MODEL_ASSESS, max_tokens=1500, system=SYSTEM_BLOCKS + [{"type": "text", "text": rules}], tools=[IV_TOOL], tool_choice={"type": "auto"},
         extra_body={"output_config": {"effort": "low"}},
         messages=[{"role": "user", "content": f"Library: {json.dumps(lib)}\nCandidates: {json.dumps(cands)}\nRole viewing: {body.get('role')}\n"
+                                                f"ISS kit: {json.dumps(kit)}\n"
                                                 f"CMO-typed symptoms: {str(body.get('symptoms', ''))[:400]}\nCMO-confirmed signs: {json.dumps(body.get('confirmedSigns', []))}\n"
                                                 f"Snapshot: {json.dumps(body.get('snapshot', {}), ensure_ascii=False)}\nCall rank_interventions."}])
     account(MODEL_ASSESS, msg.usage)
@@ -368,7 +370,7 @@ async def interventions(req: Request):
     plan = [{"drugId": it.get("drugId") if it.get("drugId") in drug_ids else None,
              "protocol": it.get("protocol") if it.get("protocol") in ids else None, "why": clean(it.get("why", ""))}
             for it in out.get("plan", []) if it.get("drugId") in drug_ids or it.get("protocol") in ids]
-    off = [{"name": DOSE_RE.sub("…", str(o.get("name", "")))[:60], "why": DOSE_RE.sub("…", str(o.get("why", "")))[:200]} for o in out.get("offFormulary", [])][:3]
+    off = [{"kitId": o.get("kitId") if o.get("kitId") in kit_ids else None, "name": clean(o.get("name", ""))[:60], "why": clean(o.get("why", ""))[:200]} for o in out.get("offFormulary", [])][:3]
     return {"result": {"ranked": ranked, "plan": plan, "offFormulary": off, "summary": clean(out.get("summary", "")), "escalate": out.get("escalate")},
             "latencyMs": int((time.time() - t0) * 1000), "model": MODEL_ASSESS}
 

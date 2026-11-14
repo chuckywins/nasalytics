@@ -405,3 +405,4 @@ a { color: var(--accent); }
 .intv-off { border: 1px dashed #e3a33a; border-radius: 4px; padding: 4px 8px; }
 .tag-unverified { color: #e3a33a; border: 1px solid #e3a33a; border-radius: 3px; padding: 0 4px; font-size: 11px; }
 .intv-cond { color: var(--accent); font-weight: 600; }
+.tag-kit { color: var(--accent); border: 1px solid var(--accent); border-radius: 3px; padding: 0 4px; font-size: 11px; }

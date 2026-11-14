@@ -6,7 +6,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useApp } from '../store';
 import { t } from '../i18n';
-import { PROTOCOLS, allDrugs, matchProtocols, type ProtocolId, type SnapLite } from '../engine/protocols';
+import { PROTOCOLS, allDrugs, matchProtocols, ISS_KIT, KIT_BY_ID, type ProtocolId, type SnapLite } from '../engine/protocols';
 import type { Packet, Role } from '../telemetry';
 import { ProvTag } from './Hud';
 import { SourceTags } from './Info';
@@ -16,7 +16,7 @@ const fmt = (s: number) => (s < 60 ? `${Math.round(s)} s` : `${Math.floor(s / 60
 const DRUGS = allDrugs();
 
 interface AiPlanItem { drugId?: string; protocol?: ProtocolId; why: string }
-interface AiRank { ranked: { id: ProtocolId; why: string }[]; plan: AiPlanItem[]; offFormulary: { name: string; why: string }[]; summary: string; at: number }
+interface AiRank { ranked: { id: ProtocolId; why: string }[]; plan: AiPlanItem[]; offFormulary: { name: string; why: string; kitId?: string | null }[]; summary: string; at: number }
 
 export function snapLite(p: Packet): SnapLite {
   const s = p.snap;
@@ -38,7 +38,7 @@ function DrugLine({ id, lang }: { id: string; lang: 'tr' | 'en' }) {
     <div className={`intv-drug ${d.drug.locked ? 'locked' : ''}`}>
       <code>{d.drug.verbatim}</code>{d.drug.dose && <> <code>{d.drug.dose}</code></>}
       <span className="muted small"> · {pr.source.page}</span>
-      {d.drug.locked && <div className="intv-lock">🔒 {t('iv.locked', lang)}</div>}
+      {d.drug.locked && <div className="intv-lock">🔒 {t(pr.kind === 'NASA_ISS' ? 'iv.lockedIss' : 'iv.locked', lang)}</div>}
       {d.drug.warning && <div className="intv-warn small">⚠ {d.drug.warning}</div>}
     </div>
   );
@@ -72,7 +72,7 @@ export function InterventionPanel({ p, role, compress }: { p: Packet; role: Role
       ctrl.current?.abort(); const c = new AbortController(); ctrl.current = c;
       try {
         const r = await fetch(`${API}/api/interventions`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: c.signal,
-          body: JSON.stringify({ lang, role, snapshot: p.snap, candidates: matched.map((m) => m.id), symptoms: sentSymptoms, confirmedSigns: ticked, library: libraryForAi() }) });
+          body: JSON.stringify({ lang, role, snapshot: p.snap, candidates: matched.map((m) => m.id), symptoms: sentSymptoms, confirmedSigns: ticked, library: libraryForAi(), kit: ISS_KIT.map((k) => ({ id: k.id, name: k.name, route: k.route })) }) });
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         const j = await r.json();
         setAi({ ...j.result, at: Date.now() }); setAiErr('');
@@ -118,8 +118,9 @@ export function InterventionPanel({ p, role, compress }: { p: Packet; role: Role
           </ol>
           {ai.offFormulary.length > 0 && (
             <div className="intv-off">
-              <div className="small"><b>{t('iv.offTitle', lang)}</b> <span className="tag-unverified">{t('iv.offTag', lang)}</span></div>
-              <ul className="small">{ai.offFormulary.map((o, i) => <li key={i}><b>{o.name}</b> · {t('iv.amountBySurgeon', lang)}{o.why ? ` — ${o.why}` : ''}</li>)}</ul>
+              <div className="small"><b>{t('iv.offTitle', lang)}</b></div>
+              <ul className="small">{ai.offFormulary.map((o, i) => { const k = o.kitId ? KIT_BY_ID[o.kitId] : undefined; return (
+                <li key={i}>{k ? <><b>{k.name}</b> <span className="tag-kit">{t('iv.kitTag', lang)}</span> <span className="muted">· {k.strength} {k.route} ({t('iv.kitStrength', lang)}) · {k.pack}{k.comment ? ` · “${k.comment}”` : ''}</span></> : <><b>{o.name}</b> <span className="tag-unverified">{t('iv.offTag', lang)}</span></>} · {t('iv.amountBySurgeon', lang)}{o.why ? ` — ${o.why}` : ''}</li>); })}</ul>
             </div>
           )}
           <div className="muted small">{t('iv.rxNote', lang)}</div>
@@ -164,8 +165,8 @@ export function InterventionPanel({ p, role, compress }: { p: Packet; role: Role
               </div>
             )}
             {!ground && pr.steps.some((x) => x.drug?.locked) && <div className="muted small">{t('iv.cmoNoApproval', lang)}</div>}
-            <div className="intv-src"><ProvTag p={pr.kind === 'NASA_CHECKLIST' ? 'PUBLISHED' : 'CLINICAL_GUIDELINE'} /><SourceTags sources={[pr.source]} max={1} /></div>
-            {pr.kind === 'NASA_CHECKLIST' && <div className="muted small">{t('iv.shuttleNote', lang)}</div>}
+            <div className="intv-src"><ProvTag p={pr.kind === 'CLINICAL_GUIDELINE' ? 'CLINICAL_GUIDELINE' : 'PUBLISHED'} /><SourceTags sources={[pr.source]} max={1} /></div>
+            {pr.kind !== 'CLINICAL_GUIDELINE' && <div className="muted small">{t(pr.kind === 'NASA_ISS' ? 'iv.issNote' : 'iv.shuttleNote', lang)}</div>}
           </div>
         );
       })}

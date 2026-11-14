@@ -1,6 +1,8 @@
 // Müdahale protokol kütüphanesi (DETERMİNİSTİK, KAYNAKLI). Yapay zekâ yalnızca bu kartların KİMLİKLERİNİ seçer/sıralar;
 // doz ve ilaç satırları hiçbir zaman modelden geçmez. İlaç/doz satırları kaynağından BİREBİR (İngilizce) alıntıdır.
 //
+// NASA kaynakları: (1) ISS Emergency Medical Procedures (MED CL, prosedürler 2015, FOIA 16-JSC-F-00174 ile 2016'da kısmi yayın) —
+// alerji 1.101, CPR 1.102, ALS 1.103, nöbet 1.107, solunum 1.108 ve ilaç kiti 3.001; (2) yayımlanmayan konular için
 // NASA kaynağı: Space Shuttle "Medical Checklist" JSC-48031, Generic Rev K PCN-4 (2008) — kamuya açık kopya. Güncel ISS tıbbi
 // kontrol listesi kamuya açık DEĞİLDİR. Dozlar 2008 Shuttle ilaç kiti birimleridir ("1 tab", "2 puffs"), taşınabilir doz değildir.
 // Belgede "*" = "Contact Surgeon before giving any medication marked w/asterisk. In emergency or when orbiter LOS, begin appropriate
@@ -14,12 +16,13 @@ type L = { tr: string; en: string };
 export interface Drug { id: string; verbatim: string; dose?: string; locked: boolean; warning?: string }
 export interface PStep { text: L; drug?: Drug; medical?: boolean /* koşullu adım: koşul metniyle gösterilir */; cond?: L; gravity?: 'zeroG' | 'partialG' }
 export interface Protocol {
-  id: ProtocolId; title: L; source: SourceRef & { page: string }; kind: 'NASA_CHECKLIST' | 'CLINICAL_GUIDELINE';
+  id: ProtocolId; title: L; source: SourceRef & { page: string }; kind: 'NASA_ISS' | 'NASA_CHECKLIST' | 'CLINICAL_GUIDELINE';
   /** Kontrol listesinin kendi belirti/bulgu listesi: CMO işaretler; işaretlenmeden ilaç adımları görünmez */
   confirm: L[]; steps: PStep[]; escalate: Escalation; note?: L;
 }
 
 const CL = (page: string) => ({ label: `NASA JSC-48031 Medical Checklist Rev K (Shuttle, 2008) · ${page}`, url: 'https://ibiblio.org/apollo/Shuttle/Medical%20Checklist/Medical%20Checklist%20Rev%20K%20PCN-4.pdf', page });
+const ISS = (page: string) => ({ label: `NASA ISS Emergency Medical Procedures (MED CL, 2015; FOIA 2016) · ${page}`, url: 'https://www.governmentattic.org/19docs/NASA-ISSmedicalEmergManual_2016.pdf', page });
 const CPR_BOX: PStep = { text: { tr: 'Nabız veya solunum yoksa: hasta/kurtarıcı bağlarıyla CPR. Bilinci açıksa: QDM maskesiyle ek oksijen.', en: 'If no pulse or respiration: CPR using patient/rescuer restraints. If conscious: supplemental O₂ with QDM.' } };
 const VITALS: PStep = { text: { tr: 'Tansiyon aleti, steteskop, termometre çıkar; vital bulguları kaydet (tansiyon, nabız, solunum, ısı).', en: 'Unstow BP cuff, stethoscope, thermometer; record vital signs (BP, pulse, respiration, temperature).' } };
 const ECG: PStep = { text: { tr: 'EKG elektrotlarını bağla (kardiyak izleme).', en: 'Attach ECG leads (cardiac monitoring).' } };
@@ -29,6 +32,7 @@ export const PROTOCOLS: Record<ProtocolId, Protocol> = {
   chestPain: {
     id: 'chestPain', kind: 'NASA_CHECKLIST', escalate: 'ground', source: CL('Emergency 1-36/1-37'),
     title: { tr: 'Göğüs ağrısı', en: 'Chest pain' },
+    note: { tr: 'ISS göğüs ağrısı prosedürü yayımlanmadı; adımlar Shuttle listesinden. ISS kitinde Aspirin 325 mg ("yemekle al") ve Nitroglycerin (Nitrostat) 0,4 mg bulunur (3.001; nitrogliserin kullanımı uçuş cerrahı kararı). AHA 2024 §6.4: travmasız göğüs ağrısında, alerji ya da sağlık profesyonelinin yasağı yoksa 162–325 mg aspirin çiğneyip yutmak teşvik edilebilir (2b); emin değilsen verme (2b).', en: 'The ISS chest-pain procedure was not released; steps come from the Shuttle checklist. The ISS kit carries Aspirin 325 mg ("take with food") and Nitroglycerin (Nitrostat) 0.4 mg (3.001; nitroglycerin use is the flight surgeon\'s decision). AHA 2024 §6.4: for nontraumatic chest pain, chewing and swallowing 162–325 mg aspirin may be encouraged unless allergic or advised not to (2b); if uncertain, wait (2b).' },
     confirm: [{ tr: 'Göğüs ağrısı / baskı hissi', en: 'Chest pain / pressure' }, { tr: 'Nefes darlığı', en: 'Shortness of breath' }, { tr: 'Cilt rengi: morumsu, gri, soluk', en: 'Skin colour: bluish, grayish, pale' }],
     steps: [CPR_BOX, VITALS,
       { text: { tr: 'Göğüs muayenesi: kalp sesleri (düzenli/düzensiz), solunum sesleri, göğüs hareketi, cilt rengi.', en: 'Chest exam: heart sounds (regular/irregular), breath sounds, chest wall motion, skin colour.' } },
@@ -47,18 +51,20 @@ export const PROTOCOLS: Record<ProtocolId, Protocol> = {
       { medical: true, text: { tr: 'Damar yolu aç ve serum başlat:', en: 'Start I.V. and begin infusion:' }, cond: { tr: 'Şok bulguları doğrulanırsa', en: 'If signs of shock are confirmed' }, drug: { id: 'shock.saline', verbatim: '5. Start I.V. (see INJECTIONS, INTRAVENOUS (I.V.), 4-11). Begin infusing 1 L of normal Saline (IV Admin-1, Saline Supply Bag, EENT Subpack-1)', locked: false } },
       ECG, SURGEON,
       { gravity: 'zeroG', text: { tr: 'Mikro-yerçekimi: kontrol listesi hastayı bağlarla sabitlemeyi söyler; bacak kaldırma yerçekimi olmadan etki etmez (VARSAYIM).', en: 'Microgravity: the checklist uses patient restraints; leg elevation has no effect without gravity (ASSUMPTION).' } },
-      { gravity: 'partialG', text: { tr: 'Kısmi yerçekimi (Ay/Mars): bilinci açık ve nefes alıyorsa sırtüstü yatır (AHA ilk yardım, Sınıf 2a). Travma yoksa ayakları ~15–30 cm kaldırmak düşünülebilir (Sınıf 2b); ağrı yaparsa kaldırma (Sınıf 3: zarar). Dünya kılavuzunun kısmi yerçekimine uygulanması VARSAYIMDIR.', en: 'Partial gravity (Moon/Mars): if responsive and breathing, place supine (AHA first aid, Class 2a). Without trauma, raising the feet ~6–12 in may be considered (Class 2b); do not if it causes pain (Class 3: harm). Applying Earth guidance to partial gravity is an ASSUMPTION.' } }],
+      { gravity: 'partialG', text: { tr: 'Kısmi yerçekimi (Ay/Mars), AHA/Kızılhaç 2024 §5.2: bilinci normal ise sırtüstü yatır (2a). Bilinç azalmış, kusuyor ya da sürekli izlenemiyorsa yan yatış (derlenme) pozisyonu (2a). Travma yoksa ayakları ~15–30 cm (≈30°–45°) kaldırmak makul olabilir (2b); ağrı, rahatsızlık veya belirtilerde kötüleşme olursa sırtüstüne geri al (2b). Dünya kılavuzunun kısmi yerçekimine uygulanması VARSAYIMDIR.', en: 'Partial gravity (Moon/Mars), AHA/Red Cross 2024 §5.2: if normally alert, place supine (2a). If decreased alertness, vomiting, or cannot be watched: recovery position (2a). Without trauma, raising the feet ~6–12 in (≈30°–45°) may be reasonable (2b); if it causes pain, discomfort or worse symptoms, return to supine (2b). Applying Earth guidance to partial gravity is an ASSUMPTION.' } }],
   },
   breathing: {
-    id: 'breathing', kind: 'NASA_CHECKLIST', escalate: 'crew', source: CL('Emergency 1-3'),
-    title: { tr: 'Solunum güçlüğü', en: 'Breathing difficulty' },
-    confirm: [{ tr: 'Toz/kimyasal maruziyeti sonrası başladı', en: 'Began after dust/chemical exposure' }, { tr: 'Hırıltı / nefes darlığı', en: 'Wheezing / shortness of breath' }, { tr: 'Steteskopla hırıltı, çıtırtı veya azalmış ses', en: 'Stethoscope: wheezes, crackles or decreased sounds' }],
+    id: 'breathing', kind: 'NASA_ISS', escalate: 'crew', source: ISS('1.108 Difficulty breathing (PDF p. 22–24) + 1.103 block 14'),
+    title: { tr: 'Solunum güçlüğü', en: 'Difficulty breathing' },
+    note: { tr: 'ISS 1.103 blok 14: dudak/yüz/el morumsu-gri, solunum <12 veya >30/dk ya da horlama/nefes almada güçlük varsa AMBU ile solunum desteği (5 sn\'de bir nefes) + oksijen. Kimyasal maruziyet varsa önce ISS 1.106 Toxic Exposure (kurtarıcı güvenliği, dekontaminasyon).', en: 'ISS 1.103 block 14: if lips/face/hands blue-gray, breathing rate <12 or >30, or snoring/difficulty inhaling → assist breathing with AMBU bag (one breath every 5 s) + oxygen. If chemical exposure, first ISS 1.106 Toxic Exposure (rescuer safety, decontamination).' },
+    confirm: [{ tr: 'Hırıltı / nefes darlığı', en: 'Wheezing / shortness of breath' }, { tr: 'Artmış solunum işi', en: 'Increased work of breathing' }, { tr: 'Steteskopla anormal akciğer sesi', en: 'Abnormal lung sounds on stethoscope' }],
     steps: [
-      { text: { tr: 'Kimyasal/tahriş ediciden uzaklaştır; diğerlerini maruziyetten koru.', en: 'Remove from exposure to chemical/irritant; protect others from exposure.' } },
-      SURGEON,
-      { text: { tr: 'Steteskopla solunum seslerini dinle (hırıltı, çıtırtı, azalmış ses).', en: 'Using stethoscope, listen for wheezing, crackles, or decreased breath sounds.' } },
-      { medical: true, text: { tr: 'Hırıltı/çıtırtı/azalmış ses varsa:', en: 'If wheezing, crackles, or decreased breath sounds present:' }, drug: { id: 'breathing.proventil', verbatim: '*Proventil Inhaler (Drug Subpack-11)', dose: 'Dose: 2 puffs initially. May repeat in 1-2 hr if necessary, then 2 puffs every 4 to 6 hr as needed for continued wheezing', locked: true } },
-      { text: { tr: 'Uçuş cerrahı aksini söyleyene kadar QDM ile %100 O₂.', en: 'Don QDM for 100% O₂ until MCC Surgeon advises otherwise.' } }],
+      { text: { tr: 'Nabız ve solunum sayısını 15 sn say, 4 ile çarp; kaydet.', en: 'Count pulse and respiratory rate for 15 s and multiply by four; record.' } },
+      { text: { tr: 'Oksijen: Low Flow Non-Rebreather maske (Respiratory Support Pack, 3.201 kartı).', en: 'Oxygen via Low Flow Non-Rebreather Mask (Respiratory Support Pack, 3.201 cue card).' } },
+      { medical: true, cond: { tr: 'Solunum güçlüğü varsa', en: 'If difficulty breathing' }, text: { tr: 'Albuterol inhaler (ISS prosedüründe kilit yok; tedavi edilir, sonra MCC-H aranır):', en: 'Albuterol inhaler (no lock in ISS procedure; treat, then call MCC-H):' }, drug: { id: 'breathing.albuterol', verbatim: 'Albuterol (Proventil HFA) [Topical & Injectable Medication Pack (Brown)] · kit 3.001: 90 mcg, 6.7 gm, Inhaler', dose: '1.3 Have patient fully exhale, inhale slowly and activate the inhaler, hold breath for 8 to 10 seconds before exhaling. Deliver a second dose.', locked: false } },
+      { text: { tr: 'Oksimetre (SpO₂), havayolu muayenesi, iki taraflı akciğer dinleme, tansiyon; kaydet.', en: 'Blood oximeter (SpO₂), airway exam, listen to both lungs front and back, blood pressure; record.' } },
+      { text: { tr: 'Öykü: belirtilerin başlangıcı, ilaçlar, ateş/öksürük. MCC-H\'yi ara, özel tıbbi görüşme (PMC) iste.', en: 'History: onset, medications, fever/cough. Call MCC-H to request PMC.' } },
+      { gravity: 'partialG', text: { tr: 'Kısmi yerçekimi: bilinci açık hasta nefes almak için en rahat pozisyonu seçsin, çoğunlukla oturur (AHA 2024 §5.1, Sınıf 1). Dünya kılavuzu, VARSAYIM.', en: 'Partial gravity: an alert patient assumes the position most comfortable for breathing, usually sitting up (AHA 2024 §5.1, Class 1). Earth guidance, ASSUMPTION.' } }],
   },
   dcs: {
     id: 'dcs', kind: 'NASA_CHECKLIST', escalate: 'ground', source: CL('DCS 3-8 (aftercare, late DCS)'),
@@ -74,48 +80,49 @@ export const PROTOCOLS: Record<ProtocolId, Protocol> = {
   },
   hypoglycemia: {
     id: 'hypoglycemia', kind: 'CLINICAL_GUIDELINE', escalate: 'crew',
-    source: { label: 'ADA: Hypoglycemia (15-15 rule) · CDC', url: 'https://professional.diabetes.org/sites/dpro/files/2023-12/hypoglycemia_in_diabetes.pdf', page: 'ADA 2023' },
+    source: { label: 'ADA 15-15 rule (2023) · AHA/Red Cross First Aid 2024 §6.7', url: 'https://doi.org/10.1161/CIR.0000000000001281', page: 'ADA 2023 · AHA 2024 §6.7' },
     title: { tr: 'Düşük kan şekeri (≤70 mg/dL)', en: 'Low blood glucose (≤70 mg/dL)' },
-    note: { tr: 'ADA kılavuzu diyabetli kişiler için yazılmıştır; astronotlara uygulanması VARSAYIMDIR. 15-15 kuralı yalnızca bilinci açık kişi içindir. CDC: <55 mg/dL ciddi düşüklüktür, 15-15 kuralıyla tedavi edilemeyebilir.', en: 'ADA guidance is written for people with diabetes; applying it to astronauts is an ASSUMPTION. The 15-15 rule is only for conscious people. CDC: <55 mg/dL is severely low and may not be treatable with the 15-15 rule.' },
-    confirm: [{ tr: 'Bilinci açık, yutabiliyor', en: 'Conscious, able to swallow' }],
+    note: { tr: 'İki kaynak miktarda farklıdır: ADA 15 g / 15 dk; AHA 2024 ≥20 g ağızdan glukoz (tablet tercih, 2a). Kılavuzlar Dünya içindir; astronotlara uygulanması VARSAYIMDIR. ISS kit listesinde (3.001) glukoz kalemi yoktur.', en: 'The two sources differ in amount: ADA 15 g / 15 min; AHA 2024 ≥20 g oral glucose (tablets preferred, 2a). Earth guidance; applying it to astronauts is an ASSUMPTION. No glucose item is listed in the ISS kit (3.001).' },
+    confirm: [{ tr: 'Bilinci açık, yutabiliyor', en: 'Awake, able to swallow' }],
     steps: [
-      { medical: true, text: { tr: '15 g hızlı etkili karbonhidrat al.', en: 'Have 15 g of fast-acting carbohydrate.' } },
-      { text: { tr: '15 dakika sonra kan şekerini yeniden ölç; hâlâ ≤70 ise tekrarla.', en: 'Recheck glucose in 15 minutes; repeat if still ≤70.' } },
-      { text: { tr: '70 üstüne çıkınca ve yakında öğün yoksa protein + karbonhidrat atıştırmalığı al.', en: 'Once above 70, have a protein + carbohydrate snack if no meal is coming soon.' } },
+      { cond: { tr: 'Bilinci kapalı veya yutamıyorsa', en: 'If not awake or unable to swallow' }, text: { tr: 'Ağızdan HİÇBİR ŞEY verme (AHA 2024, 3: Zarar); hemen uçuş cerrahı (damar yolu glukoz gerekebilir).', en: 'Give NOTHING by mouth (AHA 2024, 3: Harm); call the flight surgeon immediately (IV dextrose may be needed).' } },
+      { medical: true, cond: { tr: 'Bilinci açık ve yutabiliyorsa', en: 'If awake and able to swallow' }, text: { tr: 'Hızlı etkili karbonhidrat: ADA 15 g · AHA 2024 ≥20 g glukoz (tablet tercih).', en: 'Fast-acting carbohydrate: ADA 15 g · AHA 2024 ≥20 g glucose (tablets preferred).' } },
+      { text: { tr: '15 dk sonra yeniden ölç; hâlâ ≤70 ise tekrarla (ADA). 10 dk içinde düzelme yoksa veya nöbet olursa üst düzeye çık (AHA 2024, Sınıf 1).', en: 'Recheck in 15 min; repeat if still ≤70 (ADA). No improvement within 10 min, or a seizure → escalate (AHA 2024, Class 1).' } },
+      { text: { tr: '70 üstüne çıkınca ve yakında öğün yoksa protein + karbonhidrat atıştırmalığı.', en: 'Once above 70, protein + carbohydrate snack if no meal is coming soon.' } },
       SURGEON],
   },
   htnCrisis: {
     id: 'htnCrisis', kind: 'CLINICAL_GUIDELINE', escalate: 'ground',
-    source: { label: 'AHA: Hypertensive crisis (>180/120)', url: 'https://www.heart.org/en/health-topics/high-blood-pressure/understanding-blood-pressure-readings/hypertensive-crisis-when-you-should-call-911-for-high-blood-pressure', page: 'heart.org' },
-    title: { tr: 'Hipertansif kriz (>180/120)', en: 'Hypertensive crisis (>180/120)' },
-    note: { tr: 'Belirti yoksa "hipertansif aciliyet": ilaç kararı klinisyenindir. Belirti varsa "hipertansif acil durum": beklemeden en üst sağlık desteği (Dünya\'da 911; uzayda uçuş cerrahı).', en: 'No symptoms = hypertensive urgency: medication decisions are the clinician\'s. Symptoms = hypertensive emergency: do not wait (911 on Earth; flight surgeon in space).' },
+    source: { label: 'AHA: When to call 911 for high blood pressure (son gözden geçirme 14 Ağu 2025)', url: 'https://www.heart.org/en/health-topics/high-blood-pressure/understanding-blood-pressure-readings/when-to-call-911-for-high-blood-pressure', page: 'heart.org, 2025' },
+    title: { tr: 'Çok yüksek tansiyon (>180/120)', en: 'Very high blood pressure (>180/120)' },
+    note: { tr: 'AHA iki durum ayırır: "şiddetli hipertansiyon" (en az 1 dk arayla 2 ölçümde >180/120, belirti yok: genellikle hastane gerekmez, en kısa sürede klinisyenle ilaç ayarı) ve "hipertansif acil durum" (belirti var: beklenmez). ISS kitinde Lisinopril ve Metoprolol XL bulunur (3.001); ilaç kararı uçuş cerrahınındır. Not: içerik heart.org sayfasından, kullanıcının sağladığı Türkçe özet üzerinden alınmıştır.', en: 'AHA distinguishes "severe hypertension" (>180/120 on 2 readings ≥1 min apart, no symptoms: usually no hospital, contact a clinician soon for medication adjustment) and "hypertensive emergency" (symptoms: do not wait). The ISS kit carries Lisinopril and Metoprolol XL (3.001); medication is the flight surgeon\'s decision. Note: content taken from heart.org via a user-provided Turkish summary.' },
     confirm: [{ tr: 'Göğüs ağrısı', en: 'Chest pain' }, { tr: 'Nefes darlığı', en: 'Shortness of breath' }, { tr: 'Sırt ağrısı', en: 'Back pain' }, { tr: 'Uyuşma / güçsüzlük', en: 'Numbness / weakness' }, { tr: 'Görme değişikliği', en: 'Change in vision' }, { tr: 'Konuşma güçlüğü', en: 'Difficulty speaking' }],
     steps: [
-      { text: { tr: 'Kısa bir bekleme sonrası tansiyonu yeniden ölç.', en: 'Wait briefly and measure blood pressure again.' } },
-      { text: { tr: 'Hâlâ >180/120 ve belirti yoksa: uçuş cerrahına bildir (ilaç kararı onundur).', en: 'Still >180/120 with no symptoms: inform the flight surgeon (medication is their decision).' } },
-      { text: { tr: 'Belirti varsa: beklemeden uçuş cerrahına acil çağrı.', en: 'With symptoms: call the flight surgeon immediately, do not wait.' } }],
+      { text: { tr: 'En az 1 dakika bekle, tansiyonu yeniden ölç.', en: 'Wait at least 1 minute and measure blood pressure again.' } },
+      { cond: { tr: 'Hâlâ >180/120, belirti yok', en: 'Still >180/120, no symptoms' }, text: { tr: 'Şiddetli hipertansiyon: uçuş cerrahına en kısa sürede bildir (ilaç ayarı onun kararı).', en: 'Severe hypertension: inform the flight surgeon as soon as possible (medication adjustment is their decision).' } },
+      { cond: { tr: 'Belirti varsa', en: 'With symptoms' }, text: { tr: 'Hipertansif acil durum: tansiyonun kendiliğinden düşmesini bekleme; hemen uçuş cerrahı.', en: 'Hypertensive emergency: do not wait for BP to come down on its own; call the flight surgeon immediately.' } }],
   },
   allergy: {
-    id: 'allergy', kind: 'NASA_CHECKLIST', escalate: 'ground', source: CL('Emergency 1-29/1-30 (Allergic reaction, severe)'),
+    id: 'allergy', kind: 'NASA_ISS', escalate: 'ground', source: ISS('1.101 Severe allergic reaction (PDF p. 4–5)'),
     title: { tr: 'Ağır alerjik reaksiyon', en: 'Severe allergic reaction' },
-    note: { tr: 'Daha önce reaksiyon olmayan maddeye de gelişebilir; şoka ilerleyebilir (Şok kartı).', en: 'May follow exposure to substances with no previous reaction; shock possible (see Shock card).' },
-    confirm: [{ tr: 'Solunum güçlüğü / hırıltı', en: 'Difficulty breathing / wheezing' }, { tr: 'Solukluk, terleme', en: 'Pallor, sweating' }, { tr: 'Düşük tansiyon, hızlı nabız', en: 'Low BP, rapid pulse' }],
+    note: { tr: 'Anafilaksi ≥2 sistemi tutar (solunum, deri, dolaşım, sindirim; AHA). Sonraki ISS adımı "2.0.403 Allergic Reaction" kamuya yayımlanmadı → uçuş cerrahı. Şok bulguları için Şok kartı. ISS kitinde Diphenhydramine (Benadryl) oral/IM bulunur (3.001).', en: 'Anaphylaxis involves ≥2 body systems (respiratory, skin, circulation, GI; AHA). The next ISS step "2.0.403 Allergic Reaction" was not released → flight surgeon. For shock signs see Shock card. The ISS kit carries Diphenhydramine (Benadryl) oral/IM (3.001).' },
+    confirm: [{ tr: 'Solunum güçlüğü / hırıltı', en: 'Difficulty breathing / wheezing' }, { tr: 'Kurdeşen, dudak/göz şişmesi', en: 'Hives, lip/eye swelling' }, { tr: 'Düşük tansiyon / şok', en: 'Low BP / shock' }, { tr: 'Karın krampı, ishal', en: 'Abdominal cramps, diarrhea' }],
     steps: [
-      { text: { tr: 'Ek oksijen ver.', en: 'Provide supplemental O₂.' } },
-      { medical: true, cond: { tr: 'Ağır reaksiyon bulguları varsa', en: 'If signs of severe reaction' }, text: { tr: 'Epi Pen: siyah ucu uyluk dışına yerleştir, hızlıca bastır ve 10 sn tut (giysi üzerinden kullanılamaz).', en: 'Epi Pen: place black tip on outer thigh, press firmly and hold 10 sec (not through clothing).' }, drug: { id: 'allergy.epipen', verbatim: 'Epi Pen Injector (Drug Subpack-9)', locked: false } },
-      { text: { tr: 'Nabız, solunum, tansiyonu izle; uçuş cerrahıyla iletişime geç.', en: 'Monitor pulse, respiration, BP; Contact Surgeon.' } },
-      { medical: true, cond: { tr: 'İlk enjeksiyondan 5 dk sonra solunum/tansiyon düzelmezse', en: 'If no improvement in breathing or BP within 5 min of first injection' }, text: { tr: 'Ek epinefrin:', en: 'Additional epinephrine:' }, drug: { id: 'allergy.epinephrine', verbatim: '*Epinephrine (Drug Subpack-5)', dose: 'Dose: Inject 0.3 to 0.5-mL subcutaneously', locked: true } },
-      { medical: true, cond: { tr: 'Ardından', en: 'Then' }, text: { tr: 'Antihistaminik:', en: 'Antihistamine:' }, drug: { id: 'allergy.benadryl', verbatim: '*Benadryl (Injectable) (Drug Subpack-13)', dose: 'Dose: Inject 1 ampule intramuscularly', locked: true, warning: 'General WARNING 6-2: Following drugs should not be used together as they may cause excessive drowsiness in combination: Ambien, Benadryl, Claritin, Demerol, Duragesic Patch (Fentanyl), Morphine Sulfate, Phenergan, Restoril, Valium, Vicodin' } }],
+      { medical: true, cond: { tr: 'Ağır reaksiyon bulguları varsa', en: 'If signs of severe reaction' }, text: { tr: 'EpiPen: koruyucu tüpten çıkar, başparmak emniyet kapağına yakın yumruk yap, kapağı çek; iğne ucunu uyluk dışına dik ve sertçe bastır, klik sesinden sonra 10 sn tut. Giysi üzerinden yapma, parmağı iğne ucuna koyma.', en: 'EpiPen: remove from tube, fist with thumb toward safety cap, pull cap; jab needle end perpendicular and firmly against outer thigh until click, hold 10 s. Not through clothing; no fingers over needle end.' }, drug: { id: 'allergy.epipen', verbatim: 'Epinephrine (EpiPen) [Emergency Medical Treatment Pack (Red)] · kit 3.001: 1:1000, 0.3 mL, Intramuscular', dose: '1.6 Epinephrine (EpiPen) may be repeated every 20 minutes if symptoms recur or progress.', locked: false } },
+      { text: { tr: 'Kullanılmış EpiPen\'i tüpüne koy, gri bantla kapat. MCC-H\'yi ara, özel tıbbi görüşme (PMC) iste.', en: 'Discard used EpiPen in its tube, secure with Gray Tape. Call MCC-H to request PMC.' } },
+      { text: { tr: 'Nabız, solunum, tansiyonu izle; ISS 2.0.403 Allergic Reaction prosedürüne geç (yayımlanmadı → uçuş cerrahı).', en: 'Monitor pulse, respiration, BP; go to ISS 2.0.403 Allergic Reaction (not released → flight surgeon).' } }],
   },
   seizure: {
-    id: 'seizure', kind: 'NASA_CHECKLIST', escalate: 'ground', source: CL('Emergency 1-42/1-43 (Seizures)'),
+    id: 'seizure', kind: 'NASA_ISS', escalate: 'ground', source: ISS('1.107 Seizure (PDF p. 19–21)'),
     title: { tr: 'Nöbet', en: 'Seizure' },
+    note: { tr: 'Nöbetler genelde 1 dakikadan kısa sürer; sonrasında hasta birkaç dakika konfüzdür. Ağzı zorla açma, ağza bir şey koyma (ISS NOT; AHA 2024 3: Zarar). Hastayı kısıtlama (AHA 2024).', en: 'Seizures typically last under a minute; afterwards the patient is confused for several minutes. Never pry the mouth or put anything in it (ISS NOTE; AHA 2024 3: Harm). Do not restrain the patient (AHA 2024).' },
     confirm: [{ tr: 'Nöbet geçiriyor', en: 'Seizure in progress' }],
     steps: [
-      { medical: true, cond: { tr: 'Nöbet varsa, hemen', en: 'If seizing, ASAP' }, text: { tr: 'Kas içi Valium (uyluk dış orta kısım tercih edilir):', en: 'Intramuscular Valium (outer middle thigh preferred):' }, drug: { id: 'seizure.valiumIM', verbatim: '*Valium Injection (Drug Subpack-22)', dose: 'Dose: 2-mL intramuscularly ASAP', locked: true, warning: 'General WARNING 6-2: Following drugs should not be used together as they may cause excessive drowsiness in combination: Ambien, Benadryl, Claritin, Demerol, Duragesic Patch (Fentanyl), Morphine Sulfate, Phenergan, Restoril, Valium, Vicodin' } },
-      { text: { tr: 'Bilinci açıksa ek oksijen ver.', en: 'If conscious, provide supplemental O₂.' } },
-      { medical: true, cond: { tr: 'İlk enjeksiyondan 5 dk sonra nöbet sürüyorsa', en: 'If seizure continues 5 min after first injection' }, text: { tr: 'Damar içi Valium:', en: 'Intravenous Valium:' }, drug: { id: 'seizure.valiumIV', verbatim: '*Valium (Injectable) (Drug Subpack-22)', dose: 'Dose: SLOWLY 2 mL intravenously (over 1-2 min)', locked: true } },
-      { text: { tr: 'Hastayı bağlarla sabitle, damar yolu aç, uçuş cerrahını ara, EKG bağla. Nöbet tekrarlayabilir; Valium hazır beklesin.', en: 'Restrain patient, start I.V., Contact Surgeon, attach ECG. Seizure can recur; keep Valium ready.' } }],
+      { text: { tr: 'Yaralanmayı önle: hastayı modülün ortasına, sert yapılardan uzağa al.', en: 'Protect from injury: locate the patient in the centre of a module, away from hard structures.' } },
+      { medical: true, cond: { tr: 'Nöbet varsa', en: 'If seizing' }, text: { tr: 'Kas içi Diazepam (ISS prosedüründe kilit yok; MCC-H sonra aranır):', en: 'Intramuscular Diazepam (no lock in ISS procedure; MCC-H called afterwards):' }, drug: { id: 'seizure.diazepamIM', verbatim: 'Diazepam (Valium) [Topical & Injectable Medication Pack (Brown)] · kit 3.001: 5 mg/mL, 2 mL, Intramuscular', dose: '2.1 Prepare 2 mL Diazepam (Valium) 5 mg/mL for a total of 10 mg. 2.2 Give 2 mL intramuscular shot. If seizure continues for > 5 minutes or for repeated seizures, repeat medication administration in 10 minutes.', locked: false } },
+      { text: { tr: 'Oksimetre (SpO₂), Non-Rebreather maskeyle oksijen, damar yolu.', en: 'Blood oximeter (SpO₂), oxygen via Non-Rebreather Mask, IV access.' } },
+      { text: { tr: 'Baş, kollar-bacaklar, dişler ve dili yaralanma için muayene et; fotoğrafla. MCC-H\'yi ara (PMC).', en: 'Examine head, extremities, teeth and tongue for injuries; photo document. Call MCC-H to request PMC.' } },
+      { medical: true, cond: { tr: 'Uyanık, bilinci yerinde ve yutabiliyorsa', en: 'When awake, coherent and able to swallow' }, text: { tr: 'Nöbet önleyici (uçuş cerrahının yönlendirmesiyle):', en: 'Antiseizure (as directed by Surgeon):' }, drug: { id: 'seizure.phenytoin', verbatim: 'Phenytoin (Dilantin ER) [Oral Medication Pack (Purple)] · kit 3.001: 300 mg, Oral, capsule — Swallow whole; do not crush or chew.', dose: '7.2 Give one capsule of Phenytoin (Dilantin ER) by mouth, as directed by Surgeon. 7.3 After two hours, give a second dose, or as directed by Surgeon.', locked: true } }],
   },
   insomnia: {
     id: 'insomnia', kind: 'NASA_CHECKLIST', escalate: 'self', source: CL('5-13 (Sleeping problems)'),
@@ -156,6 +163,40 @@ export const PROTOCOLS: Record<ProtocolId, Protocol> = {
       { text: { tr: 'Daha güçlü ilaçlar (Vicodin, Demerol, Morfin) "*": uçuş cerrahı.', en: 'Stronger options (Vicodin, Demerol, Morphine) are "*": flight surgeon.' } }],
   },
 };
+
+/** ISS ilaç kiti (MED CL 3.001, 09 APR 15; FOIA 2016). "strength" kitteki birimdir, DOZ DEĞİLDİR; kullanım/miktar uçuş cerrahına göredir.
+ *  Satırlar PDF sayfa metninden kontrol edildi (pdftotext -layout kit tablosu sütunlarını karıştırdığı için ona güvenilmedi). */
+export interface KitItem { id: string; name: string; strength: string; route: string; pack: string; comment?: string }
+export const ISS_KIT: KitItem[] = [
+  { id: 'kit.aspirin', name: 'Aspirin', strength: '325 mg', route: 'Oral', pack: 'Convenience (White) T1', comment: 'Take with food.' },
+  { id: 'kit.tylenol', name: 'Acetaminophen (Tylenol)', strength: '325 mg', route: 'Oral', pack: 'Convenience (White) T1', comment: 'No more than 12 tablets every 24 hours.' },
+  { id: 'kit.motrin', name: 'Ibuprofen (Motrin)', strength: '400 mg', route: 'Oral', pack: 'Convenience (White) T1', comment: 'No more than 8 tablets every 24 hours. Take with food.' },
+  { id: 'kit.loperamide', name: 'Loperamide (Imodium)', strength: '2 mg', route: 'Oral', pack: 'Convenience (White) T1', comment: 'Use for nonbloody diarrhea. No more than 8 tablets every 24 hours.' },
+  { id: 'kit.loratadine', name: 'Loratadine (Claritin)', strength: '10 mg', route: 'Oral', pack: 'Convenience (White) T1' },
+  { id: 'kit.melatonin', name: 'Melatonin', strength: '3 mg', route: 'Oral', pack: 'Convenience (White) T1', comment: 'Do not use with other sleep meds.' },
+  { id: 'kit.zolpidem', name: 'Zolpidem (Ambien)', strength: '10 mg', route: 'Oral', pack: 'Convenience (White) T1', comment: 'Do not use with other sleep meds.' },
+  { id: 'kit.zaleplon', name: 'Zaleplon (Sonata)', strength: '10 mg', route: 'Oral', pack: 'Convenience (White) T1', comment: 'Do not take with a high fat meal. Do not use with other sleep meds.' },
+  { id: 'kit.epipen', name: 'Epinephrine (EpiPen)', strength: '1:1000, 0.3 mL', route: 'Intramuscular', pack: 'Emergency (Red) T2' },
+  { id: 'kit.acetazolamide', name: 'Acetazolamide (Diamox)', strength: '250 mg', route: 'Oral', pack: 'Oral Medication (Purple) T8' },
+  { id: 'kit.diphenhydramineOral', name: 'Diphenhydramine (Benadryl)', strength: '25 mg', route: 'Oral', pack: 'Oral Medication (Purple) T8', comment: 'May cause sedation and impair performance. Do not use with sleep meds.' },
+  { id: 'kit.phenytoin', name: 'Phenytoin (Dilantin ER)', strength: '300 mg', route: 'Oral', pack: 'Oral Medication (Purple) T8', comment: 'Swallow whole; do not crush or chew.' },
+  { id: 'kit.lorazepam', name: 'Lorazepam (Ativan)', strength: '1 mg', route: 'Oral', pack: 'Oral Medication (Purple) T8' },
+  { id: 'kit.lisinopril', name: 'Lisinopril (Zestril)', strength: '10 mg', route: 'Oral', pack: 'Oral Medication (Purple) T8' },
+  { id: 'kit.metoprolol', name: 'Metoprolol XL (Toprol XL)', strength: '50 mg', route: 'Oral', pack: 'Oral Medication (Purple) T8', comment: 'Swallow whole; do not crush or chew.' },
+  { id: 'kit.nitroglycerin', name: 'Nitroglycerin (Nitrostat)', strength: '0.4 mg', route: 'Oral', pack: 'Oral Medication (Purple) T8' },
+  { id: 'kit.meclizine', name: 'Meclizine (Antivert)', strength: '25 mg', route: 'Oral', pack: 'Oral Medication (Purple) T8', comment: 'May cause sedation and impair performance. Do not use with sleep meds.' },
+  { id: 'kit.ondansetron', name: 'Ondansetron (Zofran ODT)', strength: '8 mg', route: 'Oral', pack: 'Oral Medication (Purple) T8' },
+  { id: 'kit.promethazineOral', name: 'Promethazine (Phenergan)', strength: '25 mg', route: 'Oral', pack: 'Oral Medication (Purple) T8', comment: 'May cause sedation and impair performance. Do not use with sleep meds.' },
+  { id: 'kit.prednisone', name: 'Prednisone (Deltasone)', strength: '20 mg', route: 'Oral', pack: 'Oral Medication (Purple) T8', comment: 'Take with food.' },
+  { id: 'kit.diphenhydramineIM', name: 'Diphenhydramine (Benadryl)', strength: '50 mg/mL, 1 mL', route: 'Intramuscular', pack: 'Topical & Injectable (Brown) T10', comment: 'May cause sedation and impair performance. Do not take with sleep meds.' },
+  { id: 'kit.diazepam', name: 'Diazepam (Valium)', strength: '5 mg/mL, 2 mL', route: 'Intramuscular', pack: 'Topical & Injectable (Brown) T10' },
+  { id: 'kit.albuterol', name: 'Albuterol (Proventil HFA)', strength: '90 mcg, 6.7 gm', route: 'Inhaler', pack: 'Topical & Injectable (Brown) T10' },
+  { id: 'kit.fluticasone', name: 'Fluticasone (Flovent HFA)', strength: '220 mcg, 12 gm', route: 'Inhaler', pack: 'Topical & Injectable (Brown) T10' },
+  { id: 'kit.ketorolac', name: 'Ketorolac (Toradol)', strength: '30 mg/mL, 2 mL', route: 'Intramuscular', pack: 'Topical & Injectable (Brown) T10' },
+  { id: 'kit.promethazineIM', name: 'Promethazine (Phenergan)', strength: '25 mg/mL, 1 mL', route: 'Intramuscular', pack: 'Topical & Injectable (Brown) T10', comment: 'May cause sedation and impair performance.' },
+  { id: 'kit.dexamethasone', name: 'Dexamethasone (Decadron)', strength: '10 mg/mL, 1 mL', route: 'Intramuscular', pack: 'Topical & Injectable (Brown) T10' },
+];
+export const KIT_BY_ID: Record<string, KitItem> = Object.fromEntries(ISS_KIT.map((k) => [k.id, k]));
 
 /** İlaç adı listesi: AI serbest metninde geçerse metin reddedilir (doz modelden geçmez) */
 export const DRUG_WORDS = ['epinefrin', 'nitrogliserin', 'salbutamol', 'parasetamol', 'aspirin', 'proventil', 'albuterol', 'saline', 'serum', 'epinephrine', 'epi pen', 'benadryl', 'valium', 'diazepam', 'ambien', 'restoril', 'diamox', 'glucagon', 'glukagon', 'insulin', 'insülin', 'nitroglycerin', 'atropine'];
