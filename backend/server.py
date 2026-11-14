@@ -21,6 +21,7 @@ from pathlib import Path
 import anthropic
 import base64
 import struct
+from xml.sax.saxutils import escape as xml_escape
 import httpx
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -329,6 +330,11 @@ async def vega(req: Request):
 
 
 # ---- Gerçekçi ses: Google Gemini TTS (isteğe bağlı; GEMINI_API_KEY yoksa istemci tarayıcı sesine düşer) ----
+AZURE_KEY = os.environ.get("AZURE_SPEECH_KEY", "")
+AZURE_REGION = os.environ.get("AZURE_SPEECH_REGION", "eastus")
+AZURE_VOICE_TR = os.environ.get("AZURE_VOICE_TR", "tr-TR-AhmetNeural")
+AZURE_VOICE_EN = os.environ.get("AZURE_VOICE_EN", "en-US-AndrewNeural")
+_azure = httpx.AsyncClient(timeout=15)  # bağlantı yeniden kullanımı → ilk istekten sonra daha düşük gecikme
 GEMINI_KEY = os.environ.get("GEMINI_API_KEY", "")
 GEMINI_VOICE = os.environ.get("GEMINI_VOICE", "Achird")
 TTS_MODELS = [m.strip() for m in os.environ.get("GEMINI_TTS_MODEL", "gemini-3.8-flash-tts,gemini-3.8-flash-lite-tts,gemini-2.5-flash-preview-tts").split(",") if m.strip()]
@@ -363,14 +369,34 @@ def _find_audio(node):
 @app.post("/api/tts")
 async def tts(req: Request):
     from fastapi.responses import Response
-    if not GEMINI_KEY:
-        raise HTTPException(503, "GEMINI_API_KEY not set")
+    if not (AZURE_KEY or GEMINI_KEY):
+        raise HTTPException(503, "no TTS key")
     guard(req)
     body = await req.json()
     text = str(body.get("text", "")).strip()[:1500]
     if not text:
         raise HTTPException(400, "empty")
-    style = TTS_STYLE.get(body.get("style"), TTS_STYLE["calm"])
+    lang = "en" if body.get("lang") == "en" else "tr"
+    urgent = body.get("style") == "urgent"
+    style = TTS_STYLE["urgent" if urgent else "calm"]
+    # 1) Azure nöral ses (Ahmet/Emel) — düşük gecikme, cümle cümle
+    if AZURE_KEY and _tts_cool.get("azure", 0) < time.time():
+        voice = AZURE_VOICE_EN if lang == "en" else AZURE_VOICE_TR
+        ssml = (f"<speak version='1.0' xml:lang='{'en-US' if lang == 'en' else 'tr-TR'}'><voice name='{voice}'>"
+                f"<prosody rate='{'+8%' if urgent else '+0%'}'>{xml_escape(text)}</prosody></voice></speak>")
+        try:
+            r = await _azure.post(f"https://{AZURE_REGION}.tts.speech.microsoft.com/cognitiveservices/v1", content=ssml.encode("utf-8"),
+                                  headers={"Ocp-Apim-Subscription-Key": AZURE_KEY, "Content-Type": "application/ssml+xml",
+                                           "X-Microsoft-OutputFormat": "audio-24khz-48kbitrate-mono-mp3", "User-Agent": "vega-proto"})
+            if r.status_code == 200 and r.content:
+                return Response(r.content, media_type="audio/mpeg", headers={"Cache-Control": "no-store", "X-TTS-Model": f"azure:{voice}"})
+            if r.status_code in (401, 403, 429):  # kota/anahtar → bir süre Gemini'ye geç
+                _tts_cool["azure"] = time.time() + (3600 if r.status_code != 429 else 60)
+        except Exception:
+            pass
+    if not GEMINI_KEY:
+        raise HTTPException(429, "tts unavailable")
+    # 2) Gemini TTS (yedek)
     async with httpx.AsyncClient(timeout=30) as hc:
         for model in TTS_MODELS:
             if _tts_cool.get(model, 0) > time.time():

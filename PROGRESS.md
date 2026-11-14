@@ -46,3 +46,8 @@ Her adım buraya kısa notla eklenir (en yeni en altta).
 - VEGA `update_reading` aracı: "nabzımı 150 yap", "açlık şekerimi 50 olarak güncelle", "tansiyonum 145/95 kaydet" → USER_INPUT kaydı; istemci fizyolojik aralığı doğrular, kural motoru anında değerlendirir (alarm). Sorular ("150 olsa tehlikeli mi?") kayıt yapmaz — test edildi.
 - Model yalnızca aracı çağırırsa ikinci kısa tur ile sözlü onay üretilir (test: 6/6 onaylı).
 - /api/tts: Google Gemini TTS (cevap başına tek istek, sakin/acil ton). GEMINI_API_KEY yoksa tarayıcı sesine düşer. Alarm anonsları her zaman tarayıcı sesi (çevrimdışı).
+
+## 2026-11-14 20:22 — VEGA sesi: Azure nöral TTS
+- /api/tts sırası: Azure Speech (tr-TR-AhmetNeural / en-US-AndrewNeural, F0 ücretsiz katman) → Gemini TTS → tarayıcı sesi.
+- İstemci cümle cümle boru hattı: her cümlenin sesi hemen istenir, sırayla çalınır. Ölçülen: cümle başına 0,5–1,0 sn (eastus).
+- Değer kaydedilen cevaplarda hafif hızlı (acil) ton. Alarm anonsları tarayıcı sesi (çevrimdışı güvence).

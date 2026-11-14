@@ -8,7 +8,7 @@ import { useApp, activeAlerts } from '../store';
 import { askVega, maxEsc } from '../ai';
 import { grabCameraFrame } from './FatigueCam';
 import { useFatigue } from '../fatigue';
-import { startAlarm, stopAlarm, speak, stopSpeaking, unlockAudio, speakReply, stopVoice, geminiVoice } from '../audio';
+import { startAlarm, stopAlarm, speak, stopSpeaking, unlockAudio, speakSentence, stopVoice, beginReply } from '../audio';
 import { t } from '../i18n';
 
 /* ---------------- AI değerlendirme kartı ---------------- */
@@ -135,15 +135,14 @@ export function Vega() {
 
   const send = async (q: string) => {
     if (!q.trim()) return;
-    abort.current?.abort(); stopVoice();
+    abort.current?.abort(); beginReply();
     const c = new AbortController(); abort.current = c;
     setBusy(true); setReply(''); setErr(''); setApplied([]);
     try {
       const frame = withCam && camOn ? grabCameraFrame() : null;
       setSentFrame(!!frame);
-      const real = geminiVoice();
       const done: string[] = [];
-      const full = await askVega(q, hist.current, setReply, (s) => { if (!real) speak(s, lang); }, c.signal, frame, (a) => {
+      const full = await askVega(q, hist.current, setReply, (s) => speakSentence(s, lang), c.signal, frame, (a) => {
         // Sesli komutla değer girişi: kimlik ve fizyolojik aralık burada doğrulanır, kural motoru hemen değerlendirir
         const id = a.indicator as IndicatorId;
         const d = INDICATORS[id];
@@ -152,7 +151,6 @@ export function Vega() {
         done.push(`${t(`ind.${id}`, lang)} ${a.value.toFixed(d.decimals)} ${d.unit}`);
         setApplied([...done]);
       });
-      if (real && !c.signal.aborted) void speakReply(full, lang, done.length ? 'urgent' : 'calm');
       hist.current = [...hist.current, { role: 'user' as const, content: q }, { role: 'assistant' as const, content: full }].slice(-8);
     } catch (e) {
       if ((e as Error).name !== 'AbortError') setErr(t('ai.offline', lang));
