@@ -36,7 +36,7 @@ Her AI çıktısı neyi hesapladığını adlandırır (kamera nabzı, konuşma 
 - **Kamera/mikrofon:** veri yalnızca açık "yakala" eyleminde cihazdan çıkar, ekranda yazılır. Kamera reddedilse de her şey çalışmalı.
 
 ### Yüz duygu tanıma değerlendirmesi (2026-11-14 17:30)
-github.com/NkL-M/Real-Time-Facial-Emotion-Recognition: **LİSANS YOK** (GitHub API license=None → tüm hakları saklı), doğruluk raporlanmamış, FER-2013 7 sınıf, Python/Streamlit (ONNX 24,5 MB var). **Kullanılmayacak** (teslim beyanı riski + bilimsel geçerlilik). Kamera geri gelirse alternatif: **MediaPipe Face Landmarker (Apache 2.0, tarayıcıda)** → göz kırpma hızı, PERCLOS (yorgunluk), "görünen ifade" (duygu değil, onaylanacak ipucu), ileride rPPG aynı akıştan.
+github.com/NkL-M/Real-Time-Facial-Emotion-Recognition: **LİSANS YOK** (GitHub API license=None → tüm hakları saklı), doğruluk raporlanmamış, FER-2013 7 sınıf, Python/Streamlit (ONNX 24,5 MB var). **Kullanılmayacak** (teslim beyanı riski + bilimsel geçerlilik). **KARAR (kullanıcı, 17:40): kamera geri geldiğinde MediaPipe kullanılacak.** Alternatif: **MediaPipe Face Landmarker (Apache 2.0, tarayıcıda)** → göz kırpma hızı, PERCLOS (yorgunluk), "görünen ifade" (duygu değil, onaylanacak ipucu), ileride rPPG aynı akıştan.
 
 ## Omurga: jürinin 12 maddesi (eksiksiz karşılanacak)
 1. Astronotun **kendi sağlığını değerlendirdiği görsel araç** + tedavi ve iyileştirme rehberliği

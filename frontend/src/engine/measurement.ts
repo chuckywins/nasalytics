@@ -121,7 +121,7 @@ export const MEASURE: Record<string, MeasureInfo> = {
   },
   reaction: {
     inSpace: { tr: 'NASA, astronotların uyku kaybı ve yorgunluğu fark etmesi için 10 dakikalık bir uyanıklık öz testi kullanır.', en: 'NASA uses a 10-minute vigilance self-test so astronauts can detect sleep loss and fatigue.' },
-    here: { tr: '10 denemelik kısaltılmış sürüm: medyan tepki süresi, >500 ms gecikmeler ve erken tepkiler; kişisel baz çizgiyle kıyas. Eşikler VARSAYIMDIR.', en: 'A shortened 10-trial version: median reaction time, >500 ms lapses and false starts, compared with your personal baseline. Thresholds are ASSUMPTIONS.' },
+    here: { tr: '8 denemelik kısaltılmış sürüm: medyan tepki süresi, >500 ms gecikmeler ve erken tepkiler; kişisel baz çizgiyle kıyas. Eşikler VARSAYIMDIR.', en: 'A shortened 8-trial version: median reaction time, >500 ms lapses and false starts, compared with your personal baseline. Thresholds are ASSUMPTIONS.' },
     why: { tr: 'Uyku kaybı kritik görevlerde (EVA, robot kol) hata riskini artırır.', en: 'Sleep loss raises error risk in critical tasks (EVA, robotic arm).' },
     sources: [{ label: 'NASA: The Human Body in Space', url: 'https://www.nasa.gov/humans-in-space/the-human-body-in-space/' }, S.archer],
   },

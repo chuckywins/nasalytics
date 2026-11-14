@@ -174,7 +174,7 @@ const D = {
   'badge.streak3': { tr: '3 günlük seri', en: '3-day streak' },
   'badge.vigilant': { tr: 'Uyanık: hatasız reaksiyon testi', en: 'Vigilant: flawless reaction test' },
   'badge.voice': { tr: 'İlk sesli günlük', en: 'First voice log' },
-  'rt.intro': { tr: 'Kutu camgöbeğine döndüğü anda tıklayın veya Boşluk tuşuna basın. 10 deneme, yaklaşık 40 saniye. Erken basmak "erken tepki" sayılır.', en: 'Click or press Space the moment the pad turns cyan. 10 trials, about 40 seconds. Pressing early counts as a false start.' },
+  'rt.intro': { tr: 'Kutu camgöbeğine döndüğü anda tıklayın veya Boşluk tuşuna basın. 8 deneme, yaklaşık 20 saniye. Erken basmak "erken tepki" sayılır.', en: 'Click or press Space the moment the pad turns cyan. 8 trials, about 20 seconds. Pressing early counts as a false start.' },
   'rt.wait': { tr: 'Bekleyin…', en: 'Wait…' },
   'rt.now': { tr: 'ŞİMDİ!', en: 'NOW!' },
   'rt.falseStart': { tr: 'erken tepki', en: 'false start' },

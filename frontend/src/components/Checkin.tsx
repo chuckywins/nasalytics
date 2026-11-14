@@ -16,7 +16,8 @@ export function RoutinePanel() {
   const lang = useApp((s) => s.lang);
   const readings = useApp((s) => s.readings);
   const ck = useCheckin();
-  const [modal, setModal] = useState<'reaction' | 'voice' | null>(null);
+  // Öz-test: ?rtSelfTest reaksiyon testini açar ve otomatik yanıtlar (headless doğrulama için)
+  const [modal, setModal] = useState<'reaction' | 'voice' | null>(() => (location.search.includes('rtSelfTest') ? 'reaction' : null));
   const done = doneToday(); // render: yalnızca okur
   useEffect(() => { syncToday(); }, [done.length, readings]); // kayıt: efektte
   const sk = streak(ck.days), xp = totalXp(ck.days);
@@ -55,7 +56,7 @@ export function RoutinePanel() {
 }
 
 /* ---------------- Reaksiyon süresi testi (PVT tarzı, kısaltılmış) ---------------- */
-const TRIALS = 10;
+const TRIALS = 8;
 export function ReactionTest({ onClose }: { onClose: () => void }) {
   const lang = useApp((s) => s.lang);
   const add = useCheckin((s) => s.addReaction);
@@ -68,7 +69,7 @@ export function ReactionTest({ onClose }: { onClose: () => void }) {
 
   const next = () => {
     setPhase('wait');
-    timer.current = window.setTimeout(() => { t0.current = performance.now(); setPhase('go'); }, 1500 + Math.random() * 2500);
+    timer.current = window.setTimeout(() => { t0.current = performance.now(); setPhase('go'); }, 1000 + Math.random() * 2000); // 1–3 sn rastgele bekleme
   };
   const finish = () => {
     const a = [...rts.current].sort((x, y) => x - y);
@@ -84,11 +85,19 @@ export function ReactionTest({ onClose }: { onClose: () => void }) {
     const n = trial + 1; setTrial(n);
     if (n >= TRIALS) finish(); else next();
   };
+  // Klavye dinleyicisi her render'da güncel `press`'i kullanır; ZAMANLAYICIYI SİLMEZ.
+  // (Hata düzeltmesi: eski sürüm her render'da bekleyen zamanlayıcıyı iptal ediyordu → "ŞİMDİ!" hiç gelmiyordu.)
   useEffect(() => {
     const k = (e: KeyboardEvent) => { if (e.code === 'Space') { e.preventDefault(); e.stopPropagation(); press(); } if (e.key === 'Escape') onClose(); };
     window.addEventListener('keydown', k, true);
-    return () => { window.removeEventListener('keydown', k, true); if (timer.current) clearTimeout(timer.current); };
+    return () => window.removeEventListener('keydown', k, true);
   });
+  // Öz-test modu: başlat ve her "ŞİMDİ!"de 250 ms sonra bas
+  const selfTest = location.search.includes('rtSelfTest');
+  useEffect(() => { if (selfTest && phase === 'intro') { rts.current = []; fs.current = 0; next(); } }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { if (selfTest && phase === 'go') { const h = setTimeout(press, 250); return () => clearTimeout(h); } }); // eslint-disable-line react-hooks/exhaustive-deps
+  // Zamanlayıcı yalnızca pencere kapanınca temizlenir.
+  useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
   const base = prev.filter((p) => p !== res);
   const baseMed = base.length ? Math.round(base.map((p) => p.medianMs).sort((a, b) => a - b)[Math.floor(base.length / 2)]) : null;
   const flag = res && (res.lapses >= 2 || res.medianMs > 400 || (baseMed != null && res.medianMs > baseMed * 1.2));
