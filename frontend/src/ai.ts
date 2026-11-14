@@ -9,6 +9,7 @@ import { useApp, evalLatest, stableStatus, type AiAssessment } from './store';
 import { t } from './i18n';
 import { useCheckin, doneToday, dayKey } from './checkin';
 import { useFatigue } from './fatigue';
+import { useScenario } from './scenario';
 
 const API = import.meta.env.VITE_API_BASE ?? '';
 
@@ -37,6 +38,16 @@ export function buildSnapshot() {
       return f.enabled && f.phase === 'running' ? { onDevice: true, perclos: f.perclos, blinkPerMin: f.blinkPerMin, yawns: f.yawns, visibleExpression: f.face ? f.expression : 'no face', longEyeClosureLast2min: !!(f.lastLongClosureAt && Date.now() - f.lastLongClosureAt < 120000), cueStatus: f.status, note: 'PERCLOS thresholds are assumptions; cue not diagnosis' } : null;
     })(),
     cabin: { o2Pct: +s.cabin.o2Pct.toFixed(1), pressurePsia: +s.cabin.pressurePsia.toFixed(2) },
+    scenario: (() => {
+      const sc = useScenario.getState();
+      if (!sc.id) return null;
+      const p = sc.replay?.series[sc.replay.idx];
+      return {
+        name: sc.id, note: 'Demo scenario: vitals are SIMULATED; radiation replays are real NASA measurements (time-compressed).',
+        replay: p && sc.replay ? { utc: p.t, absorbedUGyH: p.v, baselineUGyH: +sc.replay.baseline.toFixed(2), multiple: +(p.v / sc.replay.baseline).toFixed(1), highLatitudeBin: p.hl, cumulative: `${sc.replay.doseSoFar.toFixed(3)} ${sc.replay.doseUnit.en}` } : null,
+        suit: sc.suit, extraAlerts: sc.extra.map((x) => ({ id: x.id, status: x.status, value: x.value, label: x.label.en, actions: x.steps.map((st) => st.en), note: x.note?.en })),
+      };
+    })(),
     indicators: INDICATOR_ORDER.map((id) => {
       const ev = evalLatest(s.readings, id);
       const d = INDICATORS[id];
@@ -59,7 +70,8 @@ export function useAiAssessment() {
   const lang = useApp((s) => s.lang);
   const activity = useApp((s) => s.activity);
   const env = useApp((s) => s.env);
-  const sig = INDICATOR_ORDER.map((id) => [id, stableStatus(readings, id)] as const).filter(([, s]) => s !== 'ok' && s !== 'unknown').map(([id, s]) => `${id}:${s}`).join('|') + `#${lang}#${activity}#${env}`;
+  const extraSig = useScenario((s) => s.extra.map((x) => `${x.id}:${x.status}`).join('|'));
+  const sig = extraSig + '#' + INDICATOR_ORDER.map((id) => [id, stableStatus(readings, id)] as const).filter(([, s]) => s !== 'ok' && s !== 'unknown').map(([id, s]) => `${id}:${s}`).join('|') + `#${lang}#${activity}#${env}`;
   const ctrl = useRef<AbortController | null>(null);
   useEffect(() => {
     const st = useApp.getState();

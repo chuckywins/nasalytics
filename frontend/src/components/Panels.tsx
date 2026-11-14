@@ -1,7 +1,7 @@
 // Sağ ve alt paneller: değerlendirme, bölge bilgisi, kabin, görev zaman çizelgesi, trend.
 // AI notu: Claude (Anthropic) yardımıyla yazılmıştır.
 import { AnimatePresence, motion } from 'motion/react';
-import { INDICATORS } from '../engine/indicators';
+import { INDICATORS, statusRank } from '../engine/indicators';
 import { REGIONS } from '../engine/regions';
 import { adviceFor } from '../engine/guidance';
 import { ENVS, MISSION_DAYS, boneLossPct, cumulativeMSv, equivUSvH } from '../engine/environment';
@@ -14,6 +14,8 @@ import { RoutinePanel } from './Checkin';
 import { useFatigue } from '../fatigue';
 import { useState } from 'react';
 import { InfoTip, SourceTags, toSteps } from './Info';
+import { ScenarioList, ExtraAlertCards } from './Scenario';
+import { useScenario, suitCO2Status } from '../scenario';
 
 // Uyarı görünürlüğü animasyona BAĞLI DEĞİL: yalnızca konum kayar, opaklık her zaman 1 (animasyon çalışmasa da okunur).
 const fade = { initial: { y: 8 }, animate: { y: 0 }, transition: { duration: 0.2 } };
@@ -22,14 +24,16 @@ const fade = { initial: { y: 8 }, animate: { y: 0 }, transition: { duration: 0.2
 export function AssessmentPanel() {
   const { readings, lang, selectIndicator } = useApp();
   const alerts = activeAlerts(readings).filter((a) => a.id !== 'diastolic' || evalLatest(readings, 'systolic').status === 'ok');
-  const overall: Status = alerts[0]?.status ?? 'ok';
+  const extra = useScenario((s) => s.extra);
+  const overall: Status = [...extra.map((x) => x.status), alerts[0]?.status ?? 'ok'].reduce((a, b) => (statusRank(b) > statusRank(a) ? b : a), 'ok' as Status);
   return (
-    <Panel title={t('ui.assessment', lang)} right={<StatusChip s={overall} label={`${alerts.length}`} />} className="assess">
+    <Panel title={t('ui.assessment', lang)} right={<StatusChip s={overall} label={`${alerts.length + extra.length}`} />} className="assess">
       <AiCard />
+      <ExtraAlertCards />
       <FatigueCue />
       <div className="alerts" role="status" aria-live="polite">
         <AnimatePresence initial={false}>
-          {alerts.length === 0 && <motion.p key="ok" {...fade} className="nominal">● {t('ui.allNominal', lang)}</motion.p>}
+          {alerts.length === 0 && extra.length === 0 && <motion.p key="ok" {...fade} className="nominal">● {t('ui.allNominal', lang)}</motion.p>}
           {alerts.map((a) => {
             const adv = adviceFor(a.id, a.status);
             return (
@@ -100,6 +104,15 @@ export function CabinPanel() {
   const { readings, cabin, lang } = useApp();
   const co2 = evalLatest(readings, 'cabinCO2');
   const pStatus: Status = cabin.pressurePsia < 5.0 || cabin.pressurePsia > 15.0 ? 'critical' : 'ok';
+  const suit = useScenario((s) => s.suit);
+  if (suit) return (
+    <Panel title={t('suit.title', lang)} right={<ProvTag p="SIMULATED" />} className="cabin">
+      <Gauge label={t('suit.co2', lang)} value={suit.ppCO2mmHg} unit="mmHg" lo={0} hi={8} limitHi={4.5} status={suitCO2Status(suit.ppCO2mmHg)} />
+      <Gauge label="ppO₂ (%100 O₂)" value={suit.ppO2mmHg} unit="mmHg" lo={0} hi={300} status="ok" decimals={0} />
+      <Gauge label={t('suit.pressure', lang)} value={suit.pressurePsia} unit="psia" lo={0} hi={16} status="ok" />
+      <div className="src"><ProvTag p="NASA_STANDARD" /><span>V2 [11035] · OCHMO-TB-004 · TB-037 (4,3 psia)</span></div>
+    </Panel>
+  );
   return (
     <Panel title={t('ui.cabin', lang)} right={<ProvTag p="SIMULATED" />} className="cabin">
       <Gauge info="cabinCO2" label={`CO₂ (${t('ui.limit', lang)} 3 mmHg)`} value={co2.reading.value} unit="mmHg" lo={0} hi={8} limitHi={3} status={co2.status} />
@@ -119,13 +132,14 @@ export function MissionPanel() {
   const cum = cumulativeMSv(e, day);
   const bone = boneLossPct(e, day);
   const h = equivUSvH(e);
-  const [tab, setTab] = useState<'routine' | 'mission'>('routine');
+  const [tab, setTab] = useState<'routine' | 'mission' | 'scen'>('routine');
   const tabs = (
     <div className="tabs" role="tablist">
-      {(['routine', 'mission'] as const).map((k) => <button key={k} role="tab" aria-selected={tab === k} className={tab === k ? 'on' : ''} onClick={() => setTab(k)}>{t(`tab.${k}`, lang)}</button>)}
+      {(['routine', 'scen', 'mission'] as const).map((k) => <button key={k} role="tab" aria-selected={tab === k} className={tab === k ? 'on' : ''} onClick={() => setTab(k)}>{t(`tab.${k}`, lang)}</button>)}
     </div>
   );
   if (tab === 'routine') return <Panel title={t('tab.routine', lang)} right={tabs} className="mission"><RoutinePanel /></Panel>;
+  if (tab === 'scen') return <Panel title={t('tab.scen', lang)} right={tabs} className="mission"><ScenarioList /></Panel>;
   return (
     <Panel title={t('ui.timeline', lang)} right={tabs} className="mission">
       <div className="timeline">

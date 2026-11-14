@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { INDICATORS, VITAL_ROWS, worst, type VitalRow } from '../engine/indicators';
 import type { GlucoseCtx, IndicatorId, Provenance, Status } from '../engine/types';
+import { useScenario } from '../scenario';
 import { ENVS, ENV_LABEL, ENV_ORDER, equivUSvH, cumulativeMSv, type EnvId } from '../engine/environment';
 import { useApp, evalLatest, latest } from '../store';
 import { t } from '../i18n';
@@ -44,6 +45,9 @@ export function TopBar() {
   const e = ENVS[env];
   const h = equivUSvH(e);
   const cum = cumulativeMSv(e, missionDay);
+  // Gerçek veri tekrarı sürerken üst bar tekrarın o anki değerini gösterir (çelişki olmasın)
+  const replay = useScenario((s) => s.replay);
+  const rp = replay?.series[replay.idx]; const rpBase = replay?.baseline ?? 1;
   const [d0, d1] = e.commDelayOneWaySec;
   const fmtDelay = (s: number) => (s < 60 ? `${s.toFixed(1)} s` : `${Math.round(s / 60)} min`);
   return (
@@ -58,7 +62,8 @@ export function TopBar() {
       <div className="tb-item"><span>{t('ui.day', lang)}</span><b className="num">{missionDay}</b></div>
       <div className="tb-item"><span>{t('ui.delay', lang)} ({t('ui.oneWay', lang)})</span><b className="num">{d0 === d1 ? fmtDelay(d0) : `${fmtDelay(d0)}–${fmtDelay(d1)}`}</b></div>
       <div className="tb-item"><span>{t('ui.doseRate', lang)} <InfoTip k="doseRate" /></span>
-        <b className="num">{e.absorbedUGyH != null ? `${e.absorbedUGyH.toFixed(1)} µGy/h` : t('ui.noData', lang)}</b>
+        {rp ? <b className="num" style={{ color: rp.v / rpBase >= 10 ? STATUS_COLOR.critical : rp.v / rpBase >= 3 ? STATUS_COLOR.warn : undefined }}>{rp.v.toFixed(1)} µGy/h <small>({t('scen.replay', lang)})</small></b>
+          : <b className="num">{e.absorbedUGyH != null ? `${e.absorbedUGyH.toFixed(1)} µGy/h` : t('ui.noData', lang)}</b>}
         {e.absorbedUGyH != null && <ProvTag p="NASA_MEASUREMENT" />}
       </div>
       <div className="tb-item"><span>{t('ui.cumDose', lang)} <InfoTip k="cumDose" /></span>

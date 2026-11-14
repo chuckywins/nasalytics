@@ -112,6 +112,10 @@ export const useApp = create<State>((set) => ({
 
 export const latest = (r: Reading[]) => r[r.length - 1];
 
+/** Aktivite son değişim zamanı (kararlı durum penceresi bunu başlangıç alır) */
+let activityChangedAt = 0;
+useApp.subscribe((s, prev) => { if (s.activity !== prev.activity) activityChangedAt = Date.now(); });
+
 export function evalLatest(readings: Record<IndicatorId, Reading[]>, id: IndicatorId) {
   const r = latest(readings[id]);
   return { reading: r, ...INDICATORS[id].evaluate(r.value, { glucose: r.ctx, activity: useApp.getState().activity }) };
@@ -132,7 +136,8 @@ export function regionStatuses(readings: Record<IndicatorId, Reading[]>): Partia
 export function stableStatus(readings: Record<IndicatorId, Reading[]>, id: IndicatorId): Status {
   const d = INDICATORS[id];
   if (d.mode !== 'stream') return evalLatest(readings, id).status;
-  const since = Date.now() - 30_000, act = useApp.getState().activity;
+  // Yalnızca SON aktivite değişiminden sonraki okumalar: egzersizde alınan 150, dinlenmeye dönünce "kritik" sayılmaz
+  const since = Math.max(Date.now() - 30_000, activityChangedAt), act = useApp.getState().activity;
   return readings[id].filter((r) => r.t >= since).reduce<Status>((w, r) => worst(w, d.evaluate(r.value, { glucose: r.ctx, activity: act }).status), evalLatest(readings, id).status);
 }
 

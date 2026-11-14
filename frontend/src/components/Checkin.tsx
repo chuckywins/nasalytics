@@ -2,6 +2,7 @@
 // AI notu: Claude (Anthropic) yardımıyla yazılmıştır.
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { useScenario } from '../scenario';
 import { useApp, activeAlerts } from '../store';
 import { useCheckin, TASKS, syncToday, doneToday, streak, totalXp, badges, type TaskId, type ReactionResult, type VoiceResult } from '../checkin';
 import type { IndicatorId } from '../engine/types';
@@ -237,7 +238,8 @@ export function RoutineReminder() {
   const [open, setOpen] = useState(false);
   const nextAt = useRef(0);
   const critical = activeAlerts(readings).some((a) => a.status === 'critical' && !acked.includes(a.id));
-  const blocked = critical || !!modal;
+  const scen = useScenario((s) => s.id);
+  const blocked = critical || !!modal || !!scen;
   useEffect(() => {
     if (!sessionStarted) return;
     nextAt.current = Date.now() + FIRST_MS;

@@ -7,6 +7,7 @@ import { AssessmentPanel, RegionPanel, CabinPanel, MissionPanel, TrendChart } fr
 import { SessionGate, AlarmBanner, Vega } from './components/Ai';
 import { RoutineReminder, CheckinModals } from './components/Checkin';
 import { FatigueCam } from './components/FatigueCam';
+import { ScenarioBanner } from './components/Scenario';
 import { useAiAssessment } from './ai';
 import { useApp, regionStatuses, evalLatest } from './store';
 import { worst } from './engine/indicators';
@@ -56,6 +57,7 @@ export default function App() {
         </div>
         <Body3D statuses={statuses} selected={selectedRegion} onSelect={selectRegion} layers={layers} callouts={callouts} />
         <AlarmBanner />
+        <ScenarioBanner />
         <FatigueCam />
         <div className="model-credit">3D: BodyParts3D/Z-Anatomy · CC BY-SA</div>
         <Vega />

@@ -10,6 +10,7 @@ import { grabCameraFrame } from './FatigueCam';
 import { useFatigue } from '../fatigue';
 import { startAlarm, stopAlarm, unlockAudio, speakSentence, stopVoice, beginReply, prewarmVoice } from '../audio';
 import { t } from '../i18n';
+import { useScenario, allCaptions } from '../scenario';
 
 /* ---------------- AI değerlendirme kartı ---------------- */
 export function AiCard() {
@@ -63,6 +64,7 @@ export function SessionGate() {
 /** Alarm anonsu: değer içermez (ekranda) → metin sabit, sesi disk önbelleğinden anında çalar */
 const alarmPhrase = (id: IndicatorId, lang: 'tr' | 'en') => `${t('alarm.critical', lang)}. ${t(`ind.${id}`, lang)}. ${adviceFor(id, 'critical').action[lang].split('.')[0]}.`;
 let prewarmed = '';
+const radPhrase = (lang: 'tr' | 'en') => `${t('alarm.critical', lang)}. ${t('alarm.radiation', lang)}. ${t('alarm.radAction', lang)}.`;
 
 export function AlarmBanner() {
   const { readings, acked, ack, lang, sessionStarted } = useApp();
@@ -70,23 +72,25 @@ export function AlarmBanner() {
   const crit = INDICATOR_ORDER.filter((id) => stableStatus(readings, id) === 'critical')
     .map((id) => ({ id, ...evalLatest(readings, id), labelKey: evalLatest(readings, id).status === 'critical' ? evalLatest(readings, id).labelKey : 'alarm.recent' }));
   const unacked = crit.filter((a) => !acked.includes(a.id));
-  const key = unacked.map((a) => a.id).join(',');
+  const extra = useScenario((s) => s.extra);
+  const ackedExtra = useScenario((s) => s.ackedExtra);
+  const xcrit = extra.filter((x) => x.status === 'critical' && !ackedExtra.includes(x.id));
+  const key = [...unacked.map((a) => a.id), ...xcrit.map((x) => x.id)].join(',');
   const spokenFor = useRef('');
   // Oturum başında tüm alarm anonslarının sesini önceden üret (bir kez; sonrası disk önbelleği)
   useEffect(() => {
-    if (!sessionStarted || prewarmed === lang) return;
+    if (!sessionStarted || prewarmed === lang || location.search.includes('test')) return; // otomatik testler kota harcamasın
     prewarmed = lang;
-    void prewarmVoice(INDICATOR_ORDER.map((id) => alarmPhrase(id, lang)), lang, 'urgent');
+    void prewarmVoice([...INDICATOR_ORDER.map((id) => alarmPhrase(id, lang)), radPhrase(lang)], lang, 'urgent').then(() => prewarmVoice(allCaptions(lang), lang, 'calm'));
   }, [sessionStarted, lang]);
   useEffect(() => {
     if (!sessionStarted) return;
-    if (unacked.length > 0) {
+    if (unacked.length > 0 || xcrit.length > 0) {
       startAlarm();
       if (spokenFor.current !== key) {
         spokenFor.current = key;
-        const a = unacked[0];
         beginReply();
-        speakSentence(alarmPhrase(a.id, lang), lang, 'urgent');
+        speakSentence(xcrit.length ? radPhrase(lang) : alarmPhrase(unacked[0].id, lang), lang, 'urgent');
       }
     } else { stopAlarm(); spokenFor.current = ''; }
   }, [key, sessionStarted, lang]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -96,16 +100,17 @@ export function AlarmBanner() {
     const critIds = crit.map((a) => a.id);
     if (st.acked.some((id) => !critIds.includes(id))) useApp.setState({ acked: st.acked.filter((id) => critIds.includes(id)) });
   });
-  if (unacked.length === 0) return null;
+  if (unacked.length === 0 && xcrit.length === 0) return null;
   return (
     <div className="alarm" role="alert">
       <span className="alarm-icon">✖</span>
       <div className="alarm-txt">
         <b>{t('alarm.critical', lang)}</b>
+        {xcrit.map((x) => <span key={x.id}>{x.title[lang]}: <b className="num">{x.value}</b> · {x.label[lang]}</span>)}
         {unacked.slice(0, 3).map((a) => <span key={a.id}>{t(`ind.${a.id}`, lang)}: <b className="num">{a.reading.value.toFixed(INDICATORS[a.id].decimals)} {INDICATORS[a.id].unit}</b> · {t(a.labelKey, lang)}</span>)}
         {unacked.length > 3 && <span className="muted">+{unacked.length - 3} {t('alarm.more', lang)}</span>}
       </div>
-      <button className="ack" onClick={() => { ack(unacked.map((a) => a.id) as IndicatorId[]); stopAlarm(); stopVoice(); }}>{t('alarm.ack', lang)}</button>
+      <button className="ack" onClick={() => { ack(unacked.map((a) => a.id) as IndicatorId[]); useScenario.setState((s) => ({ ackedExtra: [...s.ackedExtra, ...xcrit.map((x) => x.id)] })); stopAlarm(); stopVoice(); }}>{t('alarm.ack', lang)}</button>
     </div>
   );
 }

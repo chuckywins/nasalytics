@@ -528,15 +528,15 @@ async def tts_stream(req: Request):
     from fastapi.responses import Response
     if not GEMINI_KEYS:
         raise HTTPException(503, "GEMINI_API_KEYS not set")
-    guard(req)
     body = await req.json()
     text = str(body.get("text", "")).strip()[:1500]
     if not text:
         raise HTTPException(400, "empty")
     style = TTS_STYLE["urgent" if body.get("style") == "urgent" else "calm"]
     path = TTS_CACHE_DIR / (hashlib.sha1(f"{GEMINI_VOICE}|{style}|{text}".encode("utf-8")).hexdigest() + ".pcm")
-    if path.exists():
+    if path.exists():  # önbellek isabeti hız sınırına sayılmaz (maliyet yok)
         return Response(path.read_bytes(), media_type="application/octet-stream", headers={"X-TTS-Model": "cache"})
+    guard(req)
     hc = httpx.AsyncClient(timeout=60)
     up, tag = None, ""
     for ki, key in enumerate(GEMINI_KEYS):

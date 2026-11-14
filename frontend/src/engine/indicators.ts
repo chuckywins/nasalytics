@@ -28,10 +28,11 @@ const bands = (list: [number, Status, string][]) => (v: number) => {
 export const INDICATORS: Record<IndicatorId, IndicatorDef> = {
   heartRate: {
     id: 'heartRate', mode: 'stream', unit: 'bpm', regions: ['heart'], decimals: 0,
-    // Dinlenme: AHA 60–100. Egzersiz/EVA: AHA hedef nabız %50–85 × maks. (≈220−yaş; 40 yaş ≈ 180) → ~170'e kadar beklenen.
+    // Dinlenme: AHA 60–100. Egzersiz/EVA: AHA hedef bölge %50–85 × tahmini maks. (≈220−yaş). Yaş 40 VARSAYIMI → maks ≈180,
+    // %85 ≈ 153: ≤153 "efor için beklenen"; 153–180 hedefin üstü (izle); ≥180 tahmini maksimumun üstü (uyarı); ≥200 kritik (VARSAYIM).
     evaluate: (v: number, o?: EvalOpts) => (o?.activity && o.activity !== 'rest'
-      ? bands([[40, 'critical', 'band.bradySevere'], [50, 'warn', 'band.brady'], [170, 'ok', 'band.exerciseOk'],
-          [185, 'watch', 'band.exerciseHigh'], [200, 'warn', 'band.tachyHigh'], [Infinity, 'critical', 'band.tachySevere']])(v)
+      ? bands([[40, 'critical', 'band.bradySevere'], [50, 'warn', 'band.brady'], [153, 'ok', 'band.exerciseOk'],
+          [180, 'watch', 'band.exerciseHigh'], [200, 'warn', 'band.tachyHigh'], [Infinity, 'critical', 'band.tachySevere']])(v)
       : bands([[40, 'critical', 'band.bradySevere'], [50, 'warn', 'band.brady'], [60, 'watch', 'band.lowNormal'],
           [100, 'ok', 'band.normal'], [130, 'watch', 'band.tachy'], [150, 'warn', 'band.tachyHigh'], [Infinity, 'critical', 'band.tachySevere']])(v)),
     thresholdProvenance: 'CLINICAL_GUIDELINE', sources: [S.ahaHR, S.ahaTarget, S.nasaCardio],
