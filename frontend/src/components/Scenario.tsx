@@ -14,9 +14,9 @@ export function ScenarioList() {
       {SCENARIOS.map((id) => {
         const m = SCEN_META[id];
         return (
-          <button key={id} className={`scen-item ${cur === id ? 'on' : ''}`} onClick={() => (cur === id ? stopScenario() : startScenario(id))}>
-            <span className="scen-t">{cur === id ? '■' : '▶'} {m.title[lang]} <ProvTag p={m.prov} /></span>
-            <span className="muted">{m.desc[lang]}</span>
+          <button key={id} className={`scen-item ${cur === id ? 'on' : ''}`} title={m.desc[lang]} onClick={() => (cur === id ? stopScenario() : startScenario(id))}>
+            <span className="scen-t">{cur === id ? '■' : '▶'} {m.title[lang]}</span>
+            <ProvTag p={m.prov} />
           </button>
         );
       })}

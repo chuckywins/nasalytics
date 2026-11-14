@@ -127,3 +127,12 @@ Her adım buraya kısa notla eklenir (en yeni en altta).
 - Düzeltme: şok kısmi yerçekimi adımında "ağrı yaparsa kaldırma (Sınıf 3: zarar)" yanlıştı → AHA 2024: sırtüstüne geri al (2b), açı ≈30°–45°, bilinç azalmışsa derlenme pozisyonu (2a).
 - Tansiyon: "en az 1 dk bekle, tekrar ölç"; terimler AHA 2025 ("şiddetli hipertansiyon" / "hipertansif acil durum"). Hipoglisemi: ADA 15 g ve AHA ≥20 g ayrı kaynaklarla; yutamayana ağızdan verilmez; 10 dk'da düzelmezse üst düzey.
 - Sunucu: model metnindeki tüm doz kalıpları artık siliniyor (izin listesi kaldırıldı; doz yalnız kütüphane/kit satırından gelir).
+
+## 2026-11-15 00:35 — VEGA belirti bildirimi (CMO + mürettebat) ve 5 yeni senaryo (Fable planı)
+- Kullanıcı: astronot VEGA'ya "kendimi iyi hissetmiyorum / başım ağrıyor / midem bulanıyor / göğsüm ağrıyor" derse, merkeze ayrıca bildirmesine gerek kalmadan VEGA CMO'ya ve mürettebata bildirsin.
+- Algılama ayrı Haiku çağrısı (report_symptom / no_symptom zorunlu seçim, ucuz ön süzgeçle), ses akışına paralel → ilk ses gecikmesi değişmedi. Test: "başım ağrıyor" → bildirim; "başım ağrırsa ne yapmalıyım" ve "başım ağrımıyor" → bildirim YOK; "nabzımı 150 güncelle, midem de bulanıyor" → kayıt + bildirim.
+- Onay deterministik: model "bildirdim" demez; olay gelince istemci sabit, önbellekli cümleyi söyler ("Bunu mürettebat sağlık görevlisine ve ekibe bildirdim").
+- Taşıma: belirti anlık duruma (snapshot.reportedSymptoms) girer → CMO'da anında açılır bildirim + kart rozeti + müdahale panelinde "Astronot bildirimi" kutusu, aday kart (göğüs ağrısı/solunum/bulantı/ağrı/alerji) ve AI planı. Diğer astronot cihazlarına sunucu üzerinden kısa "notice". Yer kontrolü açılır bildirim almaz; veri kartta tek yön gecikmeyle görünür.
+- Yeni senaryolar (hepsi SİMÜLE, belirti VEGA ile aynı kanaldan): ağır alerji (ISS 1.101), düşük kan şekeri (ADA/AHA), çok yüksek tansiyon + belirti (AHA 2025), kabin basıncı düşüşü (irtifa kartı; varsayımsal kaçak), uzay adaptasyon sendromu 2. gün (OCHMO-TB-033: %50–70).
+- Motor düzeltmeleri: nokta ölçümler (tansiyon, şeker) SIMULATED okuma ile sürülür; Durdur tansiyon/şeker/kabin/görev gününü geri yükler (test edildi); kabin basıncı hedefi eklendi.
+- Küçük düzeltmeler: AI aciliyet değeri dizi gelirse normalize; senaryo değişince sabitlenmiş kartlar temizlenir; senaryo listesi 5 sütun (1536×700'de 10 senaryo görünür).

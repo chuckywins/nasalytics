@@ -8,7 +8,7 @@ import { SessionGate, AlarmBanner, Vega } from './components/Ai';
 import { RoutineReminder, CheckinModals } from './components/Checkin';
 import { FatigueCam } from './components/FatigueCam';
 import { ScenarioBanner } from './components/Scenario';
-import { CrewView } from './components/CrewView';
+import { CrewView, CrewNotices } from './components/CrewView';
 import { useTelemetry, startTelemetry } from './telemetry';
 
 let telStarted = false;
@@ -72,6 +72,7 @@ export default function App() {
         <Body3D statuses={statuses} selected={selectedRegion} onSelect={selectRegion} layers={layers} callouts={callouts} />
         <AlarmBanner />
         <ScenarioBanner />
+        <CrewNotices />
         <FatigueCam />
         <div className="model-credit">3D: BodyParts3D/Z-Anatomy · CC BY-SA</div>
         <Vega />

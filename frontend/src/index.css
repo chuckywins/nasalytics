@@ -341,8 +341,8 @@ a { color: var(--accent); }
 .replay svg { width: 100%; height: 70px; display: block; background: rgba(255,255,255,.02); }
 .replay-h, .replay-f { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; flex-wrap: wrap; }
 .replay-ev { font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.scen-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; overflow: auto; }
-.scen-item { text-align: left; display: flex; flex-direction: column; gap: 2px; padding: 5px 7px; font-size: 12px; line-height: 1.3; }
+.scen-list { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; overflow: auto; }
+.scen-item { text-align: left; display: flex; flex-direction: column; align-items: flex-start; gap: 3px; padding: 5px 7px; font-size: 12px; line-height: 1.25; }
 .scen-item.on { border-color: var(--accent); }
 .scen-t { font-weight: 600; font-size: 12px; }
 .small { font-size: 12px; }
@@ -406,3 +406,11 @@ a { color: var(--accent); }
 .tag-unverified { color: #e3a33a; border: 1px solid #e3a33a; border-radius: 3px; padding: 0 4px; font-size: 11px; }
 .intv-cond { color: var(--accent); font-weight: 600; }
 .tag-kit { color: var(--accent); border: 1px solid var(--accent); border-radius: 3px; padding: 0 4px; font-size: 11px; }
+.sym-toasts { position: fixed; top: 64px; left: 50%; transform: translateX(-50%); z-index: 40; display: flex; flex-direction: column; gap: 6px; width: min(720px, calc(100vw - 32px)); }
+.sym-toasts.crew { top: 58px; }
+.sym-toast { background: rgba(10,22,32,.97); border: 1px solid #e3a33a; border-left: 4px solid #e3a33a; border-radius: 6px; padding: 8px 12px; font-size: 13px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; box-shadow: 0 4px 18px rgba(0,0,0,.5); }
+.sym-toast button { margin-left: auto; font-size: 12px; }
+.sym-toast button.ghost { margin-left: 0; background: none; border: none; color: var(--ink); cursor: pointer; }
+.cc-sym { color: #e3a33a; background: rgba(227,163,58,.1); padding: 3px 8px; border-radius: 4px; }
+.intv-reported { border: 1px solid #e3a33a; border-radius: 6px; padding: 6px 10px; background: rgba(227,163,58,.06); display: flex; flex-direction: column; gap: 2px; }
+.sym-toasts:not(.crew) { top: auto; bottom: 16px; left: 16px; transform: none; width: min(600px, calc(100vw - 32px)); }

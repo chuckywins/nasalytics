@@ -209,7 +209,9 @@ export function allDrugs(): Record<string, { drug: Drug; protocol: ProtocolId; c
 }
 
 /** Deterministik eşleştirici: gösterilen anlık durumdan ADAY kartlar (CMO belirtileri doğrular). Çevrimdışı çalışır. */
-export interface SnapLite { activity: string; gravity_g: number; cabinPsia?: number; indicators: { id: string; value: number; status: string }[]; extra: { id: string; status: string }[] }
+export interface SnapLite { activity: string; gravity_g: number; cabinPsia?: number; indicators: { id: string; value: number; status: string }[]; extra: { id: string; status: string }[]; symptoms?: { category: string; quote: string }[] }
+/** Astronot bildirimi kategorisi → aday kart (tanı değil; CMO doğrular) */
+const SYMPTOM_CARD: Record<string, ProtocolId> = { chestPain: 'chestPain', breathing: 'breathing', nausea: 'nausea', pain: 'pain', allergy: 'allergy' };
 export function matchProtocols(s: SnapLite): { id: ProtocolId; reason: L }[] {
   const v = (id: string) => s.indicators.find((x) => x.id === id);
   const st = (id: string) => v(id)?.status ?? 'ok';
@@ -223,6 +225,10 @@ export function matchProtocols(s: SnapLite): { id: ProtocolId; reason: L }[] {
   if (s.extra.some((x) => x.id === 'dcs')) out.push({ id: 'dcs', reason: { tr: 'DCS belirti bildirimi', en: 'DCS symptom report' } });
   if (st('sleepHours') === 'warn') out.push({ id: 'insomnia', reason: { tr: `Uyku ${v('sleepHours')?.value} sa`, en: `Sleep ${v('sleepHours')?.value} h` } });
   if (st('cabinCO2') === 'warn' || st('cabinCO2') === 'critical') out.push({ id: 'pain', reason: { tr: `Kabin CO₂ ${v('cabinCO2')?.value} mmHg (baş ağrısı aralığı)`, en: `Cabin CO₂ ${v('cabinCO2')?.value} mmHg (headache range)` } });
+  for (const x of s.symptoms ?? []) {
+    const id = SYMPTOM_CARD[x.category];
+    if (id && !out.some((o) => o.id === id)) out.push({ id, reason: { tr: `Astronot bildirimi (VEGA): “${x.quote}”`, en: `Astronaut report (VEGA): “${x.quote}”` } });
+  }
   if (s.cabinPsia != null && s.cabinPsia < 10.9) out.push({ id: 'altitude', reason: { tr: `Kabin ${s.cabinPsia} psia < 10,9 (≈8000 ft)`, en: `Cabin ${s.cabinPsia} psia < 10.9 (≈8000 ft)` } });
   return out;
 }

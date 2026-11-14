@@ -1,13 +1,13 @@
 // Mürettebat sağlık görevlisi (CMO) ve yer kontrol görünümleri. Her kart bir astronot cihazıdır.
 // Yer kontrol: veri "şimdi − tek yön gecikme" anından gösterilir; henüz ulaşmamış veri için geri sayım. Gecikme sıkıştırılırsa yazılır.
 // AI notu: Claude (Anthropic) yardımıyla yazılmıştır.
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useApp } from '../store';
 import { t } from '../i18n';
 import { ENV_LABEL, type EnvId } from '../engine/environment';
 import { statusRank } from '../engine/indicators';
 import type { Escalation, Status } from '../engine/types';
-import { useTelemetry, delayMsFor, type Packet } from '../telemetry';
+import { useTelemetry, useNotices, delayMsFor, type Packet } from '../telemetry';
 import { STATUS_COLOR, STATUS_GLYPH, ProvTag } from './Hud';
 import { InterventionPanel } from './Intervention';
 
@@ -47,7 +47,8 @@ function CrewCard({ k, list, now, sel, onSel }: { k: string; list: Packet[]; now
       <div className="cc-meta muted small num">
         {t('view.dataAge', lang)}: {fmtDur(now - shown.t)}{delay > 0 && <> · {t('view.delay', lang)} {fmtDur(delay)}{compress ? ` (${t('view.compressed', lang)})` : ''}</>}
       </div>
-      {ui.alarm.length > 0 && <div className="cc-alarm">✖ {t('alarm.critical', lang)}: {ui.alarm.map((id) => (id === 'radiation' ? t('alarm.radiation', lang) : t(`ind.${id}`, lang))).join(', ')}</div>}
+      {ui.alarm.length > 0 && <div className="cc-alarm">✖ {t('alarm.critical', lang)}: {ui.alarm.map((id) => ui.extra.find((x) => x.id === id)?.title[lang] ?? t(`ind.${id}`, lang)).join(', ')}</div>}
+      {(s.reportedSymptoms ?? []).length > 0 && <div className="cc-sym small">🔔 {t('iv.reported', lang)}: “{s.reportedSymptoms[s.reportedSymptoms.length - 1].quote}”</div>}
       {ui.scenario && <div className="cc-scen"><b className="scen-tag">{t('scen.tag', lang)}</b> {ui.scenario.title[lang]}{ui.scenario.caption && <div className="muted small">{ui.scenario.caption[lang]}</div>}</div>}
       <div className="cc-grid">
         <span className="cc-l">{t('ind.systolic', lang).split(' ')[0]}</span><b className="num">{ui.bp}</b>
@@ -76,9 +77,20 @@ export function CrewView() {
   const keys = Object.keys(buf).filter((k) => buf[k].length && !(k.startsWith('local:') && buf[k.slice(6)]?.length)).sort((a, b) => Number(a.startsWith('local:')) - Number(b.startsWith('local:')) || a.localeCompare(b));
   // Seçili astronot: kullanıcı seçimi; yoksa en ciddi durumdaki (gösterilen pakete göre)
   const shownOf = (k: string) => { const l = buf[k]; const d = delayMsFor(l[l.length - 1], role, compress); return [...l].reverse().find((p) => p.t <= now - d); };
-  const sevOf = (k: string) => { const p = shownOf(k); return p ? Math.max(0, ...p.snap.indicators.map((x) => statusRank(x.status as Status))) : -1; };
+  // Belirti bildirimi de seçimi etkiler: yaşamsal değerleri normal ama "kendimi iyi hissetmiyorum" diyen astronot öne gelir
+  const sevOf = (k: string) => { const p = shownOf(k); return p ? Math.max(0, ...p.snap.indicators.map((x) => statusRank(x.status as Status)), (p.snap.reportedSymptoms ?? []).length ? statusRank('warn') : 0) : -1; };
   const selKey = sel && keys.includes(sel) ? sel : [...keys].sort((a, b) => sevOf(b) - sevOf(a))[0];
   const selShown = selKey ? shownOf(selKey) : undefined;
+  // CMO bildirimi: GÖSTERİLEN pakette yeni belirti → üstte kalıcı bildirim (yer kontrolüne bildirim yok; veri gecikmeli kartta görünür)
+  const seen = useRef<Set<string> | null>(null);
+  const [toasts, setToasts] = useState<{ id: string; key: string; crewId: string; quote: string; category: string }[]>([]);
+  useEffect(() => {
+    if (role !== 'cmo') return;
+    const all = keys.flatMap((k) => (shownOf(k)?.snap.reportedSymptoms ?? []).map((x) => ({ ...x, key: k, crewId: buf[k][0].crewId })));
+    if (!seen.current) { seen.current = new Set(all.filter((x) => x.minutesAgo >= 1).map((x) => x.id)); } // açılışta eski bildirimleri tekrar çalma
+    const fresh = all.filter((x) => !seen.current!.has(x.id) && x.minutesAgo < 1); // yalnızca yeni (<~1 dk) bildirim açılır
+    if (fresh.length) { fresh.forEach((x) => seen.current!.add(x.id)); setToasts((ts) => [...ts, ...fresh.map((x) => ({ id: x.id, key: x.key, crewId: x.crewId, quote: x.quote, category: x.category }))].slice(-3)); }
+  }); // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <div className="crew-view">
       <div className="cv-h">
@@ -87,6 +99,10 @@ export function CrewView() {
         <span className="muted small">{t(role === 'cmo' ? 'view.cmoNote' : 'view.groundNote', lang)}</span>
         {role === 'ground' && <label className="cv-comp small"><input type="checkbox" checked={compress} onChange={(e) => setCompress(e.target.checked)} /> {t('view.compress', lang)}</label>}
       </div>
+      {toasts.length > 0 && <div className="sym-toasts" role="status" aria-live="assertive">{toasts.map((x) => (
+        <div key={x.id} className="sym-toast"><b>🔔 {x.crewId} · {t('notice.vega', lang)}</b> “{x.quote}” <span className="muted small">({t(`sym.${x.category}`, lang)})</span>
+          <button onClick={() => { setSel(x.key); setToasts((ts) => ts.filter((y) => y.id !== x.id)); }}>{t('notice.view', lang)}</button>
+          <button className="ghost" aria-label={t('notice.dismiss', lang)} onClick={() => setToasts((ts) => ts.filter((y) => y.id !== x.id))}>✕</button></div>))}</div>}
       <div className="cv-body">
         <div className="cv-grid">
           {keys.length === 0 ? <p className="muted">{t('view.empty', lang)}</p> : keys.map((k) => <CrewCard key={k} k={k} list={buf[k]} now={now} sel={k === selKey} onSel={() => setSel(k)} />)}
@@ -97,3 +113,18 @@ export function CrewView() {
   );
 }
 
+
+/** Diğer mürettebat cihazı (astronot görünümü): bir ekip arkadaşı VEGA'ya belirti bildirince kısa bildirim */
+export function CrewNotices() {
+  const lang = useApp((s) => s.lang);
+  const { list, dismiss } = useNotices();
+  if (!list.length) return null;
+  return (
+    <div className="sym-toasts crew" role="status" aria-live="polite">
+      {list.map((n) => (
+        <div key={n.id} className="sym-toast"><b>🔔 {n.crewId} · {t('notice.crew', lang)}</b> “{n.quote}” <span className="muted small">({t(`sym.${n.category}`, lang)} · {t('notice.cmoInformed', lang)})</span>
+          <button className="ghost" aria-label={t('notice.dismiss', lang)} onClick={() => dismiss(n.id)}>✕</button></div>
+      ))}
+    </div>
+  );
+}

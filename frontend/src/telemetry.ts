@@ -9,13 +9,14 @@ import { useApp, activeAlerts, evalLatest } from './store';
 import { INDICATOR_ORDER, INDICATORS } from './engine/indicators';
 import { useScenario, SCEN_META, type L } from './scenario';
 import type { Escalation, Status } from './engine/types';
+import { setSymptomHook, type SymptomReport } from './symptoms';
 
 export type Role = 'astronaut' | 'cmo' | 'ground';
 export interface UiExtra {
   labels: Record<string, string>; decimals: Record<string, number>;
   alarm: string[]; ai: { headline: string; escalate?: Escalation; lang: string } | null;
   scenario: { title: L; caption: L | null } | null;
-  extra: { title: L; value: string; label: L; status: Status; escalate: Escalation }[];
+  extra: { id: string; title: L; value: string; label: L; status: Status; escalate: Escalation }[];
   bp: string;
 }
 export interface Packet { crewId: string; t: number; snap: ReturnType<typeof buildSnapshot>; ui: UiExtra; local?: boolean }
@@ -55,11 +56,21 @@ function makePacket(): Packet {
       labels, decimals, alarm: [...crit, ...sc.extra.filter((x) => x.status === 'critical' && !sc.ackedExtra.includes(x.id)).map((x) => x.id)],
       ai: a.ai.data ? { headline: a.ai.data.headline, escalate: a.ai.data.escalate, lang: a.lang } : null,
       scenario: sc.id ? { title: SCEN_META[sc.id].title, caption: sc.caption } : null,
-      extra: sc.extra.map((x) => ({ title: x.title, value: x.value, label: x.label, status: x.status, escalate: x.escalate })),
+      extra: sc.extra.map((x) => ({ id: x.id, title: x.title, value: x.value, label: x.label, status: x.status, escalate: x.escalate })),
       bp: `${evalLatest(a.readings, 'systolic').reading.value.toFixed(0)}/${evalLatest(a.readings, 'diastolic').reading.value.toFixed(0)}`,
     },
   };
 }
+
+/** Mürettebat bildirimi: bir astronot belirti bildirdiğinde DİĞER astronot cihazlarına kısa uyarı (CMO paketten görür) */
+export interface Notice { id: string; crewId: string; t: number; category: SymptomReport['category']; quote: string }
+export const useNotices = create<{ list: Notice[]; dismiss: (id: string) => void }>((set) => ({
+  list: [], dismiss: (id) => set((s) => ({ list: s.list.filter((x) => x.id !== id) })),
+}));
+setSymptomHook((r) => {
+  const n: Notice = { id: r.id, crewId: useTelemetry.getState().crewId, t: r.t, category: r.category, quote: r.quote };
+  if (ws?.readyState === 1) ws.send(JSON.stringify({ type: 'notice', notice: n }));
+});
 
 let ws: WebSocket | null = null;
 let wsRole = '';
@@ -76,7 +87,17 @@ function connect() {
   s.onclose = () => { if (ws === s) { useTelemetry.setState({ connected: false }); ws = null; } };
   s.onerror = () => { /* yerel modda sürer */ };
   // Varışta yeniden damgala: laptoplar arası saat farkı gecikme hesabını bozmasın (ağ gecikmesi ~ms, ihmal)
-  s.onmessage = (ev) => { try { const p = JSON.parse(ev.data) as Packet; if (p?.crewId && p.snap) push(p.crewId, { ...p, t: Date.now() }); } catch { /* yok */ } };
+  s.onmessage = (ev) => {
+    try {
+      const d = JSON.parse(ev.data);
+      if (d?.type === 'notice' && d.notice?.id) { // diğer mürettebat cihazı: kısa bildirim (kendi gönderdiğimiz gelmez)
+        const n = d.notice as Notice;
+        if (n.crewId !== useTelemetry.getState().crewId) useNotices.setState((st) => ({ list: [...st.list.filter((x) => x.id !== n.id), { ...n, t: Date.now() }].slice(-3) }));
+        return;
+      }
+      const p = d as Packet; if (p?.crewId && p.snap) push(p.crewId, { ...p, t: Date.now() });
+    } catch { /* yok */ }
+  };
 }
 
 /** Uygulama boyunca bir kez: 2 sn'de bir yayın + bağlantı bakımı */

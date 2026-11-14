@@ -20,7 +20,7 @@ interface AiRank { ranked: { id: ProtocolId; why: string }[]; plan: AiPlanItem[]
 
 export function snapLite(p: Packet): SnapLite {
   const s = p.snap;
-  return { activity: s.activity, gravity_g: s.gravity_g, cabinPsia: s.cabin?.pressurePsia, indicators: s.indicators.map((x) => ({ id: x.id, value: x.value, status: x.status })), extra: (s.scenario?.extraAlerts ?? []).map((x) => ({ id: x.id, status: x.status })) };
+  return { activity: s.activity, gravity_g: s.gravity_g, cabinPsia: s.cabin?.pressurePsia, indicators: s.indicators.map((x) => ({ id: x.id, value: x.value, status: x.status })), extra: (s.scenario?.extraAlerts ?? []).map((x) => ({ id: x.id, status: x.status })), symptoms: (s.reportedSymptoms ?? []).map((x) => ({ category: x.category, quote: x.quote })) };
 }
 
 function libraryForAi() {
@@ -51,13 +51,18 @@ export function InterventionPanel({ p, role, compress }: { p: Packet; role: Role
   // Sabitleme: eşikte salınan değer kartı aç-kapa yapmasın → eşleşen kart 60 sn ekranda kalır
   const latch = useRef<Record<string, { at: number; m: (typeof fresh)[number] }>>({});
   const nowMs = Date.now();
+  const scenKey = p.ui.scenario?.title.en ?? '';
+  const lastScen = useRef<Record<string, string>>({});
+  if (lastScen.current[p.crewId] !== undefined && lastScen.current[p.crewId] !== scenKey) for (const k of Object.keys(latch.current)) if (k.startsWith(`${p.crewId}:`)) delete latch.current[k];
+  lastScen.current[p.crewId] = scenKey;
   for (const m of fresh) latch.current[`${p.crewId}:${m.id}`] = { at: nowMs, m };
   const matched = Object.entries(latch.current).filter(([k, v]) => k.startsWith(`${p.crewId}:`) && nowMs - v.at < 60_000).map(([, v]) => v.m);
   const [symptoms, setSymptoms] = useState('');
   const [sentSymptoms, setSentSymptoms] = useState('');
   const [confirmed, setConfirmed] = useState<Record<string, boolean[]>>({});
   const ticked = Object.entries(confirmed).filter(([k]) => k.startsWith(`${p.crewId}:`)).flatMap(([k, arr]) => { const pid = k.split(':')[1] as ProtocolId; return arr.map((b, i) => (b ? PROTOCOLS[pid].confirm[i].en : '')).filter(Boolean); });
-  const sig = `${p.crewId}|${matched.map((m) => m.id).sort().join(',')}|${sentSymptoms}|${ticked.join(',')}|${lang}`;
+  const reported = p.snap.reportedSymptoms ?? [];
+  const sig = `${p.crewId}|${matched.map((m) => m.id).sort().join(',')}|${sentSymptoms}|${ticked.join(',')}|${reported.map((x) => x.id).join(',')}|${lang}`;
   const [ai, setAi] = useState<AiRank | null>(null);
   const [aiErr, setAiErr] = useState('');
   const [approved, setApproved] = useState<Record<string, number>>({});
@@ -67,12 +72,12 @@ export function InterventionPanel({ p, role, compress }: { p: Packet; role: Role
 
   // AI: durum imzası değişince (kart kümesi, belirtiler), 2 sn debounce
   useEffect(() => {
-    if (!matched.length && !sentSymptoms && !ticked.length) { setAi(null); return; }
+    if (!matched.length && !sentSymptoms && !ticked.length && !reported.length) { setAi(null); return; }
     const h = setTimeout(async () => {
       ctrl.current?.abort(); const c = new AbortController(); ctrl.current = c;
       try {
         const r = await fetch(`${API}/api/interventions`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: c.signal,
-          body: JSON.stringify({ lang, role, snapshot: p.snap, candidates: matched.map((m) => m.id), symptoms: sentSymptoms, confirmedSigns: ticked, library: libraryForAi(), kit: ISS_KIT.map((k) => ({ id: k.id, name: k.name, route: k.route })) }) });
+          body: JSON.stringify({ lang, role, snapshot: p.snap, candidates: matched.map((m) => m.id), symptoms: sentSymptoms, reported: reported.map((x) => ({ category: x.category, quote: x.quote, minutesAgo: x.minutesAgo })), confirmedSigns: ticked, library: libraryForAi(), kit: ISS_KIT.map((k) => ({ id: k.id, name: k.name, route: k.route })) }) });
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         const j = await r.json();
         setAi({ ...j.result, at: Date.now() }); setAiErr('');
@@ -102,6 +107,7 @@ export function InterventionPanel({ p, role, compress }: { p: Packet; role: Role
           <button type="submit">{t('iv.analyze', lang)}</button>
         </form>
       )}
+      {reported.length > 0 && <div className="intv-reported"><b>🔔 {t('iv.reported', lang)}</b>{reported.slice().reverse().map((x) => <div key={x.id} className="small">“{x.quote}” <span className="muted">· {t(`sym.${x.category}`, lang)} · {x.minutesAgo} {t('iv.minAgo', lang)}{x.source === 'scenario' ? ` · ${t('scen.tag', lang)}` : ''}</span></div>)}</div>}
       {(p.snap.commDelayOneWaySec?.[0] ?? 0) >= 60 && <div className="intv-auto small">⏱ {t('iv.autonomy', lang)} <a href="https://www.nasa.gov/wp-content/uploads/2023/07/ochmo-tb-033-spaceflight-experience-medical-care-rev-c.pdf" target="_blank" rel="noreferrer">OCHMO-TB-033 ↗</a></div>}
       {aiErr && <div className="muted small">{t('iv.aiOffline', lang)}</div>}
       {ai && (ai.summary || ai.plan.length > 0) && (

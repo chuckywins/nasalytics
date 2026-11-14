@@ -22,6 +22,8 @@ interface State {
   /** stream göstergeler için simülatör hedefi (senaryolar bunu değiştirir) */
   target: Partial<Record<IndicatorId, number>>;
   cabin: { o2Pct: number; pressurePsia: number };
+  /** Senaryo kabin hedefi (yoksa 14,7 psia'ya döner) */
+  cabinTarget: { pressurePsia?: number };
   selectedRegion: Region | null;
   selectedIndicator: IndicatorId;
   activity: Activity;
@@ -70,6 +72,7 @@ export const useApp = create<State>((set) => ({
   readings: init(),
   target: {},
   cabin: { o2Pct: 21.0, pressurePsia: 14.7 },
+  cabinTarget: {},
   selectedRegion: null,
   selectedIndicator: 'heartRate',
   activity: 'rest',
@@ -105,7 +108,7 @@ export const useApp = create<State>((set) => ({
       const drift = (goal - last.value) * 0.15 + (Math.random() - 0.5) * s.noise;
       next[id] = [...st.readings[id], { t: now, value: clamp(last.value + drift, s.min, s.max), provenance: 'SIMULATED' as const }].slice(-HISTORY);
     }
-    const cabin = { o2Pct: clamp(st.cabin.o2Pct + (21 - st.cabin.o2Pct) * 0.1 + (Math.random() - 0.5) * 0.05, 15, 30), pressurePsia: clamp(st.cabin.pressurePsia + (14.7 - st.cabin.pressurePsia) * 0.1 + (Math.random() - 0.5) * 0.02, 4, 15.2) };
+    const cabin = { o2Pct: clamp(st.cabin.o2Pct + (21 - st.cabin.o2Pct) * 0.1 + (Math.random() - 0.5) * 0.05, 15, 30), pressurePsia: clamp(st.cabin.pressurePsia + ((st.cabinTarget.pressurePsia ?? 14.7) - st.cabin.pressurePsia) * 0.1 + (Math.random() - 0.5) * 0.02, 4, 15.2) };
     return { readings: next, cabin };
   }),
 }));

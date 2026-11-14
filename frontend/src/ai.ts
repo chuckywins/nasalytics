@@ -10,6 +10,7 @@ import { t } from './i18n';
 import { useCheckin, doneToday, dayKey } from './checkin';
 import { useFatigue } from './fatigue';
 import { useScenario } from './scenario';
+import { recentSymptoms, useSymptoms, type SymptomCategory } from './symptoms';
 
 const API = import.meta.env.VITE_API_BASE ?? '';
 
@@ -38,6 +39,8 @@ export function buildSnapshot() {
       return f.enabled && f.phase === 'running' ? { onDevice: true, perclos: f.perclos, blinkPerMin: f.blinkPerMin, yawns: f.yawns, visibleExpression: f.face ? f.expression : 'no face', longEyeClosureLast2min: !!(f.lastLongClosureAt && Date.now() - f.lastLongClosureAt < 120000), cueStatus: f.status, note: 'PERCLOS thresholds are assumptions; cue not diagnosis' } : null;
     })(),
     cabin: { o2Pct: +s.cabin.o2Pct.toFixed(1), pressurePsia: +s.cabin.pressurePsia.toFixed(2) },
+    reportedSymptoms: recentSymptoms(), // astronotun kendi bildirimi (VEGA/senaryo); tanı değil
+
     scenario: (() => {
       const sc = useScenario.getState();
       if (!sc.id) return null;
@@ -71,7 +74,8 @@ export function useAiAssessment() {
   const activity = useApp((s) => s.activity);
   const env = useApp((s) => s.env);
   const extraSig = useScenario((s) => s.extra.map((x) => `${x.id}:${x.status}`).join('|'));
-  const sig = extraSig + '#' + INDICATOR_ORDER.map((id) => [id, stableStatus(readings, id)] as const).filter(([, s]) => s !== 'ok' && s !== 'unknown').map(([id, s]) => `${id}:${s}`).join('|') + `#${lang}#${activity}#${env}`;
+  const symSig = useSymptoms((s) => s.list.map((x) => x.id).join(','));  // yeni belirti bildirimi → yeni AI değerlendirmesi
+  const sig = extraSig + '#' + symSig + '#' + INDICATOR_ORDER.map((id) => [id, stableStatus(readings, id)] as const).filter(([, s]) => s !== 'ok' && s !== 'unknown').map(([id, s]) => `${id}:${s}`).join('|') + `#${lang}#${activity}#${env}`;
   const ctrl = useRef<AbortController | null>(null);
   useEffect(() => {
     const st = useApp.getState();
@@ -84,6 +88,8 @@ export function useAiAssessment() {
         const r = await fetch(`${API}/api/assess`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lang, snapshot: buildSnapshot() }), signal: c.signal });
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         const j = await r.json();
+        const esc0 = Array.isArray(j.assessment?.escalate) ? j.assessment.escalate[0] : j.assessment?.escalate;
+        if (j.assessment) j.assessment.escalate = (['self', 'crew', 'ground'] as const).find((x) => x === esc0);
         useApp.getState().setAi({ status: 'ok', data: j.assessment as AiAssessment, at: Date.now(), latencyMs: j.latencyMs, model: j.model });
       } catch (e) {
         if ((e as Error).name !== 'AbortError') useApp.getState().setAi({ status: 'error', error: String(e) });
@@ -95,7 +101,8 @@ export function useAiAssessment() {
 
 /** VEGA: SSE akışı; her cümle tamamlandıkça onSentence çağrılır (hemen seslendirme için). */
 export interface VegaAction { indicator: string; value: number; glucose_context?: 'fasting' | 'postprandial'; }
-export async function askVega(text: string, history: { role: 'user' | 'assistant'; content: string }[], onDelta: (full: string) => void, onSentence: (s: string) => void, signal?: AbortSignal, image?: string | null, onAction?: (a: VegaAction) => void) {
+export interface VegaSymptom { category: SymptomCategory; quote: string }
+export async function askVega(text: string, history: { role: 'user' | 'assistant'; content: string }[], onDelta: (full: string) => void, onSentence: (s: string) => void, signal?: AbortSignal, image?: string | null, onAction?: (a: VegaAction) => void, onSymptom?: (x: VegaSymptom) => void) {
   const { lang } = useApp.getState();
   const r = await fetch(`${API}/api/vega`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lang, text, history, snapshot: buildSnapshot(), image: image ?? undefined }), signal });
   if (!r.ok || !r.body) throw new Error(`HTTP ${r.status}`);
@@ -115,6 +122,7 @@ export async function askVega(text: string, history: { role: 'user' | 'assistant
       const d = JSON.parse(data);
       if (d.error) throw new Error(d.error);
       if (d.action) { onAction?.(d.action as VegaAction); continue; }
+      if (d.symptom) { onSymptom?.(d.symptom as VegaSymptom); continue; }
       full += d.t; pending += d.t; onDelta(full);
       // Cümle sınırı: . ! ? ; ve ardından boşluk
       const m = pending.match(/^([\s\S]*?[.!?;])\s+/);

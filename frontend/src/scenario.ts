@@ -10,13 +10,15 @@ import { ENVS, type EnvId } from './engine/environment';
 import { INDICATORS } from './engine/indicators';
 import type { Activity, Escalation, IndicatorId, Provenance, SourceRef, Status } from './engine/types';
 import { speakSentence } from './audio';
+import { reportSymptom, useSymptoms, type SymptomCategory } from './symptoms';
+import type { GlucoseCtx } from './engine/types';
 
-export type ScenarioId = 'tachy' | 'iss2017' | 'mars2024' | 'evaCO2' | 'evaDCS';
-export const SCENARIOS: ScenarioId[] = ['tachy', 'iss2017', 'mars2024', 'evaCO2', 'evaDCS'];
+export type ScenarioId = 'tachy' | 'iss2017' | 'mars2024' | 'evaCO2' | 'evaDCS' | 'allergy' | 'hypo' | 'htn' | 'cabinLeak' | 'sas';
+export const SCENARIOS: ScenarioId[] = ['tachy', 'iss2017', 'mars2024', 'evaCO2', 'evaDCS', 'allergy', 'hypo', 'htn', 'cabinLeak', 'sas'];
 export type L = { tr: string; en: string };
 
 export interface ExtraAlert {
-  id: 'radiation' | 'suitCO2' | 'dcs';
+  id: 'radiation' | 'suitCO2' | 'dcs' | 'cabin';
   status: Status; title: L; value: string; label: L; steps: L[]; sources: SourceRef[]; escalate: Escalation; prov: Provenance; note?: L;
 }
 export interface ReplayPoint { t: string; v: number; hl: boolean | null }
@@ -35,6 +37,7 @@ const SRC = {
   tb004: { label: 'OCHMO-TB-004 CO₂ · V2 [11035][11036]', url: 'https://nasa.gov/wp-content/uploads/2023/03/co2-technical-brief-ochmo.pdf' },
   tb037: { label: 'OCHMO-TB-037 DCS', url: 'https://www.nasa.gov/wp-content/uploads/2023/12/ochmo-tb-037-decompression-sickness.pdf' },
   aha: { label: 'AHA: Target heart rates', url: 'https://www.heart.org/en/healthy-living/fitness/fitness-basics/target-heart-rates' },
+  tb033: { label: 'OCHMO-TB-033 Spaceflight medical care (SAS 50–70%)', url: 'https://www.nasa.gov/wp-content/uploads/2023/07/ochmo-tb-033-spaceflight-experience-medical-care-rev-c.pdf' },
 };
 
 export const SCEN_META: Record<ScenarioId, { title: L; desc: L; prov: Provenance }> = {
@@ -43,9 +46,15 @@ export const SCEN_META: Record<ScenarioId, { title: L; desc: L; prov: Provenance
   mars2024: { title: { tr: 'Güneş fırtınası: Mars, Mayıs 2024', en: 'Solar storm: Mars, May 2024' }, desc: { tr: 'Curiosity RAD gerçek doz verisi; Dünya ile iletişim gecikmesi.', en: 'Real Curiosity RAD dose data; Earth communication delay.' }, prov: 'NASA_MEASUREMENT' },
   evaCO2: { title: { tr: 'Uzay yürüyüşü: kıyafette CO₂ birikimi', en: 'EVA: suit CO₂ build-up' }, desc: { tr: 'Kıyafet CO₂ yükselir; NASA-STD-3001 Tablo 23 süre limitleri; ekip kararıyla yürüyüş sonlandırılır.', en: 'Suit CO₂ rises; NASA-STD-3001 Table 23 duration limits; EVA terminated on crew decision.' }, prov: 'SIMULATED' },
   evaDCS: { title: { tr: 'Uzay yürüyüşü: vurgun (DCS) belirtisi', en: 'EVA: decompression sickness symptom' }, desc: { tr: 'Belirti bildirimiyle tetiklenir (nabızla değil); yürüyüş sonlandırılır.', en: 'Triggered by a symptom report (not a vital sign); EVA is terminated.' }, prov: 'SIMULATED' },
+  allergy: { title: { tr: 'Ağır alerjik reaksiyon', en: 'Severe allergic reaction' }, desc: { tr: 'Yemek sonrası kaşıntı ve dudak şişliği VEGA ile bildirilir; tansiyon düşer, nabız ve solunum artar. ISS 1.101 EpiPen kartı.', en: 'Itching and lip swelling after a meal reported via VEGA; BP falls, pulse and breathing rise. ISS 1.101 EpiPen card.' }, prov: 'SIMULATED' },
+  hypo: { title: { tr: 'Düşük kan şekeri', en: 'Low blood glucose' }, desc: { tr: 'Uzun egzersiz, atlanan öğün: kan şekeri 54 altına iner; titreme/terleme bildirimi; ADA/AHA adımları ve yeniden ölçüm.', en: 'Long exercise, skipped meal: glucose drops below 54; shaking/sweating report; ADA/AHA steps and recheck.' }, prov: 'SIMULATED' },
+  htn: { title: { tr: 'Çok yüksek tansiyon + belirti', en: 'Very high BP + symptoms' }, desc: { tr: 'Şiddetli baş ağrısı ve bulanık görme bildirimi; iki ölçümde >180/120 → hipertansif acil durum (AHA).', en: 'Severe headache and blurred vision reported; >180/120 on two readings → hypertensive emergency (AHA).' }, prov: 'SIMULATED' },
+  cabinLeak: { title: { tr: 'Kabin basıncı düşüşü', en: 'Cabin pressure drop' }, desc: { tr: 'Varsayımsal yavaş kaçak: basınç ≈8000 ft eşdeğerinin altına iner, SpO₂ düşer; baş ağrısı/bulantı bildirimi; irtifa hastalığı kartı.', en: 'Hypothetical slow leak: pressure falls below ≈8000 ft equivalent, SpO₂ drops; headache/nausea report; altitude sickness card.' }, prov: 'SIMULATED' },
+  sas: { title: { tr: 'Uzay adaptasyon sendromu (2. gün)', en: 'Space adaptation syndrome (day 2)' }, desc: { tr: 'Yaşamsal değerler neredeyse normal; uyarıyı astronotun "midem bulanıyor" bildirimi başlatır. Mürettebatın %50–70\'i (TB-033).', en: 'Vitals near normal; the alert starts from the astronaut\'s "I feel nauseous" report. Affects 50–70% of crew (TB-033).' }, prov: 'SIMULATED' },
 };
 
-interface Saved { activity: Activity; env: EnvId; target: Partial<Record<IndicatorId, number>>; acked: IndicatorId[] }
+const SPOT_SAVE: IndicatorId[] = ['systolic', 'diastolic', 'glucose', 'bodyTemp'];
+interface Saved { activity: Activity; env: EnvId; target: Partial<Record<IndicatorId, number>>; acked: IndicatorId[]; missionDay: number; spot: Partial<Record<IndicatorId, { value: number; ctx?: GlucoseCtx }>> }
 interface ScenState {
   id: ScenarioId | null; caption: L | null; stepNo: number; replay: Replay | null; suit: Suit | null; extra: ExtraAlert[]; saved: Saved | null; done: boolean; ackedExtra: string[];
 }
@@ -73,12 +82,20 @@ const sayWait = async (c: L, my: number) => { await say(c); alive(my); };
 const setTarget = (t: Partial<Record<IndicatorId, number>>) => useApp.setState((s) => ({ target: { ...s.target, ...t } }));
 const latestVal = (id: IndicatorId) => { const r = useApp.getState().readings[id]; return r[r.length - 1].value; };
 const statusOf = (id: IndicatorId) => { const s = useApp.getState(); const r = s.readings[id][s.readings[id].length - 1]; return INDICATORS[id].evaluate(r.value, { glucose: r.ctx, activity: s.activity }).status; };
+/** Nokta ölçüm (tansiyon, kan şekeri): simülatör hedefi bunlara etki etmez → SIMULATED okuma eklenir (USER_INPUT DEĞİL) */
+const spot = (id: IndicatorId, value: number, ctx?: GlucoseCtx) => useApp.setState((s) => ({ readings: { ...s.readings, [id]: [...s.readings[id], { t: Date.now(), value, provenance: 'SIMULATED' as const, ctx }].slice(-200) } }));
+/** Senaryo belirti bildirimi: VEGA ile AYNI kanal (CMO + mürettebat bildirimi, AI ve kart eşleme) */
+const symptom = (category: SymptomCategory, quote: L) => reportSymptom(category, quote[useApp.getState().lang], 'scenario');
 const setExtra = (a: ExtraAlert | null, id: ExtraAlert['id']) => useScenario.setState((s) => ({ extra: [...s.extra.filter((x) => x.id !== id), ...(a ? [a] : [])] }));
 
 export function stopScenario() {
   token++;
   const s = useScenario.getState();
-  if (s.saved) useApp.setState({ activity: s.saved.activity, env: s.saved.env, target: s.saved.target, acked: s.saved.acked });
+  if (s.saved) {
+    useApp.setState({ activity: s.saved.activity, env: s.saved.env, target: s.saved.target, acked: s.saved.acked, missionDay: s.saved.missionDay, cabinTarget: {} });
+    for (const [id, v] of Object.entries(s.saved.spot)) if (v) spot(id as IndicatorId, v.value, v.ctx); // nokta ölçümler eski hâline
+  }
+  useSymptoms.setState((st) => ({ list: st.list.filter((x) => x.source !== 'scenario') })); // senaryo bildirimleri temizlenir (VEGA'nınkiler kalır)
   useScenario.setState({ id: null, caption: null, stepNo: 0, replay: null, suit: null, extra: [], saved: null, done: false, ackedExtra: [] });
 }
 
@@ -86,8 +103,10 @@ export function startScenario(id: ScenarioId) {
   stopScenario();
   const my = ++token;
   const a = useApp.getState();
-  useScenario.setState({ id, saved: { activity: a.activity, env: a.env, target: { ...a.target }, acked: [...a.acked] }, stepNo: 0, done: false });
-  const run = { tachy, iss2017, mars2024, evaCO2, evaDCS }[id];
+  const spotSaved: Saved['spot'] = {};
+  for (const sid of SPOT_SAVE) { const r = a.readings[sid][a.readings[sid].length - 1]; spotSaved[sid] = { value: r.value, ctx: r.ctx }; }
+  useScenario.setState({ id, saved: { activity: a.activity, env: a.env, target: { ...a.target }, acked: [...a.acked], missionDay: a.missionDay, spot: spotSaved }, stepNo: 0, done: false });
+  const run = { tachy, iss2017, mars2024, evaCO2, evaDCS, allergy, hypo, htn, cabinLeak, sas }[id];
   run(my).then(() => { if (my === token) useScenario.setState({ done: true }); }).catch((e) => { if (!(e instanceof Cancelled)) console.error(e); });
 }
 
@@ -131,6 +150,36 @@ const CAP = {
     s2: { tr: 'Astronot dirseğinde eklem ağrısı bildiriyor.', en: 'The astronaut reports joint pain in the elbow.' },
     s3: { tr: 'Vurgun belirtilerle tanınır; nabız normal olsa da uyarı verilir. Yürüyüşü güvenle ve hızla sonlandır, basınçlı ortama dön.', en: 'Decompression sickness is recognised by symptoms; the alert is raised even with a normal heart rate. Terminate the spacewalk safely and quickly, return to a pressurised environment.' },
     s4: { tr: 'Basınçlı ortama dönüldü. Uçuş cerrahı değerlendirmesi sürüyor.', en: 'Back in a pressurised environment. The flight surgeon is evaluating.' },
+  },
+  allergy: {
+    s1: { tr: 'Alerji senaryosu, simülasyon. Astronot yemeğini yeni bitirdi; değerler normal.', en: 'Allergy scenario, simulation. The astronaut has just finished a meal; values are normal.' },
+    s2: { tr: 'Astronot VEGA\'ya kaşıntı ve dudaklarında şişlik bildirdi. Bildirim mürettebat sağlık görevlisine ve ekibe gitti.', en: 'The astronaut told VEGA about itching and swollen lips. The report went to the crew medical officer and the crew.' },
+    s3: { tr: 'Tansiyon düşüyor, nabız ve solunum hızlanıyor. Müdahale panelinde ISS ağır alerji prosedürü: EpiPen, uyluk dışına.', en: 'Blood pressure is falling, pulse and breathing are speeding up. The intervention panel shows the ISS severe allergy procedure: EpiPen to the outer thigh.' },
+    s4: { tr: 'Simülasyon: değerler toparlanıyor. ISS prosedürüne göre belirtiler dönerse EpiPen yirmi dakikada bir tekrarlanabilir; ardından yer kontrolü aranır.', en: 'Simulation: values are recovering. Per the ISS procedure, if symptoms recur the EpiPen may be repeated every twenty minutes; then mission control is called.' },
+  },
+  hypo: {
+    s1: { tr: 'Düşük kan şekeri senaryosu, simülasyon. Uzun egzersiz seansı; astronot öğününü atladı.', en: 'Low blood sugar scenario, simulation. A long exercise session; the astronaut skipped a meal.' },
+    s2: { tr: 'Astronot ellerinin titrediğini ve terlediğini bildirdi. Parmak ucu ölçümü kan şekerinin düştüğünü gösteriyor.', en: 'The astronaut reported shaky hands and sweating. A finger-stick measurement shows blood sugar falling.' },
+    s3: { tr: 'Kan şekeri elli dördün altında. Bilinci açık ve yutabiliyorsa hızlı etkili karbonhidrat: ADA on beş gram, AHA en az yirmi gram. Yutamıyorsa ağızdan hiçbir şey verilmez.', en: 'Blood sugar is below fifty four. If awake and able to swallow, fast-acting carbohydrate: fifteen grams per ADA, at least twenty grams per AHA. If unable to swallow, nothing by mouth.' },
+    s4: { tr: 'Simülasyon: on beş dakika sonraki yeniden ölçüm yetmişin üstünde. Öğün yoksa protein ve karbonhidrat atıştırmalığı.', en: 'Simulation: the recheck fifteen minutes later is above seventy. If no meal is coming, a protein and carbohydrate snack.' },
+  },
+  htn: {
+    s1: { tr: 'Yüksek tansiyon senaryosu, simülasyon. Astronot VEGA\'ya şiddetli baş ağrısı ve bulanık görme bildirdi.', en: 'High blood pressure scenario, simulation. The astronaut told VEGA about a severe headache and blurred vision.' },
+    s2: { tr: 'Tansiyon ölçüldü: yüz seksenin üzerinde. Amerikan Kalp Derneği: en az bir dakika bekle, yeniden ölç.', en: 'Blood pressure measured: above one hundred eighty. American Heart Association: wait at least one minute and measure again.' },
+    s3: { tr: 'İkinci ölçüm de yüksek ve belirti var: hipertansif acil durum. Tansiyonun kendiliğinden düşmesi beklenmez; uçuş cerrahı hemen aranır, ilaç kararı onundur.', en: 'The second reading is also high and there are symptoms: a hypertensive emergency. Do not wait for it to come down; call the flight surgeon now, medication is their decision.' },
+    s4: { tr: 'Simülasyon: uçuş cerrahı yönlendirmesiyle tansiyon izleniyor.', en: 'Simulation: blood pressure is being monitored under flight surgeon direction.' },
+  },
+  cabinLeak: {
+    s1: { tr: 'Kabin basıncı senaryosu. Varsayımsal yavaş bir kaçak; simülasyon.', en: 'Cabin pressure scenario. A hypothetical slow leak; simulation.' },
+    s2: { tr: 'Kabin basıncı on virgül dokuz psia altına indi: yaklaşık sekiz bin feet eşdeğeri. Kandaki oksijen düşüyor.', en: 'Cabin pressure fell below ten point nine psia: about eight thousand feet equivalent. Blood oxygen is falling.' },
+    s3: { tr: 'Astronot baş ağrısı ve bulantı bildirdi. Bunlar irtifa hastalığı belirtileri olabilir; müdahale panelinde ilgili kart açıldı.', en: 'The astronaut reported a headache and nausea. These can be altitude sickness symptoms; the related card is open in the intervention panel.' },
+    s4: { tr: 'Simülasyon: kaçak izole edildi, basınç ve oksijen normale dönüyor.', en: 'Simulation: the leak is isolated, pressure and oxygen are returning to normal.' },
+  },
+  sas: {
+    s1: { tr: 'Görevin ikinci günü. NASA verisine göre mürettebatın yüzde elli ile yetmişi ilk günlerde uzay adaptasyon sendromu yaşar.', en: 'Mission day two. According to NASA, fifty to seventy percent of crew experience space adaptation syndrome in the first days.' },
+    s2: { tr: 'Astronot VEGA\'ya midesinin bulandığını ve başının döndüğünü söyledi. Yaşamsal değerler neredeyse normal; uyarıyı belirti bildirimi başlattı.', en: 'The astronaut told VEGA they feel nauseous and dizzy. Vital signs are almost normal; the symptom report started the alert.' },
+    s3: { tr: 'NASA seçenekleri: hareketsiz kalmak, baş hareketlerini sınırlamak ve uçuş cerrahı onayıyla bulantı ilacı. Bulantı kartı CMO ekranında.', en: 'NASA options: stay still, limit head movement, and anti-nausea medication with flight surgeon approval. The nausea card is on the CMO screen.' },
+    s4: { tr: 'Simülasyon: dinlenmeyle belirtiler azalıyor. Uyum genellikle ilk günlerde tamamlanır.', en: 'Simulation: symptoms ease with rest. Adaptation usually completes within the first days.' },
   },
 } as const;
 
@@ -324,4 +373,99 @@ async function evaDCS(my: number) {
   useApp.setState({ activity: 'rest' }); setTarget({ heartRate: 80, respRate: 15 });
   useScenario.setState({ suit: null });
   say(CAP.evaDCS.s4);
+}
+
+
+/* ---------------- 4. Ağır alerjik reaksiyon (ISS 1.101) ---------------- */
+async function allergy(my: number) {
+  useApp.setState({ activity: 'rest', env: 'iss' }); setTarget({ heartRate: 76, spo2: 98, respRate: 14 }); spot('systolic', 118); spot('diastolic', 76);
+  await sayWait(CAP.allergy.s1, my); await wait(2000, my);
+  symptom('allergy', { tr: 'Ellerim kaşınıyor, dudaklarım şişti, nefesim hırıltılı', en: 'My hands are itching, my lips are swollen, my breathing is wheezy' });
+  await sayWait(CAP.allergy.s2, my);
+  setTarget({ heartRate: 124, respRate: 25, spo2: 90.5 });
+  for (const [sy, di] of [[108, 70], [98, 62], [86, 54]]) { await wait(2500, my); spot('systolic', sy); spot('diastolic', di); }
+  await until(() => latestVal('heartRate') > 105, 20000, my);
+  await sayWait(CAP.allergy.s3, my); await wait(12000, my);
+  setTarget({ heartRate: 90, respRate: 16, spo2: 97 });
+  for (const [sy, di] of [[98, 62], [108, 70]]) { await wait(3000, my); spot('systolic', sy); spot('diastolic', di); }
+  say(CAP.allergy.s4);
+}
+
+/* ---------------- 5. Düşük kan şekeri (ADA 15-15 + AHA 2024) ---------------- */
+async function hypo(my: number) {
+  useApp.setState({ activity: 'exercise', env: 'iss' }); setTarget({ heartRate: 128, respRate: 22 }); spot('glucose', 96, 'fasting');
+  await sayWait(CAP.hypo.s1, my); await wait(2000, my);
+  spot('glucose', 74, 'fasting'); await wait(2500, my);
+  useApp.setState({ activity: 'rest' }); setTarget({ heartRate: 102, respRate: 18 });
+  symptom('unwell', { tr: 'Ellerim titriyor, çok terledim, başım dönüyor', en: 'My hands are shaking, I am sweating a lot, I feel dizzy' });
+  await sayWait(CAP.hypo.s2, my);
+  spot('glucose', 63, 'fasting'); await wait(3000, my);
+  spot('glucose', 51, 'fasting');
+  await sayWait(CAP.hypo.s3, my); await wait(10000, my);
+  spot('glucose', 84, 'fasting'); setTarget({ heartRate: 84, respRate: 15 });
+  say(CAP.hypo.s4);
+}
+
+/* ---------------- 6. Çok yüksek tansiyon + belirti (AHA 2025) ---------------- */
+async function htn(my: number) {
+  useApp.setState({ activity: 'rest', env: 'iss' }); setTarget({ heartRate: 88 }); spot('systolic', 128); spot('diastolic', 82);
+  symptom('pain', { tr: 'Başım çok şiddetli ağrıyor, gözlerim bulanık görüyor', en: 'I have a very severe headache and my vision is blurry' });
+  await sayWait(CAP.htn.s1, my); await wait(1500, my);
+  spot('systolic', 188); spot('diastolic', 122);
+  await sayWait(CAP.htn.s2, my); await wait(6000, my); // hızlandırılmış: gerçekte en az 1 dakika
+  spot('systolic', 186); spot('diastolic', 124);
+  await sayWait(CAP.htn.s3, my); await wait(12000, my);
+  spot('systolic', 168); spot('diastolic', 104);
+  say(CAP.htn.s4);
+}
+
+/* ---------------- 7. Kabin basıncı düşüşü (irtifa hastalığı kartı) ---------------- */
+function cabinAlert(psia: number): ExtraAlert {
+  const below = psia < 10.9;
+  return {
+    id: 'cabin', status: below ? 'warn' : 'watch', prov: 'SIMULATED', escalate: below ? 'crew' : 'self',
+    value: `${psia.toFixed(1)} psia`,
+    title: { tr: 'Kabin basıncı', en: 'Cabin pressure' },
+    label: below ? { tr: '≈8000 ft eşdeğerinin altında (standart atmosfer)', en: 'below ≈8000 ft equivalent (standard atmosphere)' } : { tr: 'düşüyor', en: 'falling' },
+    steps: [{ tr: 'Ekibe bildir; kaçak prosedürünü uygula', en: 'Alert the crew; run the leak procedure' }, { tr: 'SpO₂ ve baş ağrısı/bulantı belirtilerini izle', en: 'Watch SpO₂ and headache/nausea symptoms' }, { tr: 'Belirti varsa irtifa hastalığı kartı (CMO)', en: 'If symptoms: altitude sickness card (CMO)' }],
+    sources: [],
+    note: { tr: 'Senaryo varsayımsaldır; ISS kaçak/basınç kaybı prosedürü kamuya açık değildir.', en: 'Hypothetical scenario; the ISS leak/depress procedure is not public.' },
+  };
+}
+async function cabinLeak(my: number) {
+  useApp.setState({ activity: 'rest', env: 'iss', cabinTarget: { pressurePsia: 14.7 } }); setTarget({ heartRate: 74, spo2: 98, respRate: 14 });
+  await sayWait(CAP.cabinLeak.s1, my);
+  useApp.setState({ cabinTarget: { pressurePsia: 10.2 } });
+  const t0 = Date.now();
+  while (Date.now() - t0 < 45000) {
+    const p = useApp.getState().cabin.pressurePsia;
+    if (p < 14.2) setExtra(cabinAlert(p), 'cabin');
+    if (p < 10.9) break;
+    await wait(800, my);
+  }
+  setTarget({ heartRate: 96, spo2: 90.5, respRate: 19 });
+  await sayWait(CAP.cabinLeak.s2, my);
+  symptom('pain', { tr: 'Başım ağrıyor, midem bulanıyor', en: 'I have a headache and feel nauseous' });
+  await sayWait(CAP.cabinLeak.s3, my);
+  for (let i = 0; i < 15; i++) { setExtra(cabinAlert(useApp.getState().cabin.pressurePsia), 'cabin'); await wait(800, my); }
+  useApp.setState({ cabinTarget: {} }); setTarget({ heartRate: 76, spo2: 97, respRate: 15 });
+  say(CAP.cabinLeak.s4);
+  for (let i = 0; i < 25; i++) {
+    const p = useApp.getState().cabin.pressurePsia;
+    setExtra(p < 14.2 ? cabinAlert(p) : null, 'cabin');
+    if (p >= 14.2) break;
+    await wait(800, my);
+  }
+}
+
+/* ---------------- 8. Uzay adaptasyon sendromu (OCHMO-TB-033) ---------------- */
+async function sas(my: number) {
+  useApp.setState({ activity: 'rest', env: 'iss', missionDay: 2 }); setTarget({ heartRate: 82, respRate: 15, spo2: 98 });
+  await sayWait(CAP.sas.s1, my); await wait(1500, my);
+  symptom('nausea', { tr: 'Midem bulanıyor, başım dönüyor', en: 'I feel nauseous and dizzy' });
+  setTarget({ heartRate: 92 });
+  await sayWait(CAP.sas.s2, my);
+  await sayWait(CAP.sas.s3, my); await wait(9000, my);
+  setTarget({ heartRate: 78 });
+  say(CAP.sas.s4);
 }

@@ -12,6 +12,7 @@ AI notu: Claude (Anthropic) yardımıyla yazılmıştır.
 """
 from __future__ import annotations
 
+import concurrent.futures
 import hashlib
 import json
 import re
@@ -143,9 +144,43 @@ DRUG_WORDS = ["epinefrin", "nitrogliserin", "salbutamol", "parasetamol", "aspiri
 DOSE_RE = re.compile(r"\b\d+(?:[.,]\d+)?\s?(?:mg|mcg|µg|ml|mL|tab|tablet|puff|ampul)\b(?!\s?/)", re.I)  # "50 mg/dL" doz değildir
 
 
+# ---- VEGA belirti bildirimi: AYRI ve hızlı çağrı (ses akışına ikinci araç eklemek akışı bozmuştu) ----
+SYMPTOM_TOOL = {
+    "name": "report_symptom",
+    "description": "The astronaut is reporting a CURRENT symptom or feeling unwell about THEMSELVES right now.",
+    "input_schema": {"type": "object", "properties": {
+        "category": {"type": "string", "enum": ["chestPain", "breathing", "nausea", "pain", "allergy", "dizzy", "unwell", "other"],
+                     "description": "chestPain chest pain/pressure; breathing shortness of breath/wheeze; nausea nausea/vomiting; pain headache or other pain; allergy itching/hives/swelling; dizzy dizziness/faint; unwell general malaise; other"},
+        "quote": {"type": "string", "description": "The symptom in the astronaut's own words, short, in their language (no numbers, no advice)."}},
+        "required": ["category", "quote"]},
+}
+NO_SYMPTOM_TOOL = {"name": "no_symptom", "description": "Not a current first-person symptom report: a question, hypothetical ('what if my head hurts'), negation ('my head does not hurt'), past/resolved, or about someone else.",
+                   "input_schema": {"type": "object", "properties": {}}}
+SYMPTOM_HINT = re.compile(r"ağr|acı|bulan|kus|dön|nefes|soluk|iyi değil|iyi hisset|kötü|halsiz|yorgun|sız|kaşın|şiş|ateş|üşü|titre|ter|göğ|mide|bayıl|uyuş|karın|"
+                          r"pain|hurt|ache|naus|dizz|sick|unwell|breath|itch|swell|fever|vomit|tired|weak|faint|numb|chest", re.I)
+
+
+def _detect_symptom(text: str):
+    """Belirti bildirimi mi? Ucuz ön süzgeç + Haiku zorunlu seçim. Hata olursa None (bildirim yok; sessizce)."""
+    if not text or not SYMPTOM_HINT.search(text):
+        return None
+    try:
+        m = client.messages.create(model=MODEL_VEGA, max_tokens=150, extra_body={"thinking": {"type": "disabled"}, "output_config": {"effort": "low"}},
+                                   system="Classify one astronaut utterance. Report only a symptom the speaker has NOW.",
+                                   messages=[{"role": "user", "content": text[:400]}], tools=[SYMPTOM_TOOL, NO_SYMPTOM_TOOL], tool_choice={"type": "any"})
+        account(MODEL_VEGA, m.usage)
+        for b in m.content:
+            if b.type == "tool_use" and b.name == "report_symptom":
+                return {"category": b.input.get("category", "other"), "quote": str(b.input.get("quote", ""))[:200] or text[:200]}
+    except Exception as e:  # bildirim kaçarsa ses cevabı yine çalışır
+        print("[symptom] error", str(e)[:120])
+    return None
+
+
 VEGA_TOOLS = [UPDATE_TOOL, NO_UPDATE_TOOL]  # güncelleme yolu (zorunlu seçim); soru yolu yalnızca UPDATE_TOOL
 
 app = FastAPI(title="Astronaut Health Monitor proxy")
+_sym_pool = concurrent.futures.ThreadPoolExecutor(max_workers=4)
 
 
 def _warm_cache_loop():
@@ -357,6 +392,7 @@ async def interventions(req: Request):
         extra_body={"output_config": {"effort": "low"}},
         messages=[{"role": "user", "content": f"Library: {json.dumps(lib)}\nCandidates: {json.dumps(cands)}\nRole viewing: {body.get('role')}\n"
                                                 f"ISS kit: {json.dumps(kit)}\n"
+                                                f"Astronaut-reported via VEGA (self-report, not a diagnosis): {json.dumps(body.get('reported', []), ensure_ascii=False)[:800]}\n"
                                                 f"CMO-typed symptoms: {str(body.get('symptoms', ''))[:400]}\nCMO-confirmed signs: {json.dumps(body.get('confirmedSigns', []))}\n"
                                                 f"Snapshot: {json.dumps(body.get('snapshot', {}), ensure_ascii=False)}\nCall rank_interventions."}])
     account(MODEL_ASSESS, msg.usage)
@@ -385,6 +421,8 @@ async def vega(req: Request):
     voice_rules = ("\nYou are VEGA, the spoken voice of this assistant. Your reply is read aloud by text-to-speech: "
                    "max 2 short sentences, no lists, no markdown, no symbols, numbers with units spoken naturally."
                    "\nIf the astronaut explicitly asks to update/enter/set a value, call update_reading and say nothing else (the screen confirms it). "
+                   "\nIf the astronaut says they feel unwell or reports a symptom, answer calmly with one short safe step (stop, rest, stay still). "
+                   "The system automatically notifies the crew medical officer and the crew of reported symptoms: never tell the astronaut to report it themselves, and never say that you notified anyone (the system confirms it separately)."
                    "If the value or unit is unclear, ask instead of calling the tool.")
     messages = [m for m in history if m.get("role") in ("user", "assistant") and m.get("content")]
     user_text = f"Language: {lang}\nLive snapshot: {snapshot}\n\nAstronaut says: {body.get('text', '')}"
@@ -404,6 +442,15 @@ async def vega(req: Request):
     intent = bool(re.search(r"güncelle|kaydet|ayarla|değiştir|olarak gir|\byap\b|\bgir\b|\bset\b|update|record|change|\blog\b",
                             str(body.get("text", "")).lower()))
 
+    sym_future = _sym_pool.submit(_detect_symptom, str(body.get("text", "")))  # akışla PARALEL; ilk ses gecikmesi değişmez
+
+    def sym_event():
+        try:
+            r = sym_future.result(timeout=10)
+        except Exception:
+            r = None
+        return f"data: {json.dumps({'symptom': r}, ensure_ascii=False)}\n\n" if r else ""
+
     def gen():
         try:
             if intent:  # güncelleme komutu: önce kayıt (akışsız), sonra temiz sözlü onay
@@ -418,6 +465,9 @@ async def vega(req: Request):
                     nu = [b for b in first.content if b.type == "tool_use" and b.name == "no_update"]
                     txt = nu[0].input.get("reply", "") if nu else "".join(b.text for b in first.content if b.type == "text")
                     yield f"data: {json.dumps({'t': txt}, ensure_ascii=False)}\n\n"
+                ev = sym_event()
+                if ev:
+                    yield ev
                 yield "data: [DONE]\n\n"
                 return
             with client.messages.stream(model=MODEL_VEGA, max_tokens=400, extra_body={"thinking": {"type": "disabled"}, "output_config": {"effort": "low"}},  # ölçüldü: TTFT ~1,1 sn; düşünme açıkken Haiku tüm bütçeyi düşünmeye harcıyordu
@@ -442,6 +492,9 @@ async def vega(req: Request):
                 for b in final.content:  # akış yolunda model no_update seçtiyse cevabı oradadır
                     if b.type == "tool_use" and b.name == "no_update" and not spoke:
                         yield f"data: {json.dumps({'t': b.input.get('reply', '')}, ensure_ascii=False)}\n\n"
+            ev = sym_event()
+            if ev:
+                yield ev
             yield "data: [DONE]\n\n"
         except Exception as e:  # akış içinde hata → istemciye bildir
             yield f"data: {json.dumps({'error': str(e)[:200]})}\n\n"
@@ -695,12 +748,15 @@ async def tts_stream(req: Request):
 # Gecikme SUNUCUDA uygulanmaz: her paket gönderim zamanıyla damgalanır, yer kontrol ekranı "şimdi − gecikme" anını gösterir.
 _crew_last: dict[str, dict] = {}
 _viewers: set = set()
+_astros: set = set()
 
 
 @app.websocket("/ws/telemetry")
 async def telemetry(ws: WebSocket):
     await ws.accept()
     role = ws.query_params.get("role", "astronaut")
+    if role == "astronaut":
+        _astros.add(ws)
     if role != "astronaut":
         _viewers.add(ws)
         for pkt in list(_crew_last.values()):
@@ -709,6 +765,18 @@ async def telemetry(ws: WebSocket):
         while True:
             msg = await ws.receive_json()
             if role != "astronaut":
+                continue
+            if msg.get("type") == "notice":  # mürettebat bildirimi: diğer astronot cihazlarına (CMO bunu paketten görür)
+                n = msg.get("notice") or {}
+                note = {"type": "notice", "notice": {"id": str(n.get("id", ""))[:24], "crewId": re.sub(r"[^A-Za-z0-9-]", "", str(n.get("crewId", "")))[:8],
+                                                     "t": n.get("t"), "category": str(n.get("category", "other"))[:16], "quote": str(n.get("quote", ""))[:200]}}
+                for a in list(_astros):
+                    if a is ws:
+                        continue
+                    try:
+                        await a.send_json(note)
+                    except Exception:
+                        _astros.discard(a)
                 continue
             crew = re.sub(r"[^A-Za-z0-9-]", "", str(msg.get("crewId", "C-01")))[:8] or "C-01"
             pkt = {"crewId": crew, "t": msg.get("t") or time.time() * 1000, "snap": msg.get("snap"), "ui": msg.get("ui")}
@@ -724,6 +792,7 @@ async def telemetry(ws: WebSocket):
         pass
     finally:
         _viewers.discard(ws)
+        _astros.discard(ws)
 
 
 _warm_cache_loop()

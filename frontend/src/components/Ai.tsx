@@ -11,6 +11,7 @@ import { useFatigue } from '../fatigue';
 import { startAlarm, stopAlarm, unlockAudio, speakSentence, stopVoice, beginReply, prewarmVoice } from '../audio';
 import { t } from '../i18n';
 import { useScenario, allCaptions } from '../scenario';
+import { reportSymptom } from '../symptoms';
 
 /* ---------------- AI değerlendirme kartı ---------------- */
 export function AiCard() {
@@ -83,7 +84,7 @@ export function AlarmBanner() {
   useEffect(() => {
     if (!sessionStarted || prewarmed === lang || location.search.includes('test')) return; // otomatik testler kota harcamasın
     prewarmed = lang;
-    void prewarmVoice([...INDICATOR_ORDER.map((id) => alarmPhrase(id, lang)), radPhrase(lang), suitPhrase(lang)], lang, 'urgent').then(() => prewarmVoice(allCaptions(lang), lang, 'calm'));
+    void prewarmVoice([...INDICATOR_ORDER.map((id) => alarmPhrase(id, lang)), radPhrase(lang), suitPhrase(lang)], lang, 'urgent').then(() => prewarmVoice([t('vega.symptomSpoken', lang), ...allCaptions(lang)], lang, 'calm'));
   }, [sessionStarted, lang]);
   useEffect(() => {
     if (!sessionStarted) return;
@@ -145,6 +146,7 @@ export function Vega() {
   const [withCam, setWithCam] = useState(false);
   const [sentFrame, setSentFrame] = useState(false);
   const [applied, setApplied] = useState<string[]>([]);
+  const [sym, setSym] = useState('');
   const camOn = useFatigue((s) => s.enabled);
   const hist = useRef<Msg[]>([]);
   const rec = useRef<SR>(null);
@@ -157,11 +159,12 @@ export function Vega() {
     if (!q.trim()) return;
     abort.current?.abort(); beginReply();
     const c = new AbortController(); abort.current = c;
-    setBusy(true); setReply(''); setErr(''); setApplied([]);
+    setBusy(true); setReply(''); setErr(''); setApplied([]); setSym('');
     try {
       const frame = withCam && camOn ? grabCameraFrame() : null;
       setSentFrame(!!frame);
       const done: string[] = [];
+      let notified = false;
       const full = await askVega(q, hist.current, setReply, () => undefined, c.signal, frame, (a) => {
         // Sesli komutla değer girişi: kimlik ve fizyolojik aralık burada doğrulanır, kural motoru hemen değerlendirir
         const id = a.indicator as IndicatorId;
@@ -170,8 +173,14 @@ export function Vega() {
         useApp.getState().addReading(id, a.value, id === 'glucose' ? a.glucose_context : undefined, 'USER_INPUT');
         done.push(`${t(`ind.${id}`, lang)} ${a.value.toFixed(d.decimals)} ${d.unit}`);
         setApplied([...done]);
+      }, (x) => {
+        // Belirti bildirimi: kayıt deterministik (model "bildirdim" demez); onay cümlesi sabit ve önbellekli
+        if (notified) return; notified = true;
+        reportSymptom(x.category, x.quote || q, 'vega');
+        setSym(x.quote || q);
       });
       if (!c.signal.aborted && full.trim()) speakSentence(full, lang);
+      if (!c.signal.aborted && notified) speakSentence(t('vega.symptomSpoken', lang), lang);
       // Değer kaydedildiyse VEGA konuşmaz (analizi AI değerlendirme kartı yapar); geçmişe kısa not düşülür
       hist.current = [...hist.current, { role: 'user' as const, content: q }, { role: 'assistant' as const, content: full || `[recorded: ${done.join(', ')}]` }].slice(-8);
     } catch (e) {
@@ -216,6 +225,7 @@ export function Vega() {
         {listening || interim ? <p className="j-user">“{interim || '…'}”</p> : null}
         {busy && !reply && <p className="muted">{t('ai.thinking', lang)}</p>}
         {reply && <p className="j-reply"><span className="ai-tag">✦ AI{sentFrame ? ' · ◉' : ''}</span> {reply}</p>}
+        {sym && <p className="j-applied">🔔 {t('vega.symptomSent', lang)}: “{sym}”</p>}
         {applied.length > 0 && <p className="j-applied">✓ {t('vega.recorded', lang)}: {applied.join(' · ')} <span className="muted">({t('vega.byVoice', lang)})</span></p>}
         {err && <p className="j-err">{err}</p>}
         {!listening && !interim && !reply && !busy && !err && <p className="muted">{t('vega.hint', lang)}</p>}
