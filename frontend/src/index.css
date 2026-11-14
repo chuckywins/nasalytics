@@ -246,6 +246,36 @@ a { color: var(--accent); }
 .cam-res p { margin: 0; }
 .cam-read { display: flex; gap: 8px; align-items: center; }
 
+/* ---- Sekmeler + günlük rutin ---- */
+.tabs { display: flex; gap: 2px; }
+.tabs button { padding: 1px 8px; font-size: 12px; text-transform: none; letter-spacing: 0; }
+.tabs .on { border-color: var(--accent); color: var(--accent); }
+.routine { display: flex; flex-direction: column; gap: 6px; min-height: 0; }
+.r-head { display: flex; align-items: center; gap: 14px; font-size: 13px; color: var(--ink-2); }
+.r-prog { display: flex; align-items: center; gap: 6px; flex: 1; min-width: 140px; }
+.r-prog .g-bar { flex: 1; }
+.r-stat b { color: var(--ink); }
+.badges { display: flex; gap: 3px; }
+.badge { width: 22px; height: 22px; display: grid; place-items: center; border: 1px solid var(--line-2); border-radius: 50%; font-size: 12px; color: var(--ink-3); opacity: .5; }
+.badge.on { color: var(--accent); border-color: var(--accent); opacity: 1; }
+.tasks { display: grid; grid-template-columns: repeat(auto-fill, minmax(175px, 1fr)); gap: 5px; overflow: hidden; }
+.task { display: flex; align-items: center; gap: 6px; text-align: left; font-size: 13px; padding: 4px 8px; }
+.task.ok { border-color: #2c6b3a; color: var(--ink-2); }
+.t-check { color: var(--accent); width: 14px; }
+.task.ok .t-check { color: #3fb950; }
+.t-name { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.t-cta { font-size: 12px; color: var(--accent); }
+.rt-pad { width: 100%; aspect-ratio: 16/7; font-size: 28px; font-weight: 700; letter-spacing: .12em; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; background: #0d1621; border: 2px solid var(--line-2); touch-action: none; user-select: none; }
+.rt-pad.go { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+.rt-pad small { font-size: 13px; font-weight: 400; letter-spacing: 0; }
+.rt-stats { font-size: 15px; }
+.vl-prompt { font-size: 15px; color: var(--ink); margin: 0; }
+.cues { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.cues li { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.lv { font-size: 12px; border: 1px solid; border-radius: 3px; padding: 0 6px; white-space: nowrap; }
+.cues q { color: var(--ink-2); font-style: italic; }
+.toast { position: absolute; bottom: 104px; right: 18px; z-index: 5; background: rgba(10,22,32,.95); border: 1px solid var(--accent-dim); color: var(--ink); padding: 6px 12px; border-radius: 4px; font-size: 13px; }
+
 /* Kısa ekran (≈1536×700, %125 ölçek): satırlar tek satıra iner; durum etiketi glif + üzerine gelince başlık olarak kalır */
 @media (max-height: 860px) {
   .vrow { grid-template-rows: auto; padding: 2px 8px; }

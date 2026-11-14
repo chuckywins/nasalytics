@@ -10,6 +10,8 @@ import { useApp, activeAlerts, evalLatest, latest } from '../store';
 import { t } from '../i18n';
 import { Panel, ProvTag, StatusChip, STATUS_COLOR, STATUS_GLYPH } from './Hud';
 import { AiCard } from './Ai';
+import { RoutinePanel } from './Checkin';
+import { useState } from 'react';
 import { InfoTip, SourceTags, toSteps } from './Info';
 
 // Uyarı görünürlüğü animasyona BAĞLI DEĞİL: yalnızca konum kayar, opaklık her zaman 1 (animasyon çalışmasa da okunur).
@@ -102,8 +104,15 @@ export function MissionPanel() {
   const cum = cumulativeMSv(e, day);
   const bone = boneLossPct(e, day);
   const h = equivUSvH(e);
+  const [tab, setTab] = useState<'routine' | 'mission'>('routine');
+  const tabs = (
+    <div className="tabs" role="tablist">
+      {(['routine', 'mission'] as const).map((k) => <button key={k} role="tab" aria-selected={tab === k} className={tab === k ? 'on' : ''} onClick={() => setTab(k)}>{t(`tab.${k}`, lang)}</button>)}
+    </div>
+  );
+  if (tab === 'routine') return <Panel title={t('tab.routine', lang)} right={tabs} className="mission"><RoutinePanel /></Panel>;
   return (
-    <Panel title={t('ui.timeline', lang)} className="mission">
+    <Panel title={t('ui.timeline', lang)} right={tabs} className="mission">
       <div className="timeline">
         <input type="range" min={0} max={len} value={day} onChange={(ev) => setMissionDay(+ev.target.value)} aria-label={t('ui.day', lang)} />
         <div className="ticks num"><span>0</span><span>{Math.round(len / 4)}</span><span>{Math.round(len / 2)}</span><span>{Math.round((3 * len) / 4)}</span><span>{len}</span></div>

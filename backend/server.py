@@ -198,6 +198,53 @@ async def vision(req: Request):
     return {"result": out, "model": MODEL_ASSESS, "latencyMs": int((time.time() - t0) * 1000)}
 
 
+VOICE_TOOL = {
+    "name": "report_voice_log",
+    "description": "Report behavioral-health cues from the astronaut's daily spoken log.",
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "summary": {"type": "string", "description": "One or two sentences summarising what the astronaut said."},
+            "cues": {"type": "array", "maxItems": 4, "items": {"type": "object", "properties": {
+                "domain": {"type": "string", "enum": ["stress", "fatigue", "low_mood", "isolation"]},
+                "level": {"type": "string", "enum": ["none", "low", "moderate", "high"]},
+                "evidence": {"type": "string", "description": "A short exact quote from the transcript or a measured metric. Empty if none."}},
+                "required": ["domain", "level", "evidence"]}},
+            "followUp": {"type": "string", "description": "One gentle, practical suggestion (e.g. take a break, schedule a family call, talk to the behavioral health team)."},
+        },
+        "required": ["summary", "cues", "followUp"],
+    },
+}
+
+
+@app.post("/api/voicelog")
+async def voicelog(req: Request):
+    """Günlük sesli kayıt: transkript + hesaplanmış ses ölçüleri → davranışsal sağlık İPUÇLARI (teşhis değil)."""
+    guard(req)
+    body = await req.json()
+    lang = body.get("lang", "tr")
+    transcript = str(body.get("transcript", ""))[:4000]
+    metrics = json.dumps(body.get("metrics", {}), ensure_ascii=False)
+    if len(transcript.split()) < 3:
+        raise HTTPException(400, "transcript too short")
+    t0 = time.time()
+    msg = client.messages.create(
+        model=MODEL_ASSESS, max_tokens=2000, system=SYSTEM_BLOCKS, tools=[VOICE_TOOL], tool_choice={"type": "auto"},
+        extra_body={"output_config": {"effort": "low"}},
+        messages=[{"role": "user", "content":
+                   f"Language for all text fields: {lang}.\nDaily voice log transcript:\n\"\"\"{transcript}\"\"\"\n"
+                   f"Measured speech metrics (computed on device): {metrics}\n"
+                   "Identify cues of stress, fatigue, low mood or isolation. Every cue above 'none' MUST quote evidence. "
+                   "These are cues for the astronaut to confirm, never a diagnosis. Do not over-interpret a single sentence. "
+                   "You MUST call report_voice_log exactly once."}],
+    )
+    account(MODEL_ASSESS, msg.usage)
+    out = next((b.input for b in msg.content if b.type == "tool_use"), None)
+    if out is None:
+        raise HTTPException(502, "no voice analysis")
+    return {"result": out, "model": MODEL_ASSESS, "latencyMs": int((time.time() - t0) * 1000)}
+
+
 @app.post("/api/jarvis")
 async def jarvis(req: Request):
     guard(req)

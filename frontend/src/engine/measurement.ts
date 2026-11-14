@@ -113,6 +113,24 @@ export const MEASURE: Record<string, MeasureInfo> = {
     why: { tr: 'Kırık ve erken osteoporoz riski; karşı önlem direnç egzersizi ve beslenme.', en: 'Fracture and early osteoporosis risk; countermeasures are resistive exercise and nutrition.' },
     sources: [S.bone],
   },
+  routine: {
+    inSpace: { tr: "NASA Standard Measures görev öncesi, sırası ve sonrasında düzenli ölçüm toplar (uyku raporu, bilişsel testler, kuvvet testi). ISS'te egzersiz haftada 6–7 gün, günde 1,5 saattir.", en: 'NASA Standard Measures collects regular measurements before, during and after missions (sleep reports, cognition tests, strength test). On the ISS crews exercise 6–7 days a week, 1.5 h a day.' },
+    here: { tr: 'Görevler ölçüm girildikçe kendiliğinden tamamlanır. Puan, seri ve rozetler yalnızca gerçek tamamlamalardan hesaplanır ve bu cihazda saklanır.', en: 'Tasks complete automatically as measurements are logged. Points, streaks and badges come only from real completions, stored on this device.' },
+    why: { tr: 'Uzun görevlerde değişimleri fark etme sorumluluğu büyük ölçüde astronottadır; düzenli ölçüm erken uyarı sağlar.', en: 'On long missions astronauts carry much of the responsibility for spotting changes; regular measurement gives early warning.' },
+    sources: [S.stdm, { label: 'NASA HRP: Fitness risk', url: 'https://www.nasa.gov/reference/risk-of-reduced-cardiorespiratory-and-musculoskeletal-fitness/' }],
+  },
+  reaction: {
+    inSpace: { tr: 'NASA, astronotların uyku kaybı ve yorgunluğu fark etmesi için 10 dakikalık bir uyanıklık öz testi kullanır.', en: 'NASA uses a 10-minute vigilance self-test so astronauts can detect sleep loss and fatigue.' },
+    here: { tr: '10 denemelik kısaltılmış sürüm: medyan tepki süresi, >500 ms gecikmeler ve erken tepkiler; kişisel baz çizgiyle kıyas. Eşikler VARSAYIMDIR.', en: 'A shortened 10-trial version: median reaction time, >500 ms lapses and false starts, compared with your personal baseline. Thresholds are ASSUMPTIONS.' },
+    why: { tr: 'Uyku kaybı kritik görevlerde (EVA, robot kol) hata riskini artırır.', en: 'Sleep loss raises error risk in critical tasks (EVA, robotic arm).' },
+    sources: [{ label: 'NASA: The Human Body in Space', url: 'https://www.nasa.gov/humans-in-space/the-human-body-in-space/' }, S.archer],
+  },
+  voice: {
+    inSpace: { tr: 'NASA davranış bilimcileri uzun süreli izolasyonda zihinsel ve duygusal durumu değerlendirmek için günlük tutmayı kullanır.', en: 'NASA behavioral scientists use journaling to assess mental and emotional state during long-term isolation.' },
+    here: { tr: 'Konuşma cihazda yazıya çevrilir; süre, kelime hızı ve duraklama oranı hesaplanır. Claude transkriptten alıntıyla stres, yorgunluk ve izolasyon İPUÇLARI çıkarır.', en: 'Speech is transcribed on device; duration, speech rate and pause ratio are computed. Claude extracts stress, fatigue and isolation CUES quoting the transcript.' },
+    why: { tr: 'Mars görevinde gecikme ve izolasyon davranışsal sağlığı zorlar; erken fark etmek önemlidir.', en: 'On a Mars mission, delay and isolation strain behavioral health; early detection matters.' },
+    sources: [S.iso, S.beh],
+  },
   ecg: {
     inSpace: { tr: BIOMON_TR, en: BIOMON_EN },
     here: { tr: 'Dalga formu nabza bağlı SENTETİK bir PQRST şablonudur; tanısal değildir.', en: 'The waveform is a SYNTHETIC PQRST template driven by heart rate; not diagnostic.' },

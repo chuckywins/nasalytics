@@ -7,6 +7,7 @@ import { ENVS, ENV_LABEL, equivUSvH, cumulativeMSv, boneLossPct } from './engine
 import type { Escalation } from './engine/types';
 import { useApp, evalLatest, activeAlerts, type AiAssessment } from './store';
 import { t } from './i18n';
+import { useCheckin, doneToday, dayKey } from './checkin';
 
 const API = import.meta.env.VITE_API_BASE ?? '';
 
@@ -20,6 +21,16 @@ export function buildSnapshot() {
     commDelayOneWaySec: e.commDelayOneWaySec,
     radiation: { absorbedUGyH: e.absorbedUGyH, equivalentUSvH: equivUSvH(e).value, cumulativeMSvEstimate: cumulativeMSv(e, s.missionDay), careerLimitMSv: 600 },
     boneLossPctEstimate: boneLossPct(e, s.missionDay),
+    checkin: (() => {
+      const c = useCheckin.getState();
+      const rt = c.reaction[c.reaction.length - 1];
+      const vl = c.voice[c.voice.length - 1];
+      return {
+        tasksDoneToday: doneToday(),
+        lastReactionTest: rt ? { today: dayKey(rt.at) === dayKey(), medianMs: rt.medianMs, lapses: rt.lapses, falseStarts: rt.falseStarts } : null,
+        lastVoiceLog: vl ? { today: dayKey(vl.at) === dayKey(), metrics: vl.metrics, cues: vl.cues.filter((x) => x.level !== 'none').map((x) => `${x.domain}:${x.level}`) } : null,
+      };
+    })(),
     cabin: { o2Pct: +s.cabin.o2Pct.toFixed(1), pressurePsia: +s.cabin.pressurePsia.toFixed(2) },
     indicators: INDICATOR_ORDER.map((id) => {
       const ev = evalLatest(s.readings, id);
