@@ -137,12 +137,13 @@ async function playVoice(vs: VoiceStream, my: number, text: string, lang: 'tr' |
   live = [];
 }
 /** Bir cümleyi/cevabı sıraya ekle: ses isteği HEMEN başlar (akışlı), çalma sırayla */
-export function speakSentence(text: string, lang: 'tr' | 'en', style: 'calm' | 'urgent' = 'calm') {
+export function speakSentence(text: string, lang: 'tr' | 'en', style: 'calm' | 'urgent' = 'calm'): Promise<void> {
   const clean = text.replace(/[*_#`>]/g, '').trim();
-  if (!clean) return;
+  if (!clean) return Promise.resolve();
   const my = gen;
   const vs = openVoice(clean, lang, style);
   chain = chain.then(() => playVoice(vs, my, clean, lang));
+  return chain;
 }
 /** Önbelleği ısıt (alarm anonsları): sesi üretip disk önbelleğine yazdırır, çalmaz */
 export async function prewarmVoice(texts: string[], lang: 'tr' | 'en', style: 'calm' | 'urgent' = 'urgent') {

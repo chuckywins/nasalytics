@@ -83,3 +83,14 @@ Her adım buraya kısa notla eklenir (en yeni en altta).
 - Tek cihazda da çalışır (yerel tampon). Çoklu laptop: backend --host 0.0.0.0, Vite host:true; ekip aynı ağda http://<ana-bilgisayar-IP>:5180 açar.
 - Test (Playwright, 3 eşzamanlı tarayıcı): C-02 Mars senaryosu → yer kontrolde "Sinyal yolda 2 dk 57 sn", sıkıştırmada kritik radyasyon alarmı + senaryo anlatımı; CMO gecikmesiz. Astronot görünümü regresyon temiz.
 - Not: Vite izleyicisi python ile yazılan dosyaları zaman zaman kaçırıyor → değişiklikten sonra curl ile sunulan modülü doğrula, gerekirse touch.
+
+## 2026-11-14 22:23 — Advisor incelemesi sonrası düzeltmeler + gerçek ses yolu testi
+- Senaryo bandı alarm bandını örtüyordu (ONAYLA görünmüyordu) → bant VEGA çubuğunun üstüne taşındı.
+- Anlatım beklenebilir (ses bitince ilerler); tekrar anlatımda durur; alarm anonsu senaryo anlatımını kesmez (sıraya girer). Tekrar duvar saatiyle sürülür → ×5000 (ISS) / ×9000 (Mars) etiketleri gerçek.
+- ISS kartı bir kutu geriden geliyordu → düzeltildi. ISS şiddeti en fazla UYARI (LEO'da SPE'lerin çoğu ALARA, TB-020); Mars kritik: "başlangıçta nihai büyüklük bilinmez, sığınak önlemdir".
+- I4: referans aralıkları kişiye/cinsiyete ve örneğe göre değişiyor (Hb 11,7–15,5 vs 13,2–17,1; C003'te örnekler arası farklı) → build_data.py crewRef; halkalar kişinin kendi aralığına göre; "*" aralık değişir notu.
+- DCS kartı SIMULATED; egzersiz bandı etiketi "yaş 40 vars." ekranda; tachy anlatımı 153 üst sınırını söyler; toparlanmada önce nabız düşer sonra dinlenmeye geçilir (yanlış alarm yok).
+- Telemetri varışta yeniden damgalanır (laptop saat farkı); hız sınırı 120/dk (ekip Vite vekili üzerinden tek IP).
+- Gemini kota bulgusu: kota dolunca HTTP 200 içinde "event: error" (günde 10 istek/model/anahtar, ücretsiz katman; sıfırlanma ~11:00 TR). Akış artık ilk ses parçasını görmeden yanıt vermez; hata → sıradaki anahtar. Sıra: en iyi model tüm anahtarlarda önce.
+- Gerçek ses yolu testi (oturum açık, ?test yok): taşikardi 8 akış başlatıldı, tarayıcı sesine düşüş yok; Mars anlatımı sıralı. Önbellek: 83 dosya (tr+en alarm + anlatım).
+- Lab.tsx'te tırnak hatası Vite'ı 500'e düşürdü (tsc yakalamadı) → doğrulamaya esbuild ayrıştırma eklendi.

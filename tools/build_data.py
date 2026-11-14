@@ -79,11 +79,13 @@ for key, label, unit, f in ANALYTES:
         print("UYARI: sütun yok", key)
         continue
     crew = defaultdict(dict)
+    cref = defaultdict(dict)  # kişiye (ör. cinsiyete) özel referans aralığı, örnek başına: [min, max]
     lo = hi = None
     for r in rows:
         parts = r["Sample Name"].split("_")
         cid, tp = parts[0], next(p for p in parts if p.startswith(("L-", "R+")))
         crew[cid][tp] = num(r[vcol])
+        cref[cid][tp] = [num(r.get(locol)), num(r.get(hicol))]
         lo = lo if lo is not None else num(r.get(locol))
         hi = hi if hi is not None else num(r.get(hicol))
     pre = [v for c in crew.values() for t, v in c.items() if t.startswith("L-") and v is not None]
@@ -91,6 +93,8 @@ for key, label, unit, f in ANALYTES:
     i4["analytes"][key] = {
         "label": label, "unit": unit, "refLow": lo, "refHigh": hi,
         "crew": {cid: [crew[cid].get(t) for t in TP_ORDER] for cid in sorted(crew)},
+        "crewRef": {cid: [cref[cid].get(t) for t in TP_ORDER] for cid in sorted(crew)},
+        "rangeVaries": len({tuple(v) for c in cref.values() for v in c.values()}) > 1,
         "preflightMean": round(st.mean(pre), 3) if pre else None,
         "r1Mean": round(st.mean(r1), 3) if r1 else None,
     }

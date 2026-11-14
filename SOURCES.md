@@ -124,3 +124,10 @@ data.nasa.gov bu bilgisayardan curl ile bağlantıyı sıfırlıyor, WebFetch il
 - NASA-STD-3001 Vol.1 (mürettebat sağlığı standartları, radyasyon kariyer limiti 600 mSv)
 - NASA Human Research Program, Human Research Roadmap (5 tehlike: radyasyon, izolasyon, uzaklık, yerçekimi, kapalı ortam)
 - Resmi yarışma sayfası metni (spaceappschallenge.org 2026), WebFetch SSL hatası verdi
+
+## Senaryo kaynakları (2026-11-14 gece)
+- **DONKI CME 2024-05-20T05:36Z** (hızlı halo CME; "kaynağın Güneş'in arka yüzü olduğu düşünülüyor"; aynı saatte AR 3683 C6.7 parlaması kaynak DEĞİL): https://ccmc.gsfc.nasa.gov/DONKI/view/CME/31034/-1 — Mars RAD doz artışı (05:00 saatlik kutu) ile aynı saat. Yerel kopya `data/raw/donki_cme_may2024.json`.
+- **DONKI Eylül 2017**: FLR 2017-09-10T15:35 (X8.2), CME 16:09, SEP 16:25 (GOES-13 >100 MeV) — `data/raw/donki_sep_sep2017.json` ve storms.json olayları.
+- **OCHMO-TB-037 DCS**: Tip I/II sınıflaması, tedavi "EVA'yı güvenle ve hızla sonlandır, basınçlı ortama dön; ≥16,4 psia belirtileri hafifletebilir": https://www.nasa.gov/wp-content/uploads/2023/12/ochmo-tb-037-decompression-sickness.pdf
+- **OCHMO-TB-004 CO₂**: belirti aralıkları (2,8–4,5 mmHg baş ağrısı; >4,5 yorgunluk/bulantı), V2 [11035]/[11036] kıyafet ekranı ve alarmı. Kıyafet PICO₂ limitleri V2 [11039] Tablo 35'tedir ve OKUNMADI (ekranda yazılır).
+- **Inspiration4 referans aralıkları** kişiye (cinsiyete) ve örneğe göre değişir (OSD-569/575 CSV'lerinde örnek başına range_min/max) → halkalar kişinin kendi aralığına göre.

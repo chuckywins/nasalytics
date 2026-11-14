@@ -110,7 +110,7 @@ const D = {
   'ui.live': { tr: 'CANLI', en: 'LIVE' },
   'ui.limit': { tr: 'sınır', en: 'limit' },
   'ui.role': { tr: 'ASTRONOT', en: 'ASTRONAUT' },
-  'band.exerciseOk': { tr: 'Efor için beklenen', en: 'Expected for exertion' },
+  'band.exerciseOk': { tr: 'Efor için beklenen (yaş 40 vars.)', en: 'Expected for exertion (age 40 assumed)' },
   'band.exerciseHigh': { tr: 'Efor için yüksek', en: 'High for exertion' },
   'ui.activity': { tr: 'Aktivite', en: 'Activity' },
   'act.rest': { tr: 'Dinlenme', en: 'Rest' },

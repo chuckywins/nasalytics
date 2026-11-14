@@ -8,7 +8,7 @@ import { useApp } from '../store';
 import { ProvTag } from './Hud';
 import { SourceTags } from './Info';
 
-interface Analyte { label: string; unit: string; refLow: number; refHigh: number; crew: Record<string, number[]>; preflightMean: number; r1Mean: number }
+interface Analyte { label: string; unit: string; refLow: number; refHigh: number; crew: Record<string, number[]>; crewRef: Record<string, ([number, number] | null)[]>; rangeVaries: boolean; preflightMean: number; r1Mean: number }
 const DATA = i4 as unknown as { timepoints: string[]; analytes: Record<string, Analyte> };
 const TR: Record<string, string> = {
   glucose: 'Glukoz', sodium: 'Sodyum', potassium: 'Potasyum', calcium: 'Kalsiyum', creatinine: 'Kreatinin', urea_nitrogen_bun: 'BUN (üre azotu)',
@@ -32,10 +32,11 @@ function Spark({ a }: { a: Analyte }) {
     <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" className="lab-spark" aria-hidden>
       <rect x={0} width={W} y={y(a.refHigh)} height={Math.max(0, y(a.refLow) - y(a.refHigh))} fill="#5ad1e6" opacity={0.08} />
       <line x1={flightX} x2={flightX} y1={0} y2={H} stroke="#5b6b7c" strokeDasharray="2 2" vectorEffect="non-scaling-stroke" />
-      {Object.values(a.crew).map((vals, ci) => (
+      {Object.entries(a.crew).map(([cid, vals], ci) => (
         <g key={ci}>
           <polyline points={vals.map((v, i) => `${x(i)},${y(v)}`).join(' ')} fill="none" stroke={CREW_STROKE[ci]} strokeWidth={1.2} vectorEffect="non-scaling-stroke" opacity={0.85} />
-          {vals.map((v, i) => (v < a.refLow || v > a.refHigh) && <circle key={i} cx={x(i)} cy={y(v)} r={2.4} fill="none" stroke="#e9eef4" strokeWidth={1} vectorEffect="non-scaling-stroke" />)}
+          {/* Halka: örneğin KENDİ referans aralığının dışında (aralıklar kişiye/cinsiyete ve örneğe göre değişebilir) */}
+          {vals.map((v, i) => { const r = a.crewRef[cid]?.[i]; return r && (v < r[0] || v > r[1]) && <circle key={i} cx={x(i)} cy={y(v)} r={2.4} fill="none" stroke="#e9eef4" strokeWidth={1} vectorEffect="non-scaling-stroke" />; })}
         </g>
       ))}
     </svg>
@@ -54,14 +55,14 @@ function LabBody({ big }: { big?: boolean }) {
             <Spark a={a} />
             <div className="lab-f num">
               <span title={lang === 'tr' ? 'Uçuş öncesi mürettebat ortalaması → dönüşün 1. günü' : 'Pre-flight crew mean → return day 1'}>{a.preflightMean.toFixed(a.preflightMean < 20 ? 1 : 0)} → {a.r1Mean.toFixed(a.r1Mean < 20 ? 1 : 0)} <small>R+1 {d >= 0 ? '+' : ''}{d.toFixed(0)}%</small></span>
-              <span className="muted">{a.refLow}–{a.refHigh}</span>
+              <span className="muted" title={a.rangeVaries ? (lang === 'tr' ? 'Aralık kişiye/örneğe göre değişir; halka kişinin kendi aralığına göredir' : 'Range varies by person/sample; rings use each sample’s own range') : undefined}>{a.refLow}–{a.refHigh}{a.rangeVaries ? '*' : ''}</span>
             </div>
             {id === 'glucose' && <p className="muted small">{lang === 'tr' ? 'R+45: 3 kişide <65; veri seti açıklamıyor, yorumlanmadı.' : 'R+45: 3 crew <65; unexplained in the dataset, not interpreted.'}</p>}
           </div>
         );
       })}
     </div>
-    <div className="lab-legend muted small">{DATA.timepoints.join(' · ')} {lang === 'tr' ? '· kesik çizgi = uçuş · taralı = referans aralığı · halka = aralık dışı' : '· dashed = flight · shaded = reference range · ring = out of range'}</div>
+    <div className="lab-legend muted small">{DATA.timepoints.join(' · ')} {lang === 'tr' ? '· kesik çizgi = uçuş · taralı = örnek referans aralığı · halka = kişinin kendi aralığı dışında · * aralık kişiye göre değişir' : '· dashed = flight · shaded = example reference range · ring = outside that person’s own range · * range varies by person'}</div>
     <SourceTags sources={SRC} />
   </>);
 }

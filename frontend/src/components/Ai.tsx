@@ -89,7 +89,7 @@ export function AlarmBanner() {
       startAlarm();
       if (spokenFor.current !== key) {
         spokenFor.current = key;
-        beginReply();
+        if (!useScenario.getState().id) beginReply(); // senaryo anlatımı kesilmez; alarm anonsu sıraya girer
         speakSentence(xcrit.length ? radPhrase(lang) : alarmPhrase(unacked[0].id, lang), lang, 'urgent');
       }
     } else { stopAlarm(); spokenFor.current = ''; }

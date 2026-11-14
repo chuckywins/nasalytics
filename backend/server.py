@@ -49,7 +49,7 @@ client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
 MODEL_ASSESS = os.environ.get("MODEL_ASSESS", "claude-sonnet-5-5")
 MODEL_VEGA = os.environ.get("MODEL_VEGA", "claude-haiku-5-5")
 DAILY_BUDGET_USD = float(os.environ.get("DAILY_BUDGET_USD", "40"))
-RATE_PER_MIN = int(os.environ.get("RATE_PER_MIN", "40"))
+RATE_PER_MIN = int(os.environ.get("RATE_PER_MIN", "120"))  # ekip laptopları Vite vekili üzerinden aynı IP (127.0.0.1) ile gelir
 # $ / MTok (giriş, çıkış), platform dokümanından (2026-11-14)
 PRICE = {"claude-sonnet-5-5": (2.0, 10.0), "claude-haiku-5-5": (0.10, 0.50), "claude-opus-5-5": (4.0, 20.0)}
 
@@ -432,8 +432,8 @@ def _retry_s(body: str) -> float:
 
 async def _gemini(text: str, style: str):
     async with httpx.AsyncClient(timeout=30) as hc:
-        for ki, key in enumerate(GEMINI_KEYS):
-            for model in TTS_MODELS:
+        for model in TTS_MODELS:  # en iyi model tüm anahtarlarda önce
+            for ki, key in enumerate(GEMINI_KEYS):
                 tag = f"{ki}:{model}"
                 if _tts_cool.get(tag, 0) > time.time():
                     continue
@@ -538,15 +538,31 @@ async def tts_stream(req: Request):
         return Response(path.read_bytes(), media_type="application/octet-stream", headers={"X-TTS-Model": "cache"})
     guard(req)
     hc = httpx.AsyncClient(timeout=60)
-    up, tag = None, ""
-    for ki, key in enumerate(GEMINI_KEYS):
-        for model in TTS_MODELS:
+    up, tag, first, lines = None, "", b"", None
+
+    def audio_of(line: str):
+        """SSE satırı → (pcm | None, hata mesajı | None). Gemini kota dolunca HTTP 200 içinde 'event: error' yollar."""
+        if not line.startswith("data:"):
+            return None, None
+        try:
+            d = json.loads(line[5:].strip())
+        except Exception:
+            return None, None
+        if d.get("error"):
+            return None, str(d["error"].get("message", "error"))
+        delta = d.get("delta") or {}
+        if delta.get("data") and str(delta.get("mime_type", "audio")).startswith("audio"):
+            return base64.b64decode(delta["data"]), None
+        return None, None
+
+    # Sıra: en iyi model TÜM anahtarlarda denenir, sonra bir alt model (ses kalitesi tutarlı kalsın)
+    for model in TTS_MODELS:
+        for ki, key in enumerate(GEMINI_KEYS):
             tag = f"{ki}:{model}"
             if _tts_cool.get(tag, 0) > time.time():
                 continue
             legacy = model.startswith("gemini-2.")
-            content = {"type": "text", "text": f"Say in a {style} tone: {text}"} if legacy else \
-                      {"type": "text", "text": text, "annotations": [{"type": "speech_metadata", "style": style}]}
+            content = {"type": "text", "text": f"Say in a {style} tone: {text}"} if legacy else                       {"type": "text", "text": text, "annotations": [{"type": "speech_metadata", "style": style}]}
             payload = {"model": model, "input": [{"type": "user_input", "content": [content]}], "stream": True,
                        "response_format": {"type": "audio"}, "generation_config": {"speech_config": [{"voice": GEMINI_VOICE}]}}
             try:
@@ -555,8 +571,24 @@ async def tts_stream(req: Request):
             except Exception:
                 continue
             if r.status_code == 200:
-                up = r
-                break
+                # İlk ses parçasını bekle: akış içi hata (kota) gelirse sıradaki anahtara geç
+                it = r.aiter_lines()
+                err = None
+                try:
+                    async for line in it:
+                        pcm, err = audio_of(line)
+                        if pcm or err:
+                            first = pcm or b""
+                            break
+                except Exception as e:
+                    err = str(e)
+                if first and not err:
+                    up, lines = r, it
+                    break
+                await r.aclose()
+                _tts_cool[tag] = time.time() + (_retry_s(err or "") if err else 60)
+                print(f"[tts] key#{ki} {model} stream-error -> skip: {(err or 'no audio')[:80]}")
+                continue
             err = (await r.aread()).decode("utf-8", "ignore")
             await r.aclose()
             if r.status_code in (404, 429):
@@ -565,7 +597,6 @@ async def tts_stream(req: Request):
             elif r.status_code in (400, 401, 403):
                 for m in TTS_MODELS:
                     _tts_cool[f"{ki}:{m}"] = time.time() + 3600
-                break
         if up:
             break
     if not up:
@@ -573,18 +604,14 @@ async def tts_stream(req: Request):
         raise HTTPException(429, "tts quota")
 
     async def gen():
-        buf = bytearray()
+        buf = bytearray(first)
         try:
-            async for line in up.aiter_lines():
-                if not line.startswith("data:"):
-                    continue
-                try:
-                    d = json.loads(line[5:].strip())
-                except Exception:
-                    continue
-                delta = d.get("delta") or {}
-                if delta.get("data") and str(delta.get("mime_type", "audio")).startswith("audio"):
-                    pcm = base64.b64decode(delta["data"])
+            yield first
+            async for line in lines:
+                pcm, err = audio_of(line)
+                if err:
+                    break
+                if pcm:
                     buf += pcm
                     yield pcm
             if len(buf) > 4800:

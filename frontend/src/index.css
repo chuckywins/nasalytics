@@ -331,7 +331,7 @@ a { color: var(--accent); }
 @media (max-height: 860px) { .fcam-v { aspect-ratio: 16/10; } .fcam-s .muted { display: none; } }
 
 /* Senaryo bandı + gerçek veri tekrarı */
-.scen-banner { position: absolute; left: 50%; transform: translateX(-50%); top: 8px; z-index: 6; width: min(600px, 92%); background: rgba(8,14,22,.92); border: 1px solid var(--accent); border-radius: 8px; padding: 6px 10px; }
+.scen-banner { position: absolute; left: 50%; transform: translateX(-50%); bottom: 96px; z-index: 5; width: min(600px, 92%); background: rgba(8,14,22,.92); border: 1px solid var(--accent); border-radius: 8px; padding: 6px 10px; }
 .scen-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; font-size: 12px; }
 .scen-tag { color: var(--bg); background: var(--accent); padding: 1px 6px; border-radius: 3px; font-size: 12px; }
 .scen-title { font-weight: 600; }

@@ -56,11 +56,19 @@ class Cancelled extends Error {}
 const alive = (my: number) => { if (my !== token) throw new Cancelled(); };
 const wait = async (ms: number, my: number) => { const end = Date.now() + ms; while (Date.now() < end) { alive(my); await new Promise((r) => setTimeout(r, Math.min(150, end - Date.now()))); } alive(my); };
 const until = async (pred: () => boolean, maxMs: number, my: number) => { const end = Date.now() + maxMs; while (!pred() && Date.now() < end) { alive(my); await new Promise((r) => setTimeout(r, 200)); } alive(my); };
-function say(c: L) {
+/** Anlatım: altyazıyı gösterir ve seslendirir. Döndürdüğü söz, ses bitince (sessizde okuma süresi kadar sonra) çözülür. */
+function say(c: L): Promise<void> {
   const lang = useApp.getState().lang;
   useScenario.setState((s) => ({ caption: c, stepNo: s.stepNo + 1 }));
-  if (useApp.getState().sessionStarted && !location.search.includes('test')) speakSentence(c[lang], lang);
+  const readMs = Math.min(6000, 1200 + c[lang].length * 45);
+  if (useApp.getState().sessionStarted && !location.search.includes('test')) {
+    // Ses en fazla okuma süresinin 3 katı beklenir (ağ sorunu senaryoyu kilitlemesin)
+    return Promise.race([speakSentence(c[lang], lang), new Promise<void>((r) => setTimeout(r, readMs * 3))]);
+  }
+  return new Promise((r) => setTimeout(r, readMs));
 }
+/** Anlatımı bekle; iptal edilmişse dur */
+const sayWait = async (c: L, my: number) => { await say(c); alive(my); };
 const setTarget = (t: Partial<Record<IndicatorId, number>>) => useApp.setState((s) => ({ target: { ...s.target, ...t } }));
 const latestVal = (id: IndicatorId) => { const r = useApp.getState().readings[id]; return r[r.length - 1].value; };
 const statusOf = (id: IndicatorId) => { const s = useApp.getState(); const r = s.readings[id][s.readings[id].length - 1]; return INDICATORS[id].evaluate(r.value, { glucose: r.ctx, activity: s.activity }).status; };
@@ -91,7 +99,7 @@ const CAP = {
     s1: { tr: 'Taşikardi senaryosu. Astronot dinleniyor, nabız normal aralıkta.', en: 'Tachycardia scenario. The astronaut is at rest; heart rate is in the normal range.' },
     s2: { tr: 'Nabız dinlenme hâlinde hızla yükseliyor.', en: 'Heart rate is rising quickly while at rest.' },
     s3: { tr: 'Kural motoru alarmı anında verdi. Yapay zekâ değerlendirmesi bağlamı ekliyor.', en: 'The rule engine raised the alarm instantly. The AI assessment adds context.' },
-    s4: { tr: 'Şimdi aynı nabız egzersiz sırasında. Hedef nabız bölgesinde olduğu için alarm yok.', en: 'Now the same heart rate during exercise. It is inside the target zone, so there is no alarm.' },
+    s4: { tr: 'Şimdi aynı nabız egzersiz sırasında. Kırk yaş varsayımıyla hedef bölgenin üst sınırı yüz elli üç; bu yüzden alarm yok.', en: 'Now the same heart rate during exercise. Assuming age forty, the top of the target zone is one hundred fifty three, so there is no alarm.' },
     s5: { tr: 'Egzersiz bitti. Nabız dinlenme değerine dönüyor.', en: 'Exercise is over. Heart rate is returning to resting level.' },
     s6: { tr: 'Senaryo tamamlandı. Aynı sayı, farklı bağlamda farklı anlam taşır.', en: 'Scenario complete. The same number means different things in different contexts.' },
   },
@@ -100,7 +108,7 @@ const CAP = {
     saa: { tr: 'Bu tepeler Güney Atlantik Anomalisi geçişleri. Her gün görülür, alarm değildir.', en: 'These peaks are South Atlantic Anomaly passes. They happen every day and are not an alarm.' },
     flr: { tr: 'DONKI kaydı: X8.2 sınıfı güneş patlaması.', en: 'DONKI record: an X8.2 class solar flare.' },
     sep: { tr: 'DONKI kaydı: GOES uydusu yüz megaelektronvolt üstü proton artışı ölçtü.', en: 'DONKI record: GOES measured a rise in protons above one hundred mega electron volts.' },
-    det: { tr: 'Yüksek enlem dozu taban değerin çok üstüne çıktı: güneş parçacık olayı imzası. Korunaklı bölgeye geç; uzay yürüyüşü varsa sonlandır.', en: 'High latitude dose rose far above baseline: a solar particle event signature. Move to the shielded area; terminate any spacewalk.' },
+    det: { tr: 'Yüksek enlem dozu taban değerin çok üstüne çıktı: güneş parçacık olayı imzası. Yüksek enlem geçişlerinde korunaklı bölümde kal; uzay yürüyüşü varsa sonlandır.', en: 'High latitude dose rose far above baseline: a solar particle event signature. Stay in the shielded section during high latitude passes; terminate any spacewalk.' },
     end: { tr: 'Tekrar bitti. Olay penceresindeki doz, olay başına iki yüz elli milisievert limitinin çok altında kaldı.', en: 'Replay finished. The dose in the event window stayed far below the two hundred fifty millisievert per event limit.' },
   },
   mars2024: {
@@ -128,92 +136,110 @@ const CAP = {
 /* ---------------- 1. Taşikardi ---------------- */
 async function tachy(my: number) {
   useApp.setState({ activity: 'rest' }); setTarget({ heartRate: 72 });
-  say(CAP.tachy.s1); await wait(6000, my);
+  await sayWait(CAP.tachy.s1, my); await wait(2000, my);
   say(CAP.tachy.s2); setTarget({ heartRate: 151 });
   await until(() => statusOf('heartRate') === 'critical', 30000, my);
   await wait(2500, my);
-  say(CAP.tachy.s3); await wait(14000, my);
+  await sayWait(CAP.tachy.s3, my); await wait(9000, my);
   useApp.setState({ activity: 'exercise' });
-  say(CAP.tachy.s4); await wait(16000, my);
-  useApp.setState({ activity: 'rest' }); setTarget({ heartRate: 74 });
-  say(CAP.tachy.s5); await until(() => latestVal('heartRate') < 95, 40000, my);
+  await sayWait(CAP.tachy.s4, my); await wait(9000, my);
+  // Toparlanma: önce nabız düşer (efor bandında), sonra dinlenmeye geçilir → egzersiz nabzı dinlenme eşiğiyle yanlış alarm vermez
+  setTarget({ heartRate: 74 });
+  say(CAP.tachy.s5); await until(() => latestVal('heartRate') < 100, 40000, my);
+  useApp.setState({ activity: 'rest' });
+  await until(() => latestVal('heartRate') < 90, 30000, my);
   say(CAP.tachy.s6);
 }
 
 /* ---------------- 2a. ISS Eylül 2017 (TEPC, 10 dk kutular) ---------------- */
 type IssRow = [string, number, number, number];
+const BIN_MS_ISS = 120;  // 10 dk veri = 120 ms ekran → ×5000 (duvar saatiyle; anlatımda duraklar)
+const BIN_MS_MARS = 400; // 1 sa veri = 400 ms ekran → ×9000
+
+/** Duvar saatiyle kutu ilerletici: geride kalırsa kutu atlar ama dozu ve olayları HER kutu için işler */
+async function playBins(n: number, binMs: number, my: number, onBin: (i: number) => Promise<void> | void) {
+  let i = 0, t0 = Date.now();
+  while (i < n) {
+    alive(my);
+    const target = Math.min(n - 1, Math.floor((Date.now() - t0) / binMs));
+    while (i <= target) {
+      const before = Date.now();
+      await onBin(i);
+      t0 += Date.now() - before; // anlatım için bekleme süresi tekrar saatine sayılmaz
+      i++;
+    }
+    await new Promise((r) => setTimeout(r, 40));
+  }
+}
+
 async function iss2017(my: number) {
   const raw = (storms as unknown as { iss_sep2017: { series: IssRow[] } }).iss_sep2017.series;
   // Taban: olay ÖNCESİ (DONKI SEP 2017-09-10T16:25Z) yalnızca tam yüksek enlem kutuları (highLatFraction = 1)
   const pre = raw.filter((r) => r[3] === 1 && r[0] < '2017-09-10T16:25').map((r) => r[1]);
-  const baseline = pre.reduce((a, b) => a + b, 0) / pre.length;
+  const baseline = pre.reduce((x, y) => x + y, 0) / pre.length;
   const win = raw.filter((r) => r[0] >= '2017-09-10T12:00' && r[0] <= '2017-09-12T12:00');
   const series: ReplayPoint[] = win.map((r) => ({ t: r[0], v: r[1], hl: r[3] === 1 ? true : r[3] === 0 ? false : null }));
-  const STEP = 100; // ms / 10 dk kutu → ×6000
   useApp.setState({ env: 'iss' });
   useScenario.setState({ replay: {
-    label: { tr: 'ISS TEPC · emilen doz hızı', en: 'ISS TEPC · absorbed dose rate' }, series, idx: 0, baseline, unit: 'µGy/h', compression: 600_000 / STEP,
+    label: { tr: 'ISS TEPC · emilen doz hızı', en: 'ISS TEPC · absorbed dose rate' }, series, idx: 0, baseline, unit: 'µGy/h', compression: 600_000 / BIN_MS_ISS,
     baselineNote: { tr: 'taban: olay öncesi yüksek enlem ortalaması', en: 'baseline: pre-event high-latitude mean' },
     doseSoFar: 0, doseUnit: { tr: 'mSv (TEPC doz eşdeğeri, vekil)', en: 'mSv (TEPC dose equivalent, proxy)' }, limit: { tr: 'SPE limiti 250 mSv · V1 [4031]', en: 'SPE limit 250 mSv · V1 [4031]' },
     source: [SRC.tepc, SRC.donki], events: [
       { t: '2017-09-10T15:35', text: { tr: 'X8.2 patlama', en: 'X8.2 flare' } },
       { t: '2017-09-10T16:25', text: { tr: 'SEP (GOES >100 MeV)', en: 'SEP (GOES >100 MeV)' } }],
   } });
-  say(CAP.iss2017.s1); await wait(5000, my);
+  await sayWait(CAP.iss2017.s1, my);
   let dose = 0, saaSaid = false, flr = false, sep = false, det = false, peak = 0, lastHl = baseline;
-  for (let i = 0; i < win.length; i++) {
-    alive(my);
+  await playBins(win.length, BIN_MS_ISS, my, async (i) => {
     const r = win[i];
     dose += r[2] / 6 / 1000; // μSv/sa × 10 dk → mSv
-    useScenario.setState((s) => ({ replay: s.replay && { ...s.replay, idx: i, doseSoFar: dose } }));
-    if (!saaSaid && r[3] === 0 && r[1] > 100) { saaSaid = true; say(CAP.iss2017.saa); }
-    if (!flr && r[0] >= '2017-09-10T15:30') { flr = true; say(CAP.iss2017.flr); }
-    if (!sep && r[0] >= '2017-09-10T16:20') { sep = true; say(CAP.iss2017.sep); }
-    const mult = r[1] / baseline;
-    if (r[3] === 1 && mult >= 3) { if (mult > peak) peak = mult; if (!det) { det = true; say(CAP.iss2017.det); } }
-    if (peak >= 3) { // mandallı: en yüksek seviye korunur; değer = şimdiki yüksek enlem ölçümü + zirve
-      const status: Status = peak >= 10 ? 'critical' : 'warn';
-      setExtra(radAlert(status, `${lastHl.toFixed(0)} µGy/h · ${PEAK[useApp.getState().lang]} ×${peak.toFixed(0)}`, 'iss'), 'radiation');
-    }
     if (r[3] === 1) lastHl = r[1];
-    await wait(STEP, my);
-  }
-  say(CAP.iss2017.end);
+    useScenario.setState((s) => ({ replay: s.replay && { ...s.replay, idx: i, doseSoFar: dose } }));
+    if (!saaSaid && r[3] === 0 && r[1] > 100) { saaSaid = true; await sayWait(CAP.iss2017.saa, my); }
+    if (!flr && r[0] >= '2017-09-10T15:30') { flr = true; await sayWait(CAP.iss2017.flr, my); }
+    if (!sep && r[0] >= '2017-09-10T16:20') { sep = true; await sayWait(CAP.iss2017.sep, my); }
+    const mult = r[3] === 1 ? r[1] / baseline : 0;
+    if (mult > peak) peak = mult;
+    if (peak >= 3) {
+      // ISS (manyetosfer + istasyon kalkanı): SPE'lerin çoğu yalnızca ALARA gerektirir (TB-020) → en fazla UYARI, kritik alarm yok
+      setExtra(radAlert('warn', `${lastHl.toFixed(0)} µGy/h · ${PEAK[useApp.getState().lang]} ×${peak.toFixed(0)}`, 'iss'), 'radiation');
+      if (!det) { det = true; await sayWait(CAP.iss2017.det, my); }
+    }
+  });
+  await sayWait(CAP.iss2017.end, my);
 }
 
 /* ---------------- 2b. Mars Mayıs 2024 (MSL-RAD, saatlik) ---------------- */
 async function mars2024(my: number) {
   const raw = (storms as unknown as { mars_may2024: { series: [string, number][] } }).mars_may2024.series;
-  const preVals = raw.filter((r) => r[0] < '2024-05-20T00:00').map((r) => r[1]).sort((a, b) => a - b);
+  const preVals = raw.filter((r) => r[0] < '2024-05-20T00:00').map((r) => r[1]).sort((x, y) => x - y);
   const baseline = preVals[Math.floor(preVals.length / 2)]; // medyan
   const win = raw.filter((r) => r[0] >= '2024-05-19T12:00' && r[0] <= '2024-05-22T12:00');
-  const STEP = 400; // ms / 1 sa → ×9000
   useApp.setState({ env: 'mars_surface' });
   useScenario.setState({ replay: {
     label: { tr: 'Mars yüzeyi MSL-RAD · emilen doz hızı', en: 'Mars surface MSL-RAD · absorbed dose rate' }, series: win.map((r) => ({ t: r[0], v: r[1], hl: null })), idx: 0, baseline, unit: 'µGy/h',
-    compression: 3_600_000 / STEP, baselineNote: { tr: 'taban: 15–19 Mayıs medyanı', en: 'baseline: 15–19 May median' },
+    compression: 3_600_000 / BIN_MS_MARS, baselineNote: { tr: '15–19 Mayıs medyanı', en: '15–19 May median' },
     doseSoFar: 0, doseUnit: { tr: 'mGy (emilen doz; mSv için Q gerekir)', en: 'mGy (absorbed; mSv needs Q)' },
     source: [SRC.radlab, SRC.donki], events: [{ t: '2024-05-20T05:00', text: { tr: 'DONKI: hızlı halo CME 05:36Z', en: 'DONKI: fast halo CME 05:36Z' } }],
   } });
-  say(CAP.mars2024.s1); await wait(5000, my);
+  await sayWait(CAP.mars2024.s1, my);
   let dose = 0, cme = false, det = false, peak = 0;
   const [d0, d1] = ENVS.mars_surface.commDelayOneWaySec;
-  for (let i = 0; i < win.length; i++) {
-    alive(my);
+  await playBins(win.length, BIN_MS_MARS, my, async (i) => {
     const r = win[i];
     dose += r[1] / 1000; // μGy/sa × 1 sa → mGy
     useScenario.setState((s) => ({ replay: s.replay && { ...s.replay, idx: i, doseSoFar: dose } }));
-    if (!cme && r[0] >= '2024-05-20T05:00') { cme = true; say(CAP.mars2024.cme); }
+    if (!cme && r[0] >= '2024-05-20T05:00') { cme = true; await sayWait(CAP.mars2024.cme, my); }
     const mult = r[1] / baseline;
     if (mult > peak) peak = mult;
     if (peak >= 3) {
+      // Olay BAŞLANGICINDA nihai büyüklük bilinmez → önlem olarak sığınak (TB-020: erken uyarı sığınak kurmaya imkân verir)
       const status: Status = peak >= 10 ? 'critical' : 'warn';
       setExtra(radAlert(status, `${r[1].toFixed(0)} µGy/h · ${PEAK[useApp.getState().lang]} ×${peak.toFixed(0)} · ${DELAY[useApp.getState().lang]} ${Math.round(d0 / 60)}–${Math.round(d1 / 60)} min`, 'mars'), 'radiation');
-      if (!det && status === 'critical') { det = true; say(CAP.mars2024.det); await wait(4500, my); say(CAP.mars2024.delay); }
+      if (!det && status === 'critical') { det = true; await sayWait(CAP.mars2024.det, my); await sayWait(CAP.mars2024.delay, my); }
     }
-    await wait(STEP, my);
-  }
-  say(CAP.mars2024.end);
+  });
+  await sayWait(CAP.mars2024.end, my);
 }
 
 const PEAK = { tr: 'zirve', en: 'peak' };
@@ -222,12 +248,14 @@ function radAlert(status: Status, value: string, where: 'iss' | 'mars'): ExtraAl
   return {
     id: 'radiation', status, value, prov: 'NASA_MEASUREMENT', escalate: where === 'mars' ? 'crew' : 'ground',
     title: { tr: 'Radyasyon · güneş parçacık olayı', en: 'Radiation · solar particle event' },
-    label: { tr: status === 'critical' ? 'Taban ×10 üstü' : 'Taban ×3 üstü', en: status === 'critical' ? 'Above ×10 baseline' : 'Above ×3 baseline' },
+    label: where === 'iss' ? { tr: 'Taban ×3 üstü · ALARA', en: 'Above ×3 baseline · ALARA' } : { tr: status === 'critical' ? 'Taban ×10 üstü' : 'Taban ×3 üstü', en: status === 'critical' ? 'Above ×10 baseline' : 'Above ×3 baseline' },
     steps: where === 'mars'
       ? [{ tr: 'Sığınağa / en kalın kalkanlı bölüme geç', en: 'Go to the shelter / most shielded area' }, { tr: 'Yüzey aktivitesini ve EVA\'yı durdur', en: 'Stop surface activity and EVA' }, { tr: 'Yer kontrolü dakikalar sonra görür: karar mürettebatta', en: 'Ground sees this minutes later: crew decides' }]
-      : [{ tr: 'Korunaklı bölgeye geç', en: 'Move to the shielded area' }, { tr: 'EVA varsa sonlandır (≤2 saat)', en: 'Terminate any EVA (≤2 h)' }, { tr: 'Doz izlemeyi sürdür, yer ekibine bildir', en: 'Keep monitoring dose, inform ground' }],
+      : [{ tr: 'Yüksek enlem geçişlerinde korunaklı bölümde kal (ALARA)', en: 'Stay in the shielded section during high-latitude passes (ALARA)' }, { tr: 'EVA varsa sonlandır (≤2 saat)', en: 'Terminate any EVA (≤2 h)' }, { tr: 'Doz izlemeyi sürdür, yer ekibine bildir', en: 'Keep monitoring dose, inform ground' }],
     sources: [SRC.tb020, where === 'mars' ? SRC.radlab : SRC.tepc, SRC.donki],
-    note: { tr: 'Eşik çarpanları (×3, ×10) VARSAYIM; eylemler OCHMO-TB-020', en: 'Threshold multipliers (×3, ×10) are ASSUMPTIONS; actions from OCHMO-TB-020' },
+    note: where === 'mars'
+      ? { tr: 'Olay başlangıcında nihai büyüklük bilinmez: sığınak önlemdir. Eşik çarpanları (×3, ×10) VARSAYIM; eylemler OCHMO-TB-020', en: 'At onset the final size is unknown: sheltering is a precaution. Multipliers (×3, ×10) are ASSUMPTIONS; actions from OCHMO-TB-020' }
+      : { tr: "LEO'da SPE'lerin çoğu yalnızca ALARA gerektirir (TB-020); ×3 eşiği VARSAYIM", en: 'In LEO most SPEs need only ALARA (TB-020); ×3 threshold is an ASSUMPTION' },
   };
 }
 
@@ -252,7 +280,7 @@ async function evaCO2(my: number) {
   useApp.setState({ activity: 'eva', env: 'iss' }); setTarget({ heartRate: 112, respRate: 18 });
   let co2 = 1.5;
   useScenario.setState({ suit: { pressurePsia: 4.3, ppO2mmHg: 222, ppCO2mmHg: co2 } });
-  say(CAP.evaCO2.s1); await wait(6000, my);
+  await sayWait(CAP.evaCO2.s1, my); await wait(1500, my);
   say(CAP.evaCO2.s2);
   let saidWatch = false, saidWarn = false;
   while (co2 < 6.2) {
@@ -275,17 +303,17 @@ async function evaCO2(my: number) {
 async function evaDCS(my: number) {
   useApp.setState({ activity: 'eva', env: 'iss' }); setTarget({ heartRate: 104, respRate: 17 });
   useScenario.setState({ suit: { pressurePsia: 4.3, ppO2mmHg: 222, ppCO2mmHg: 1.8 } });
-  say(CAP.evaDCS.s1); await wait(7000, my);
-  say(CAP.evaDCS.s2); await wait(3500, my);
+  await sayWait(CAP.evaDCS.s1, my); await wait(3000, my);
+  await sayWait(CAP.evaDCS.s2, my);
   setExtra({
-    id: 'dcs', status: 'warn', value: { tr: 'öz bildirim: dirsek eklem ağrısı', en: 'self-report: elbow joint pain' }[useApp.getState().lang], prov: 'USER_INPUT', escalate: 'ground',
+    id: 'dcs', status: 'warn', value: { tr: 'öz bildirim: dirsek eklem ağrısı', en: 'self-report: elbow joint pain' }[useApp.getState().lang], prov: 'SIMULATED', escalate: 'ground',
     title: { tr: 'Olası vurgun (DCS) · Tip I belirtisi', en: 'Possible DCS · Type I symptom' },
     label: { tr: 'Belirtiye dayalı', en: 'Symptom-based' },
     steps: [{ tr: 'EVA\'yı güvenle ve hızla sonlandır', en: 'Terminate the EVA safely and quickly' }, { tr: 'Basınçlı ortama dön', en: 'Return to a pressurised environment' }, { tr: 'Uçuş cerrahına bildir; ≥16,4 psia belirtileri hafifletebilir (protokol duruma bağlı)', en: 'Inform the flight surgeon; ≥16.4 psia may relieve symptoms (protocol is scenario dependent)' }],
     sources: [SRC.tb037],
     note: { tr: 'Tip II (nörolojik, kardiyopulmoner) belirtiler daha ciddidir', en: 'Type II (neurological, cardiopulmonary) symptoms are more serious' },
   }, 'dcs');
-  say(CAP.evaDCS.s3); await wait(15000, my);
+  await sayWait(CAP.evaDCS.s3, my); await wait(8000, my);
   useApp.setState({ activity: 'rest' }); setTarget({ heartRate: 80, respRate: 15 });
   useScenario.setState({ suit: null });
   say(CAP.evaDCS.s4);

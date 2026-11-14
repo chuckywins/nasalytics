@@ -75,7 +75,8 @@ function connect() {
   s.onopen = () => useTelemetry.setState({ connected: true });
   s.onclose = () => { if (ws === s) { useTelemetry.setState({ connected: false }); ws = null; } };
   s.onerror = () => { /* yerel modda sürer */ };
-  s.onmessage = (ev) => { try { const p = JSON.parse(ev.data) as Packet; if (p?.crewId && p.snap) push(p.crewId, p); } catch { /* yok */ } };
+  // Varışta yeniden damgala: laptoplar arası saat farkı gecikme hesabını bozmasın (ağ gecikmesi ~ms, ihmal)
+  s.onmessage = (ev) => { try { const p = JSON.parse(ev.data) as Packet; if (p?.crewId && p.snap) push(p.crewId, { ...p, t: Date.now() }); } catch { /* yok */ } };
 }
 
 /** Uygulama boyunca bir kez: 2 sn'de bir yayın + bağlantı bakımı */
