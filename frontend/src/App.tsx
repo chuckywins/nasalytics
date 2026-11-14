@@ -5,7 +5,7 @@ import Body3D, { type Callout } from './components/Body3D';
 import { TopBar, VitalsPanel, EcgStrip, EntryForm } from './components/Hud';
 import { AssessmentPanel, RegionPanel, CabinPanel, MissionPanel, TrendChart } from './components/Panels';
 import { SessionGate, AlarmBanner, Vega } from './components/Ai';
-import { RoutineReminder, CheckinModals } from './components/Checkin';
+import { CheckinModals } from './components/Checkin';
 import { FatigueCam } from './components/FatigueCam';
 import { ScenarioBanner } from './components/Scenario';
 import { CrewView, CrewNotices } from './components/CrewView';
@@ -80,7 +80,6 @@ export default function App() {
       <aside className="col-right"><AssessmentPanel /><RegionPanel /></aside>
       <footer className="row-bottom"><CabinPanel /><MissionPanel /><TrendChart /></footer>
       <CheckinModals />
-      <RoutineReminder />
       <SessionGate />
     </div>
   );

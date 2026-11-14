@@ -136,3 +136,6 @@ Her adım buraya kısa notla eklenir (en yeni en altta).
 - Yeni senaryolar (hepsi SİMÜLE, belirti VEGA ile aynı kanaldan): ağır alerji (ISS 1.101), düşük kan şekeri (ADA/AHA), çok yüksek tansiyon + belirti (AHA 2025), kabin basıncı düşüşü (irtifa kartı; varsayımsal kaçak), uzay adaptasyon sendromu 2. gün (OCHMO-TB-033: %50–70).
 - Motor düzeltmeleri: nokta ölçümler (tansiyon, şeker) SIMULATED okuma ile sürülür; Durdur tansiyon/şeker/kabin/görev gününü geri yükler (test edildi); kabin basıncı hedefi eklendi.
 - Küçük düzeltmeler: AI aciliyet değeri dizi gelirse normalize; senaryo değişince sabitlenmiş kartlar temizlenir; senaryo listesi 5 sütun (1536×700'de 10 senaryo görünür).
+
+## 2026-11-15 01:12 — Günlük rutin hatırlatma açılır penceresi kaldırıldı
+- Kullanıcı isteği: periyodik "rutin görevler" popup'ı artık çıkmıyor; görevler eskisi gibi alttaki "Günlük rutin" sekmesinde. (Bileşen kodu Checkin.tsx içinde duruyor, yalnızca ekrana eklenmiyor.)
