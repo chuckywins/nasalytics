@@ -809,3 +809,27 @@ _DIST = Path(__file__).resolve().parent.parent / "frontend" / "dist"
 if _DIST.is_dir():
     from fastapi.staticfiles import StaticFiles
     app.mount("/", StaticFiles(directory=str(_DIST), html=True), name="ui")
+
+
+# ---- Alt dizin öneki (OpenLiteSpeed gibi öneki soymayan vekiller için): URL_PREFIX=/nasalytics ----
+class _StripPrefix:
+    def __init__(self, inner, prefix: str):
+        self.inner, self.prefix = inner, prefix
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] in ("http", "websocket"):
+            p = scope.get("path", "")
+            if scope["type"] == "http" and p == self.prefix:  # /nasalytics → /nasalytics/
+                await send({"type": "http.response.start", "status": 301, "headers": [(b"location", (self.prefix + "/").encode())]})
+                await send({"type": "http.response.body", "body": b""})
+                return
+            if p.startswith(self.prefix + "/"):
+                scope = dict(scope)
+                scope["path"] = p[len(self.prefix):]
+                scope["raw_path"] = scope["path"].encode()
+        await self.inner(scope, receive, send)
+
+
+_PREFIX = os.environ.get("URL_PREFIX", "").rstrip("/")
+if _PREFIX:
+    app = _StripPrefix(app, _PREFIX)  # noqa: F811 — uvicorn backend.server:app bunu yükler
