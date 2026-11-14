@@ -1,65 +1,104 @@
-# Sunucuya kurulum (kendi sunucumuz, GitHub'dan)
+# Kurulum: asicservices.com/nasalytics (AlmaLinux 8)
 
-Tek adres: FastAPI hem API'yi (`/api`), hem canlı aktarımı (`/ws/telemetry`), hem de derlenmiş arayüzü (`frontend/dist`) sunar.
-Telefonlarda mikrofon ve kamera **yalnızca HTTPS** üzerinde çalışır, bu yüzden önüne TLS yapan bir ters vekil (Caddy veya nginx) konur.
+Mimari: `uvicorn` (FastAPI) yalnızca `127.0.0.1:8790`'da çalışır ve **API + canlı aktarım (WebSocket) + derlenmiş arayüzü** birlikte sunar.
+Sitenin mevcut web sunucusu (Apache veya nginx) `https://asicservices.com/nasalytics/` isteklerini öneki soyarak buraya aktarır.
+Telefonda mikrofon/kamera yalnızca HTTPS'te çalışır; sitenin mevcut sertifikası kullanılır. Mevcut siteye başka hiçbir şey dokunulmaz.
 
-## 1. Kod ve anahtarlar
+Komutlar sunucuda, `sudo` yetkili kullanıcıyla çalıştırılır.
+
+## 0. Web sunucusunu öğren
 ```bash
-git clone https://github.com/chuckywins/nasalytics.git && cd nasalytics
-cp /güvenli/yer/.env .env        # ANTHROPIC_API_KEY, GEMINI_API_KEYS, GEMINI_VOICE, (isteğe bağlı) AZURE_SPEECH_KEY/REGION
+ls -d /usr/local/cpanel 2>/dev/null && echo "cPanel var"
+systemctl is-active httpd nginx 2>/dev/null
+ss -ltnp | grep 8790 || echo "8790 boş"
 ```
-`.env` repoda yoktur; laptoptaki dosya güvenli bir yoldan kopyalanır.
 
-## 2. Arayüzü derle
+## 1. Paketler
 ```bash
-cd frontend && npm ci && npm run build && cd ..
+sudo dnf install -y git python3.11 python3.11-pip
+sudo dnf module reset -y nodejs && sudo dnf module enable -y nodejs:20 && sudo dnf install -y nodejs
+python3.11 --version && node -v          # Python 3.11+, Node 20+
 ```
-Node 20+ gerekir. Çıktı `frontend/dist/` klasörüdür; sunucu onu otomatik bulur.
+`python3.11` bulunamazsa `sudo dnf install -y python39` ve aşağıda `python3.9` kullanın.
 
-## 3. Arka ucu çalıştır
+## 2. Hizmet kullanıcısı ve kod (özel depo → salt okunur "deploy key")
 ```bash
-python3 -m venv .venv && . .venv/bin/activate
-pip install -r backend/requirements.txt
-uvicorn backend.server:app --host 127.0.0.1 --port 8790 --proxy-headers --forwarded-allow-ips 127.0.0.1
+sudo useradd -m -r -s /bin/bash nasalytics
+sudo -u nasalytics ssh-keygen -t ed25519 -N "" -f /home/nasalytics/.ssh/id_ed25519
+sudo cat /home/nasalytics/.ssh/id_ed25519.pub
 ```
-Kalıcı çalışması için systemd hizmeti ya da `tmux` kullanılır. `--proxy-headers` sayesinde istek sınırı her telefonun gerçek IP'sine göre uygulanır.
-
-## 4. HTTPS ters vekil
-
-**Caddy (en kolayı; sertifikayı kendisi alır):** `/etc/caddy/Caddyfile`
-```
-alan-adi.com {
-    reverse_proxy 127.0.0.1:8790
-}
-```
-WebSocket dahil her şey kendiliğinden geçer.
-
-**nginx:**
-```nginx
-server {
-    listen 443 ssl;
-    server_name alan-adi.com;
-    # ssl_certificate ... (certbot)
-    location / {
-        proxy_pass http://127.0.0.1:8790;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;      # /ws/telemetry için şart
-        proxy_set_header Connection "upgrade";
-        proxy_set_header Host $host;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_buffering off;                         # VEGA ve ses akışı (SSE) beklemesin
-        proxy_read_timeout 3600s;
-    }
-}
+Çıkan satırı GitHub'da ekleyin: **chuckywins/nasalytics → Settings → Deploy keys → Add deploy key** (yazma izni KAPALI). Sonra:
+```bash
+sudo mkdir -p /opt/nasalytics && sudo chown nasalytics: /opt/nasalytics
+sudo -u nasalytics env GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=accept-new" \
+  git clone git@github.com:chuckywins/nasalytics.git /opt/nasalytics
 ```
 
-## 5. Kontrol
-- `https://alan-adi.com/api/health` → `{"ok": true ...}`
-- Telefonla adresi aç: açılış ekranında **Astronot olarak başla**. İkinci telefonda **Sağlık görevlisi (CMO) ekranı**: ilk telefonun kartı canlı görünür.
-- Doğrudan bağlantılar (QR için): `https://alan-adi.com/?role=astronaut`, `?role=cmo`, `?role=ground`.
+## 3. Anahtarlar (.env) ve hazır ses önbelleği — laptoptan
+`.env` repoda yoktur. Laptopta proje klasöründe:
+```bash
+scp .env KULLANICI@asicservices.com:/tmp/nasalytics.env
+scp -r backend/tts_cache KULLANICI@asicservices.com:/tmp/tts_cache     # önceden üretilmiş sesler: Gemini kotası harcanmaz
+```
+Sunucuda:
+```bash
+sudo mv /tmp/nasalytics.env /opt/nasalytics/.env
+sudo mv /tmp/tts_cache /opt/nasalytics/backend/tts_cache
+sudo chown -R nasalytics: /opt/nasalytics/.env /opt/nasalytics/backend/tts_cache && sudo chmod 600 /opt/nasalytics/.env
+```
+
+## 4. Python ortamı ve arayüz derlemesi (`/nasalytics/` alt dizini için)
+```bash
+sudo -u nasalytics python3.11 -m venv /opt/nasalytics/.venv
+sudo -u nasalytics bash /opt/nasalytics/deploy/update.sh
+```
+`update.sh`: `git pull` → `npm ci` → `NASA_BASE=/nasalytics/ npm run build` → `pip install -r backend/requirements.txt`.
+
+## 5. Hizmet (systemd)
+```bash
+sudo cp /opt/nasalytics/deploy/nasalytics.service /etc/systemd/system/
+sudo systemctl daemon-reload && sudo systemctl enable --now nasalytics
+curl -s 127.0.0.1:8790/api/health        # {"ok":true,...}
+```
+
+## 6. Web sunucusu yönlendirmesi
+SELinux, web sunucusunun yerel porta bağlanmasına izin vermeli (AlmaLinux'ta varsayılan kapalı):
+```bash
+sudo setsebool -P httpd_can_network_connect 1
+```
+
+**Apache (httpd):** `deploy/apache-nasalytics.conf` içeriği sitenin **443** `<VirtualHost>` bloğunun içine girmeli.
+- Düz httpd: o bloğa `Include /opt/nasalytics/deploy/apache-nasalytics.conf` satırını ekleyin.
+- cPanel/WHM:
+  ```bash
+  sudo mkdir -p /etc/apache2/conf.d/userdata/ssl/2_4/CPANEL_KULLANICI/asicservices.com
+  sudo cp /opt/nasalytics/deploy/apache-nasalytics.conf /etc/apache2/conf.d/userdata/ssl/2_4/CPANEL_KULLANICI/asicservices.com/nasalytics.conf
+  sudo /scripts/rebuildhttpdconf
+  ```
+Sonra: `sudo apachectl configtest && sudo systemctl reload httpd` (cPanel'de `sudo /scripts/restartsrv_httpd`).
+
+**nginx:** sitenin `server { listen 443 ssl; ... }` bloğuna `include /opt/nasalytics/deploy/nginx-nasalytics.conf;` ekleyin, sonra `sudo nginx -t && sudo systemctl reload nginx`.
+
+## 7. Kontrol
+- `curl -s https://asicservices.com/nasalytics/api/health` → `{"ok":true,...}`
+- Telefonla `https://asicservices.com/nasalytics/` → **Astronot olarak başla**. İkinci telefonda **Sağlık görevlisi (CMO) ekranı**: ilk telefonun kartı "canlı bağlantı" ile görünür.
+- QR için doğrudan bağlantılar: `…/nasalytics/?role=astronaut`, `?role=cmo`, `?role=ground`.
+
+## Güncelleme (yeni commit sonrası)
+```bash
+sudo -u nasalytics bash /opt/nasalytics/deploy/update.sh && sudo systemctl restart nasalytics
+```
+
+## Sorun giderme
+| Belirti | Neden / çözüm |
+|---|---|
+| 503 Service Unavailable | Hizmet kapalı (`sudo systemctl status nasalytics`, `journalctl -u nasalytics -n 50`) ya da SELinux: `setsebool -P httpd_can_network_connect 1` |
+| Sayfa boş, konsolda `/assets/...` 404 | Arayüz `NASA_BASE=/nasalytics/` olmadan derlenmiş → `update.sh`'yi tekrar çalıştırın |
+| CMO ekranında "yalnız yerel" | WebSocket geçmiyor: Apache'de `ws://` satırı genel `ProxyPass`'tan önce mi, `proxy_wstunnel` yüklü mü (`httpd -M | grep wstunnel`) |
+| VEGA cevabı tek seferde geliyor | Vekil tamponluyor: nginx `proxy_buffering off`; Apache `flushpackets=on` ve `/api/` için gzip kapalı |
+| VEGA sessiz, yazı var | Gemini kotası dolmuş olabilir (anahtar/model başına günde ~10, ~11:00'de yenilenir) ya da iPhone sessiz modda |
 
 ## Jüri günü notları
 - Her telefon ilk açılışta kendi astronot kimliğini alır (C-10…C-99); 3 dakika veri göndermeyen cihazın kartı CMO ekranından düşer.
-- Ses (Gemini) kotası: anahtar ve model başına günde ~10 istek; saat 11:00 civarı yenilenir. Sunumdan önce uygulamayı bir kez açıp anlatım seslerini önbelleğe aldırın (`backend/tts_cache/`).
-- `RATE_PER_MIN` (varsayılan 120/dk/IP) ve `DAILY_BUDGET_USD` `.env` ile ayarlanabilir.
-- iPhone'da sessiz moddayken ses çalmaz; VEGA'nın yazılı cevabı ekranda yine görünür. iOS'ta konuşma tanıma her zaman güvenilir değildir; yazı alanı her zaman çalışır.
+- İstek sınırı telefon başına (`RATE_PER_MIN`, varsayılan 120/dk) ve günlük AI bütçesi (`DAILY_BUDGET_USD`, varsayılan 40) `.env` ile ayarlanır.
+- iOS'ta konuşma tanıma her zaman güvenilir değildir; VEGA'nın yazı alanı her zaman çalışır.

@@ -3,6 +3,7 @@
 // Tıklama: vuruş listesinden bölge önceliğiyle seçim (organ > kas > kemik), kaburga/kas organları örtmesin.
 // Model: public/models/body.glb (CC BY-SA 4.0, bkz. ATTRIBUTION.md). AI notu: Claude (Anthropic) yardımıyla yazılmıştır.
 import { Canvas, useFrame, type ThreeEvent } from '@react-three/fiber';
+import { asset } from '../base';
 import { OrbitControls, useGLTF, Bounds, Line } from '@react-three/drei';
 import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
@@ -94,7 +95,7 @@ function Callouts({ items }: { items: Callout[] }) {
 }
 
 function Model({ statuses, selected, onSelect, layers }: Props) {
-  const { scene } = useGLTF('/models/body.glb');
+  const { scene } = useGLTF(asset('models/body.glb'));
   const [hover, setHover] = useState<Region | null>(null);
   const reduced = useRef(typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches);
 
@@ -205,4 +206,4 @@ export default function Body3D(props: Props) {
     </>
   );
 }
-useGLTF.preload('/models/body.glb');
+useGLTF.preload(asset('models/body.glb'));

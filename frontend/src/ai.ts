@@ -2,6 +2,7 @@
 // Kural: AI uyarıyı YÜKSELTEBİLİR, asla kapatamaz (eskalasyon = max(kural, AI)). Proxy yoksa kural kartları kalır.
 // AI notu: Claude (Anthropic) yardımıyla yazılmıştır.
 import { useEffect, useRef } from 'react';
+import { API } from './base';
 import { INDICATORS, INDICATOR_ORDER } from './engine/indicators';
 import { ENVS, ENV_LABEL, equivUSvH, cumulativeMSv, boneLossPct } from './engine/environment';
 import type { Escalation } from './engine/types';
@@ -12,7 +13,6 @@ import { useFatigue } from './fatigue';
 import { useScenario } from './scenario';
 import { recentSymptoms, useSymptoms, type SymptomCategory } from './symptoms';
 
-const API = import.meta.env.VITE_API_BASE ?? '';
 
 /** Model için kompakt, kökenli anlık durum. Kişisel veri yok. */
 export function buildSnapshot() {

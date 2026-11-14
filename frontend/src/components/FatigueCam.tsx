@@ -2,6 +2,7 @@
 // Sayfa açılınca başlar (kullanıcı kapatabilir; tercih hatırlanır). Tüm işlem CİHAZDA; kare gönderilmez.
 // AI notu: Claude (Anthropic) yardımıyla yazılmıştır.
 import { useEffect, useRef } from 'react';
+import { asset } from '../base';
 import { FaceLandmarker, FilesetResolver } from '@mediapipe/tasks-vision';
 import { useFatigue, FatigueAnalyzer } from '../fatigue';
 import { useApp } from '../store';
@@ -21,9 +22,9 @@ export function grabCameraFrame(): string | null {
 }
 
 async function createLandmarker() {
-  const fileset = await FilesetResolver.forVisionTasks('/mediapipe');
+  const fileset = await FilesetResolver.forVisionTasks(asset('mediapipe'));
   const opts = (delegate: 'GPU' | 'CPU') => ({
-    baseOptions: { modelAssetPath: '/models/face_landmarker.task', delegate },
+    baseOptions: { modelAssetPath: asset('models/face_landmarker.task'), delegate },
     runningMode: 'VIDEO' as const, numFaces: 1, outputFaceBlendshapes: true,
   });
   try { return await FaceLandmarker.createFromOptions(fileset, opts('GPU')); }

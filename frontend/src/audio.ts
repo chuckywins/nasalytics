@@ -1,6 +1,7 @@
 // Ses: Web Audio ile üretilen tehlike alarmı (dosya yok) ve tarayıcı konuşma sentezi.
 // Not: tarayıcılar kullanıcı tıklaması olmadan ses çalmaz → "Oturumu başlat" ile unlock edilir.
 // Konuşma sentetiktir (AI/TTS); arayüzde ve teslimde belirtilir. AI notu: Claude (Anthropic) yardımıyla yazılmıştır.
+import { API as API_BASE } from './base';
 let ctx: AudioContext | null = null;
 let alarmTimer: number | null = null;
 /** Dalga görseli için: VEGA sesi bu analizörden geçer (ses aynen hoparlöre gider) */
@@ -88,7 +89,7 @@ export function beginReply() { stopVoice(); return gen; }
 async function fetchVoice(text: string, lang: 'tr' | 'en', style: string): Promise<AudioBuffer | null> {
   if (ttsOff || !ctx) return null;
   try {
-    const r = await fetch(`${import.meta.env.VITE_API_BASE ?? ''}/api/tts`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text, lang, style }) });
+    const r = await fetch(`${API_BASE}/api/tts`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text, lang, style }) });
     if (r.status === 503) ttsOff = true;
     if (!r.ok) return null;
     return await ctx.decodeAudioData(await r.arrayBuffer());
@@ -110,7 +111,6 @@ function browserSay(text: string, lang: 'tr' | 'en') {
   });
 }
 interface VoiceStream { pcm: Float32Array[]; done: boolean; buffer: AudioBuffer | null; notify: (() => void) | null; }
-const API_BASE = import.meta.env.VITE_API_BASE ?? '';
 let live: AudioBufferSourceNode[] = [];
 /** Sesi HEMEN istemeye başlar: önce akışlı Gemini (ham PCM), olmazsa /api/tts (Azure vb.), o da olmazsa boş (tarayıcı sesi) */
 function openVoice(text: string, lang: 'tr' | 'en', style: string): VoiceStream {

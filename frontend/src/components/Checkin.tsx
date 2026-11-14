@@ -1,6 +1,7 @@
 // Günlük check-in arayüzü: rutin görev listesi + puan/seri/rozet, reaksiyon testi, sesli günlük, hatırlatma.
 // AI notu: Claude (Anthropic) yardımıyla yazılmıştır.
 import { useEffect, useRef, useState } from 'react';
+import { API } from '../base';
 import { createPortal } from 'react-dom';
 import { useScenario } from '../scenario';
 import { useApp, activeAlerts } from '../store';
@@ -181,7 +182,7 @@ export function VoiceLog({ onClose }: { onClose: () => void }) {
     if (words < 3) { setErr(t('vl.tooShort', lang)); setState('error'); return; }
     setState('busy');
     try {
-      const rr = await fetch('/api/voicelog', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lang, transcript, metrics }) });
+      const rr = await fetch(`${API}/api/voicelog`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lang, transcript, metrics }) });
       if (!rr.ok) throw new Error(`HTTP ${rr.status}`);
       const j = await rr.json();
       const v: VoiceResult = { at: Date.now(), transcript, metrics, ...j.result };

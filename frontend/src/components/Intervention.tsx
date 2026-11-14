@@ -4,6 +4,7 @@
 // Yer kontrol onaycıdır: onay astronota tek yön gecikmeyle ulaşır (yerel durum, CMO ekranına aktarılmaz).
 // AI notu: Claude (Anthropic) yardımıyla yazılmıştır.
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { API } from '../base';
 import { useApp } from '../store';
 import { t } from '../i18n';
 import { PROTOCOLS, allDrugs, matchProtocols, ISS_KIT, KIT_BY_ID, type ProtocolId, type SnapLite } from '../engine/protocols';
@@ -11,7 +12,6 @@ import type { Packet, Role } from '../telemetry';
 import { ProvTag } from './Hud';
 import { SourceTags } from './Info';
 
-const API = import.meta.env.VITE_API_BASE ?? '';
 const fmt = (s: number) => (s < 60 ? `${Math.round(s)} s` : `${Math.floor(s / 60)} min ${String(Math.round(s % 60)).padStart(2, '0')} s`);
 const DRUGS = allDrugs();
 

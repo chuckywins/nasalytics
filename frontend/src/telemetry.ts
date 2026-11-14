@@ -4,6 +4,7 @@
 // Tek cihazda da çalışır: yerel astronot paketleri yerel tampona da yazılır ("bu cihaz").
 // AI notu: Claude (Anthropic) yardımıyla yazılmıştır.
 import { create } from 'zustand';
+import { WS_BASE } from './base';
 import { buildSnapshot } from './ai';
 import { useApp, activeAlerts, evalLatest } from './store';
 import { INDICATOR_ORDER, INDICATORS } from './engine/indicators';
@@ -88,7 +89,7 @@ function connect() {
   if (ws && wsRole === want && ws.readyState <= 1) return;
   try { ws?.close(); } catch { /* yok */ }
   wsRole = want;
-  const url = `${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}${import.meta.env.VITE_WS_BASE ?? ''}/ws/telemetry?role=${want}`;
+  const url = `${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}${WS_BASE}/ws/telemetry?role=${want}`;
   const s = new WebSocket(url);
   ws = s;
   s.onopen = () => useTelemetry.setState({ connected: true });

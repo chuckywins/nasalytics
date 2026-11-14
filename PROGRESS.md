@@ -155,3 +155,9 @@ Her adım buraya kısa notla eklenir (en yeni en altta).
 - Ses dalgası (VegaWave): dinlerken cyan, VEGA konuşurken mor. Masaüstünde gerçek mikrofon seviyesi; telefonda konuşma tanımanın ara sonuçlarıyla (mikrofonu ikinci kez açmak Android/iOS'ta tanımayı bozabildiği için). VEGA sesi Web Audio analizöründen geçer (ses değişmez).
 - Telefonda Gövde sekmesi: taşan etiket/çizgi yerine gövdenin altında 4 renkli değer kutusu (beyin, kalp, akciğer, metabolizma); dokununca organ seçilir. Masaüstü etiketleri aynı.
 - Test: sahte konuşma tanımayla 390×844'te iki dokunuş → "nabzım kaç acaba" gönderildi, VEGA cevap verdi.
+
+## 2026-11-15 01:55 — asicservices.com/nasalytics (AlmaLinux 8) alt dizin kurulumu
+- Tüm yollar derleme tabanından türetildi (src/base.ts): API, WebSocket, 3D model, MediaPipe; derleme: NASA_BASE=/nasalytics/ npm run build. Yerel geliştirme "/" ile aynen çalışır.
+- deploy/: systemd hizmeti, Apache (cPanel dahil) ve nginx ayarı (önek soyma, WebSocket, akış tamponsuz), update.sh. DEPLOY.md AlmaLinux 8 adımlarıyla yeniden yazıldı (deploy key, SELinux httpd_can_network_connect, Node 20, Python 3.11).
+- Yerel deneme: /nasalytics önekini soyan küçük bir ters vekil arkasında telefon boyutunda uçtan uca: yönlendirme, arayüz, 3D model, VEGA akışı, WebSocket canlı aktarım, belirti bildirimi; HTTP hatası yok.
+- VEGA iç terim ("snapshot") söylemesin kuralı eklendi.

@@ -4,6 +4,7 @@
 // Gizlilik: görüntü yalnızca "Yakala" ile, tek kare olarak gönderilir; saklanmaz. Kamera reddedilirse dosya yükleme çalışır.
 // AI notu: Claude (Anthropic) yardımıyla yazılmıştır.
 import { useEffect, useRef, useState } from 'react';
+import { API } from '../base';
 import { createPortal } from 'react-dom';
 import { INDICATORS } from '../engine/indicators';
 import type { GlucoseCtx, IndicatorId } from '../engine/types';
@@ -52,7 +53,7 @@ function CameraModal({ onClose }: { onClose: () => void }) {
   const analyze = async (dataUrl: string) => {
     setShot(dataUrl); setBusy(true); setErr(''); setRes(null);
     try {
-      const r = await fetch('/api/vision', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lang, mode, image: dataUrl }) });
+      const r = await fetch(`${API}/api/vision`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lang, mode, image: dataUrl }) });
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
       const j = await r.json();
       setRes(j.result); setKeep(Object.fromEntries((j.result.readings ?? []).map((_: unknown, i: number) => [i, true])));
