@@ -3,6 +3,33 @@
 // Konuşma sentetiktir (AI/TTS); arayüzde ve teslimde belirtilir. AI notu: Claude (Anthropic) yardımıyla yazılmıştır.
 let ctx: AudioContext | null = null;
 let alarmTimer: number | null = null;
+/** Dalga görseli için: VEGA sesi bu analizörden geçer (ses aynen hoparlöre gider) */
+let outAn: AnalyserNode | null = null;
+function outNode(): AudioNode {
+  if (!ctx) throw new Error('no audio');
+  if (!outAn) { outAn = ctx.createAnalyser(); outAn.fftSize = 512; outAn.connect(ctx.destination); }
+  return outAn;
+}
+const rms = (an: AnalyserNode | null) => {
+  if (!an) return 0;
+  const d = new Uint8Array(an.fftSize); an.getByteTimeDomainData(d);
+  let s = 0; for (let i = 0; i < d.length; i++) { const v = (d[i] - 128) / 128; s += v * v; }
+  return Math.sqrt(s / d.length);
+};
+/** VEGA konuşma seviyesi 0..~0.5 */
+export const outputLevel = () => rms(outAn);
+/** Mikrofon seviyesi (yalnızca masaüstü; telefonda konuşma tanımayla çakışmasın diye açılmaz) */
+let micAn: AnalyserNode | null = null, micStream: MediaStream | null = null;
+export async function startMicMeter() {
+  try {
+    if (!ctx || micStream) return;
+    micStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
+    micAn = ctx.createAnalyser(); micAn.fftSize = 512;
+    ctx.createMediaStreamSource(micStream).connect(micAn); // hoparlöre BAĞLANMAZ
+  } catch { micAn = null; micStream = null; }
+}
+export function stopMicMeter() { micStream?.getTracks().forEach((t) => t.stop()); micStream = null; micAn = null; }
+export const micLevel = () => rms(micAn);
 
 export function unlockAudio() {
   ctx = ctx ?? new AudioContext();
@@ -68,7 +95,7 @@ async function fetchVoice(text: string, lang: 'tr' | 'en', style: string): Promi
   } catch { return null; }
 }
 function play(buf: AudioBuffer) {
-  return new Promise<void>((res) => { const src = ctx!.createBufferSource(); src.buffer = buf; src.connect(ctx!.destination); src.onended = () => { if (current === src) current = null; res(); }; current = src; src.start(); });
+  return new Promise<void>((res) => { const src = ctx!.createBufferSource(); src.buffer = buf; src.connect(outNode()); src.onended = () => { if (current === src) current = null; res(); }; current = src; src.start(); });
 }
 function browserSay(text: string, lang: 'tr' | 'en') {
   return new Promise<void>((res) => {
@@ -123,7 +150,7 @@ async function playVoice(vs: VoiceStream, my: number, text: string, lang: 'tr' |
     if (i < vs.pcm.length) {
       const f = vs.pcm[i++];
       const b = ctx!.createBuffer(1, f.length, 24000); b.copyToChannel(f as Float32Array<ArrayBuffer>, 0);
-      const src = ctx!.createBufferSource(); src.buffer = b; src.connect(ctx!.destination);
+      const src = ctx!.createBufferSource(); src.buffer = b; src.connect(outNode());
       at = Math.max(at, ctx!.currentTime + 0.12); src.start(at); at += b.duration; live.push(src);
       continue;
     }

@@ -149,3 +149,9 @@ Her adım buraya kısa notla eklenir (en yeni en altta).
 - Test: 390×844 (TR) ve 360×640 (EN), ?test=worst, dört sekmede yatay taşma yok; üretim derlemesi 8790'dan tek adreste: iki telefon farklı kimlik aldı, CMO canlı bağlandı.
 - Sayfa başlığı "Vite + React + TS" idi → "Astronot Sağlık Monitörü".
 - Kalan: gerçek iPhone ve Android ile HTTPS adresinde test (mikrofon izni, ses, klavye, senaryo).
+
+## 2026-11-15 01:44 — VEGA: dokun-konuş + ses dalgası; telefonda gövde değerleri
+- Kullanıcı: basılı tutmak telefonda tarayıcı menülerini açıyor → VEGA artık dokun-başlat / dokun-gönder (masaüstünde Boşluk basılı tutma sürüyor). Tarayıcı dinlemeyi kendisi kapatırsa elde olan gönderilir; 30 sn güvenlik sınırı; uzun basma menüsü engellendi.
+- Ses dalgası (VegaWave): dinlerken cyan, VEGA konuşurken mor. Masaüstünde gerçek mikrofon seviyesi; telefonda konuşma tanımanın ara sonuçlarıyla (mikrofonu ikinci kez açmak Android/iOS'ta tanımayı bozabildiği için). VEGA sesi Web Audio analizöründen geçer (ses değişmez).
+- Telefonda Gövde sekmesi: taşan etiket/çizgi yerine gövdenin altında 4 renkli değer kutusu (beyin, kalp, akciğer, metabolizma); dokununca organ seçilir. Masaüstü etiketleri aynı.
+- Test: sahte konuşma tanımayla 390×844'te iki dokunuş → "nabzım kaç acaba" gönderildi, VEGA cevap verdi.

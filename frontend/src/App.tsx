@@ -76,7 +76,7 @@ export default function App() {
                 <button key={l} aria-pressed={layers[l]} className={layers[l] ? 'on' : ''} onClick={() => toggleLayer(l)}>{t(`layer.${l}`, lang)}</button>
               ))}
             </div>
-            <Body3D statuses={statuses} selected={selectedRegion} onSelect={selectRegion} layers={layers} callouts={callouts} />
+            <Body3D compact statuses={statuses} selected={selectedRegion} onSelect={selectRegion} layers={layers} callouts={callouts} />
             <div className="model-credit">3D: BodyParts3D/Z-Anatomy · CC BY-SA</div>
           </div>
           <RegionPanel />

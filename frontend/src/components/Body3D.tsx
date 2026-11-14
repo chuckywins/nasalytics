@@ -50,6 +50,8 @@ interface Props {
   onSelect: (r: Region) => void;
   layers: { organs: boolean; skeleton: boolean; muscle: boolean };
   callouts: Callout[];
+  /** Telefon: gövde çevresindeki etiket/çizgi yerine altta değer kutuları (dar ekranda etiketler taşıyordu) */
+  compact?: boolean;
 }
 
 /** Organ çapa noktaları ve etiket konumları (dünya koordinatı, metre; +x = hastanın solu) */
@@ -158,7 +160,7 @@ function Model({ statuses, selected, onSelect, layers }: Props) {
 export default function Body3D(props: Props) {
   return (
     <>
-    {props.layers.organs && (
+    {props.layers.organs && !props.compact && (
       <div className="callout-layer">
         {props.callouts.map((c) => {
           const a = ANCHOR[c.region];
@@ -183,10 +185,23 @@ export default function Body3D(props: Props) {
         <Bounds fit clip observe margin={1.05}>
           <Model {...props} />
         </Bounds>
-        {props.layers.organs && <Callouts items={props.callouts} />}
+        {props.layers.organs && !props.compact && <Callouts items={props.callouts} />}
       </Suspense>
       <OrbitControls makeDefault target={[0, 0.95, 0]} enablePan={false} minDistance={0.5} maxDistance={4} />
     </Canvas>
+    {props.compact && (
+      <div className="body-chips">
+        {props.callouts.map((c) => {
+          const col = c.status === 'ok' ? '#5ad1e6' : STATUS_COLOR[c.status];
+          return (
+            <button key={c.region} className={`body-chip ${props.selected === c.region ? 'on' : ''}`} style={{ borderColor: col }} onClick={() => props.onSelect(c.region)}>
+              <span className="c-t">{c.title}</span>
+              <span className="c-v num" style={{ color: c.status === 'ok' ? '#e6edf3' : col }}>{c.status !== 'ok' && `${STATUS_GLYPH[c.status]} `}{c.value}</span>
+            </button>
+          );
+        })}
+      </div>
+    )}
     </>
   );
 }

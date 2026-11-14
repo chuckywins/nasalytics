@@ -450,7 +450,6 @@ a { color: var(--accent); }
   .m-body { position: relative; height: 62dvh; min-height: 360px; flex: none; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; }
   .m-body .layer-ctl { top: 8px; left: 8px; }
   .m-body .layer-ctl button { font-size: 12px; padding: 4px 8px; min-height: 30px; }
-  .m-body .callout-layer { display: none; } /* değerler Yaşamsal sekmesinde; dar ekranda etiketler gövdenin dışına taşıyordu */
   .m-body .model-credit { font-size: 10px; bottom: 6px; right: 8px; }
   .m-main.m-more .panel.mission { min-height: 70dvh; }
 
@@ -488,3 +487,14 @@ a { color: var(--accent); }
   .gate-box { padding: 18px; gap: 10px; }
   .gate-box h2 { font-size: 18px; }
 }
+
+.vega { overflow: hidden; }
+.vega-wave { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; opacity: .9; }
+.vega > :not(.vega-wave) { position: relative; z-index: 1; }
+.ptt { -webkit-user-select: none; -webkit-touch-callout: none; }
+
+.body-chips { position: absolute; left: 6px; right: 6px; bottom: 22px; z-index: 3; display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+.body-chip { display: flex; flex-direction: column; align-items: flex-start; gap: 0; background: rgba(6,12,20,.88); border: 1px solid; border-radius: 4px; padding: 4px 8px; text-align: left; min-height: 0; }
+.body-chip.on { box-shadow: 0 0 0 1px var(--accent) inset; }
+.body-chip .c-t { font-size: 10px; color: var(--ink-2); }
+.body-chip .c-v { font-size: 13px; font-weight: 600; }

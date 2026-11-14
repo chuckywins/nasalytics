@@ -127,7 +127,7 @@ const D = {
   'alarm.critical': { tr: 'KRİTİK UYARI', en: 'CRITICAL ALERT' },
   'alarm.more': { tr: 'kritik bulgu daha (sağ panel)', en: 'more critical findings (right panel)' },
   'alarm.ack': { tr: 'ONAYLA', en: 'ACKNOWLEDGE' },
-  'vega.hint': { tr: 'Konuşmak için basılı tutun (veya Boşluk tuşu)', en: 'Hold to talk (or Space bar)' },
+  'vega.hint': { tr: 'Konuşmak için VEGA\'ya dokun, bitince tekrar dokun (veya Boşluk tuşunu basılı tut)', en: 'Tap VEGA to talk, tap again to send (or hold Space)' },
   'vega.listening': { tr: 'DİNLİYOR', en: 'LISTENING' },
   'vega.type': { tr: 'veya yazın…', en: 'or type…' },
   'vega.noSpeech': { tr: 'Bu tarayıcı konuşma tanımayı desteklemiyor; Chrome veya Edge kullanın ya da yazın.', en: 'Speech recognition not supported; use Chrome or Edge, or type.' },

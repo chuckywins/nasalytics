@@ -12,6 +12,8 @@ import { startAlarm, stopAlarm, unlockAudio, speakSentence, stopVoice, beginRepl
 import { t } from '../i18n';
 import { useScenario, allCaptions } from '../scenario';
 import { reportSymptom } from '../symptoms';
+import { VegaWave, waveBump } from './VegaWave';
+import { startMicMeter, stopMicMeter } from '../audio';
 import { useTelemetry } from '../telemetry';
 
 /* ---------------- AI değerlendirme kartı ---------------- */
@@ -145,6 +147,8 @@ export function Vega() {
   const { lang } = useApp();
   const [listening, setListening] = useState(false);
   const [interim, setInterim] = useState('');
+  const interimRef = useRef('');
+  interimRef.current = interim;
   const [reply, setReply] = useState('');
   const [busy, setBusy] = useState(false);
   const [text, setText] = useState('');
@@ -194,8 +198,11 @@ export function Vega() {
     } finally { setBusy(false); }
   };
 
+  const autoOff = useRef<number | null>(null);
+  const coarse = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches;
   const start = () => {
     if (!SRClass) { setErr(t('vega.noSpeech', lang)); return; }
+    if (rec.current) return;
     stopVoice();
     const r = new SRClass();
     r.lang = lang === 'tr' ? 'tr-TR' : 'en-US'; r.interimResults = true; r.continuous = true;
@@ -203,16 +210,23 @@ export function Vega() {
     r.onresult = (e: SR) => {
       let fin = '', inter = '';
       for (let i = 0; i < e.results.length; i++) { if (e.results[i].isFinal) fin += e.results[i][0].transcript; else inter += e.results[i][0].transcript; }
-      finalText.current = fin; setInterim(fin + inter);
+      finalText.current = fin; setInterim(fin + inter); waveBump();
     };
-    r.onerror = (e: SR) => { setErr(`${t('vega.micError', lang)} (${e.error})`); setListening(false); };
-    rec.current = r; r.start(); setListening(true); setInterim('');
+    r.onspeechstart = () => waveBump();
+    r.onerror = (e: SR) => { if (e.error !== 'no-speech' && e.error !== 'aborted') setErr(`${t('vega.micError', lang)} (${e.error})`); };
+    // Dinleme bittiğinde (ikinci dokunuş, Boşluk bırakıldı ya da tarayıcı sessizlikte kendisi kapattı) elde ne varsa gönderilir
+    r.onend = () => {
+      rec.current = null; setListening(false); stopMicMeter();
+      if (autoOff.current) { clearTimeout(autoOff.current); autoOff.current = null; }
+      const q = (finalText.current || interimRef.current).trim();
+      if (q) void send(q);
+    };
+    rec.current = r; r.start(); setListening(true); setInterim(''); setErr('');
+    if (!coarse) void startMicMeter(); // masaüstü: gerçek ses seviyesi; telefonda tanımayla çakışmasın
+    autoOff.current = window.setTimeout(() => stop(), 30000); // unutulursa 30 sn sonra kendiliğinden gönderir
   };
-  const stop = () => {
-    const r = rec.current; if (!r) return;
-    r.onend = () => { const q = (finalText.current || interim).trim(); setListening(false); if (q) void send(q); };
-    r.stop();
-  };
+  const stop = () => { const r = rec.current; if (!r) return; try { r.stop(); } catch { /* yok */ } };
+  const toggle = () => (rec.current ? stop() : start());
   // Boşluk tuşu = bas-konuş (yazı alanındayken değil)
   useEffect(() => {
     const isField = (el: EventTarget | null) => el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement || el instanceof HTMLSelectElement;
@@ -224,7 +238,8 @@ export function Vega() {
 
   return (
     <div className="vega">
-      <button className={`ptt ${listening ? 'on' : ''}`} onPointerDown={start} onPointerUp={stop} onPointerLeave={() => listening && stop()} aria-pressed={listening} title={t('vega.hint', lang)}>
+      <VegaWave listening={listening} />
+      <button className={`ptt ${listening ? 'on' : ''}`} onClick={toggle} onContextMenu={(e) => e.preventDefault()} aria-pressed={listening} title={t('vega.hint', lang)}>
         <span className="ptt-dot" />{listening ? t('vega.listening', lang) : 'VEGA'}
       </button>
       <div className="j-text">
