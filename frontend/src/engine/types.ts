@@ -8,6 +8,7 @@ export type Provenance =
   | 'PUBLISHED'          // hakemli yayın
   | 'SIMULATED'          // simülasyon değeri
   | 'USER_INPUT'         // astronotun girdiği ölçüm
+  | 'CAMERA'             // kamerayla okunup (Claude vision) astronotun onayladığı ölçüm
   | 'PROJECTION'         // NASA oranlarından hesaplanan tahmin
   | 'ASSUMPTION';        // açıkça belirtilen varsayım
 

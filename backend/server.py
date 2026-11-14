@@ -146,6 +146,58 @@ async def assess(req: Request):
     return {"assessment": out, "model": MODEL_ASSESS, "latencyMs": int((time.time() - t0) * 1000)}
 
 
+VISION_TOOL = {
+    "name": "report_reading",
+    "description": "Report what the image shows. For a medical device display, extract the numbers exactly as shown.",
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "kind": {"type": "string", "enum": ["device", "ultrasound", "other"]},
+            "device": {"type": "string", "description": "e.g. glucometer, blood pressure monitor, pulse oximeter, thermometer, unknown"},
+            "readings": {"type": "array", "maxItems": 4, "items": {"type": "object", "properties": {
+                "indicator": {"type": "string", "enum": ["glucose", "systolic", "diastolic", "heartRate", "spo2", "bodyTemp"]},
+                "value": {"type": "number"}, "unit": {"type": "string"}}, "required": ["indicator", "value", "unit"]}},
+            "observations": {"type": "array", "maxItems": 4, "items": {"type": "string"}, "description": "For ultrasound/other: neutral visual observations only, no diagnosis."},
+            "legible": {"type": "boolean", "description": "False if the display/image is unreadable or ambiguous."},
+            "note": {"type": "string", "description": "One short sentence for the astronaut (e.g. ask to retake, or what to confirm)."},
+        },
+        "required": ["kind", "readings", "legible", "note"],
+    },
+}
+
+
+@app.post("/api/vision")
+async def vision(req: Request):
+    """Kamera görüntüsü: ölçüm cihazı ekranından değer okuma veya ultrason görüntüsü için tarafsız gözlem.
+    Görüntü yalnızca kullanıcı 'Yakala' dediğinde gönderilir; saklanmaz."""
+    guard(req)
+    body = await req.json()
+    lang, mode = body.get("lang", "tr"), body.get("mode", "device")
+    img = body.get("image", "")
+    if not img.startswith("data:image/") or len(img) > 6_000_000:
+        raise HTTPException(400, "bad image")
+    media, b64 = img[5:].split(";base64,", 1)
+    task = ("Read the medical device display. Extract only numbers you can clearly see; never guess digits. "
+            "Blood pressure monitors usually show systolic, diastolic and pulse. If unreadable, set legible=false."
+            if mode == "device" else
+            "This is an ultrasound or medical image captured by an astronaut. Give neutral visual observations only "
+            "(image quality, which structures are visible if obvious). Do NOT diagnose. Say it should be reviewed by the CMO/flight surgeon.")
+    t0 = time.time()
+    msg = client.messages.create(
+        model=MODEL_ASSESS, max_tokens=2000, system=SYSTEM_BLOCKS, tools=[VISION_TOOL], tool_choice={"type": "auto"},
+        extra_body={"output_config": {"effort": "low"}},
+        messages=[{"role": "user", "content": [
+            {"type": "image", "source": {"type": "base64", "media_type": media, "data": b64}},
+            {"type": "text", "text": f"Language for 'note' and 'observations': {lang}. {task} You MUST call report_reading exactly once."},
+        ]}],
+    )
+    account(MODEL_ASSESS, msg.usage)
+    out = next((b.input for b in msg.content if b.type == "tool_use"), None)
+    if out is None:
+        raise HTTPException(502, "no reading")
+    return {"result": out, "model": MODEL_ASSESS, "latencyMs": int((time.time() - t0) * 1000)}
+
+
 @app.post("/api/jarvis")
 async def jarvis(req: Request):
     guard(req)

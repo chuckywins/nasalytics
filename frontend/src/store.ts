@@ -40,7 +40,7 @@ interface State {
   toggleLayer: (l: Layer) => void;
   selectRegion: (r: Region | null) => void;
   selectIndicator: (i: IndicatorId) => void;
-  addReading: (id: IndicatorId, value: number, ctx?: GlucoseCtx) => void;
+  addReading: (id: IndicatorId, value: number, ctx?: GlucoseCtx, prov?: 'USER_INPUT' | 'CAMERA') => void;
   tick: () => void;
 }
 
@@ -86,9 +86,9 @@ export const useApp = create<State>((set) => ({
   toggleLayer: (l) => set((s) => ({ layers: { ...s.layers, [l]: !s.layers[l] } })),
   selectRegion: (selectedRegion) => set({ selectedRegion }),
   selectIndicator: (selectedIndicator) => set({ selectedIndicator }),
-  addReading: (id, value, ctx) => set((st) => {
+  addReading: (id, value, ctx, prov = 'USER_INPUT') => set((st) => {
     const d = INDICATORS[id];
-    const next = { ...st.readings, [id]: [...st.readings[id], { t: Date.now(), value, provenance: 'USER_INPUT' as const, ctx }].slice(-HISTORY) };
+    const next = { ...st.readings, [id]: [...st.readings[id], { t: Date.now(), value, provenance: prov, ctx }].slice(-HISTORY) };
     // stream göstergeye elle değer girilirse simülatör bu değeri yeni hedef alır (ör. manuel nabız ölçümü)
     const target = d.mode === 'stream' ? { ...st.target, [id]: value } : st.target;
     return { readings: next, target };

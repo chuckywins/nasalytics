@@ -8,6 +8,7 @@ import { useApp, evalLatest, latest } from '../store';
 import { t } from '../i18n';
 import { ActivitySelect } from './Ai';
 import { InfoTip } from './Info';
+import { CameraButton } from './Camera';
 
 export const STATUS_COLOR: Record<Status, string> = {
   ok: '#3fb950', watch: '#d4a72c', warn: '#f0883e', critical: '#f85149', unknown: '#6e7681',
@@ -170,7 +171,7 @@ export function EntryForm() {
   const v = parseFloat(val.replace(',', '.'));
   const valid = Number.isFinite(v) && v >= d.sim.min && v <= d.sim.max;
   return (
-    <Panel title={t('ui.enter', lang)}>
+    <Panel title={t('ui.enter', lang)} right={<CameraButton />}>
       <form className="entry" onSubmit={(e) => { e.preventDefault(); if (valid) { addReading(id, v, id === 'glucose' ? ctx : undefined); setVal(''); } }}>
         <select value={id} onChange={(e) => setId(e.target.value as IndicatorId)} aria-label={t('ui.enter', lang)}>
           {ENTRY.map((k) => <option key={k} value={k}>{t(`ind.${k}`, lang)} ({INDICATORS[k].unit})</option>)}
