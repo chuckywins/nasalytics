@@ -17,6 +17,7 @@ export function ScenarioList() {
           <button key={id} className={`scen-item ${cur === id ? 'on' : ''}`} title={m.desc[lang]} onClick={() => (cur === id ? stopScenario() : startScenario(id))}>
             <span className="scen-t">{cur === id ? '■' : '▶'} {m.title[lang]}</span>
             <ProvTag p={m.prov} />
+            <span className="muted scen-d">{m.desc[lang]}</span>
           </button>
         );
       })}

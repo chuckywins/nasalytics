@@ -139,3 +139,13 @@ Her adım buraya kısa notla eklenir (en yeni en altta).
 
 ## 2026-11-15 01:12 — Günlük rutin hatırlatma açılır penceresi kaldırıldı
 - Kullanıcı isteği: periyodik "rutin görevler" popup'ı artık çıkmıyor; görevler eskisi gibi alttaki "Günlük rutin" sekmesinde. (Bileşen kodu Checkin.tsx içinde duruyor, yalnızca ekrana eklenmiyor.)
+
+## 2026-11-15 01:33 — Telefon uyumu + kendi sunucuya kurulum (Fable planı)
+- Kullanıcı: jüri bilgisayar değil telefonla test edecek; kurulum kendi sunucumuza GitHub'dan yapılacak.
+- Tek adres: FastAPI derlenmiş arayüzü (frontend/dist) de sunar → /api ve /ws aynı köken; HTTPS'te mikrofon/kamera çalışır. DEPLOY.md (Caddy/nginx, WebSocket, SSE ayarları) ve backend/requirements.txt eklendi.
+- Çoklu telefon: her cihaz ilk açılışta kendi kimliğini alır (C-10…C-99; önceden hepsi C-01'di ve birbirinin üzerine yazacaktı); 3 dk veri göndermeyen cihaz kartı düşer (sunucu + istemci); istek sınırı ters vekil arkasında gerçek IP'ye göre (X-Forwarded-For).
+- Telefon düzeni (≤760 px veya kısa yatay dokunmatik; masaüstü CSS'i değişmedi, 1536×700 yeniden çekildi): astronot için alt sekmeler (Yaşamsal · Gövde · AI · Görevler), VEGA altta sabit ve yazı alanı tam genişlik, alarm/senaryo bantları akış içinde, yorgunluk kamerası telefonda yok (izin istemi çıkmasın), gövde etiketleri telefonda gizli. CMO/yer: kart listesi, karta dokununca müdahale paneli tam ekran + geri. Açılış ekranında görünüm seçimi (Astronot / CMO / Yer kontrol).
+- iOS: giriş alanları 16 px (odakta yakınlaştırma yok), güvenli alan boşlukları, 100dvh.
+- Test: 390×844 (TR) ve 360×640 (EN), ?test=worst, dört sekmede yatay taşma yok; üretim derlemesi 8790'dan tek adreste: iki telefon farklı kimlik aldı, CMO canlı bağlandı.
+- Sayfa başlığı "Vite + React + TS" idi → "Astronot Sağlık Monitörü".
+- Kalan: gerçek iPhone ve Android ile HTTPS adresinde test (mikrofon izni, ses, klavye, senaryo).

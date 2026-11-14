@@ -23,13 +23,21 @@ export interface Packet { crewId: string; t: number; snap: ReturnType<typeof bui
 
 const ls = (k: string, d: string) => { try { return localStorage.getItem(k) ?? d; } catch { return d; } };
 const q = typeof location !== 'undefined' ? new URLSearchParams(location.search) : new URLSearchParams();
+/** Her cihaz ilk açılışta kendi kimliğini alır (jüri telefonları aynı "C-01"i paylaşıp birbirinin üzerine yazmasın) */
+function deviceCrewId() {
+  const saved = ls('ahm.crew', '');
+  if (saved) return saved;
+  const id = `C-${String(10 + Math.floor(Math.random() * 90))}`;
+  try { localStorage.setItem('ahm.crew', id); } catch { /* yok */ }
+  return id;
+}
 interface TelState {
   role: Role; crewId: string; connected: boolean; compress: boolean; buf: Record<string, Packet[]>;
   setRole: (r: Role) => void; setCrewId: (c: string) => void; setCompress: (b: boolean) => void;
 }
 export const useTelemetry = create<TelState>((set) => ({
   role: (q.get('role') as Role) || (ls('ahm.role', 'astronaut') as Role),
-  crewId: q.get('crew') || ls('ahm.crew', 'C-01'),
+  crewId: q.get('crew') || deviceCrewId(),
   connected: false, compress: false, buf: {},
   setRole: (role) => { try { localStorage.setItem('ahm.role', role); } catch { /* yok */ } set({ role }); },
   setCrewId: (crewId) => { try { localStorage.setItem('ahm.crew', crewId); } catch { /* yok */ } set({ crewId }); },

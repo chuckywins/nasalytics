@@ -12,6 +12,7 @@ import { startAlarm, stopAlarm, unlockAudio, speakSentence, stopVoice, beginRepl
 import { t } from '../i18n';
 import { useScenario, allCaptions } from '../scenario';
 import { reportSymptom } from '../symptoms';
+import { useTelemetry } from '../telemetry';
 
 /* ---------------- AI değerlendirme kartı ---------------- */
 export function AiCard() {
@@ -53,7 +54,12 @@ export function SessionGate() {
         <div className="logo-big">◎</div>
         <h2>{t('app.title', lang)}</h2>
         <p>{t('gate.text', lang)}</p>
-        <button className="primary big" onClick={() => { unlockAudio(); startSession(); }}>{t('gate.start', lang)}</button>
+        <button className="primary big" onClick={() => { unlockAudio(); useTelemetry.getState().setRole('astronaut'); startSession(); }}>{t('gate.asAstronaut', lang)}</button>
+        <div className="gate-roles">
+          <button onClick={() => { unlockAudio(); useTelemetry.getState().setRole('cmo'); startSession(); }}>{t('gate.asCmo', lang)}</button>
+          <button onClick={() => { unlockAudio(); useTelemetry.getState().setRole('ground'); startSession(); }}>{t('gate.asGround', lang)}</button>
+        </div>
+        <p className="muted small">{t('gate.roleHint', lang)}</p>
         <button className="lang" onClick={() => setLang(lang === 'tr' ? 'en' : 'tr')}>{lang === 'tr' ? 'English' : 'Türkçe'}</button>
         <p className="muted small">{t('app.disclaimer', lang)}</p>
       </div>

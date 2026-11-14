@@ -1,0 +1,5 @@
+# Arka uç bağımlılıkları (2026-11-15'te çalışan sürümler)
+fastapi>=0.141
+uvicorn[standard]>=0.52
+anthropic>=0.70
+httpx>=0.28

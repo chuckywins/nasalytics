@@ -14,7 +14,7 @@ export function RoleSelect() {
         <option value="ground">{t('view.ground', lang)}</option>
       </select>
       <select value={crewId} onChange={(e) => setCrewId(e.target.value)} aria-label="crew id">
-        {['C-01', 'C-02', 'C-03', 'C-04'].map((c) => <option key={c} value={c}>{c}</option>)}
+        {Array.from(new Set([crewId, 'C-01', 'C-02', 'C-03', 'C-04'])).map((c) => <option key={c} value={c}>{c}</option>)}
       </select>
     </div>
   );

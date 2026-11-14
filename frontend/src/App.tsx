@@ -1,6 +1,7 @@
 // HUD kabuğu (tasarım v2). Sabit yükseklikli ızgara, panel kaydırma çubuğu yok; hedef 1536×700 CSS px ve üstü.
 // AI notu: Claude (Anthropic) yardımıyla yazılmıştır.
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useIsMobile } from './mobile';
 import Body3D, { type Callout } from './components/Body3D';
 import { TopBar, VitalsPanel, EcgStrip, EntryForm } from './components/Hud';
 import { AssessmentPanel, RegionPanel, CabinPanel, MissionPanel, TrendChart } from './components/Panels';
@@ -34,6 +35,8 @@ export default function App() {
   }, []);
   useEffect(() => { if (!telStarted) { telStarted = true; startTelemetry(); } }, []);
   const role = useTelemetry((s) => s.role);
+  const mobile = useIsMobile();
+  const [mTab, setMTab] = useState<'vitals' | 'body' | 'ai' | 'more'>('vitals');
   const statuses = useMemo(() => regionStatuses(readings), [readings]);
   useAiAssessment();
 
@@ -50,10 +53,44 @@ export default function App() {
   }, [readings, lang]);
 
   if (role !== 'astronaut') return (
-    <div className="app viewer">
+    <div className={`app viewer ${mobile ? 'm-viewer' : ''}`}>
       <TopBar />
       <CrewView />
       <AlarmBanner />
+      <SessionGate />
+    </div>
+  );
+  // Telefon: alt sekmeli kabuk (masaüstü ızgarası değişmez). Kamera (yorgunluk) telefonda kapalı: izin istemi jüriyi şaşırtmasın.
+  if (mobile) return (
+    <div className="app m-app">
+      <TopBar />
+      <AlarmBanner />
+      <ScenarioBanner />
+      <CrewNotices />
+      <main className={`m-main m-${mTab}`}>
+        {mTab === 'vitals' && <><VitalsPanel /><EcgStrip /><EntryForm /><CabinPanel /></>}
+        {mTab === 'body' && <>
+          <div className="m-body">
+            <div className="layer-ctl" role="group" aria-label={t('ui.layers', lang)}>
+              {(['organs', 'skeleton', 'muscle'] as Layer[]).map((l) => (
+                <button key={l} aria-pressed={layers[l]} className={layers[l] ? 'on' : ''} onClick={() => toggleLayer(l)}>{t(`layer.${l}`, lang)}</button>
+              ))}
+            </div>
+            <Body3D statuses={statuses} selected={selectedRegion} onSelect={selectRegion} layers={layers} callouts={callouts} />
+            <div className="model-credit">3D: BodyParts3D/Z-Anatomy · CC BY-SA</div>
+          </div>
+          <RegionPanel />
+        </>}
+        {mTab === 'ai' && <><AssessmentPanel /><TrendChart /></>}
+        {mTab === 'more' && <MissionPanel />}
+      </main>
+      <Vega />
+      <nav className="m-tabs" aria-label="sections">
+        {([['vitals', '♥', t('m.vitals', lang)], ['body', '◎', t('m.body', lang)], ['ai', '✦', t('m.ai', lang)], ['more', '☰', t('m.more', lang)]] as const).map(([k, ic, label]) => (
+          <button key={k} className={mTab === k ? 'on' : ''} aria-pressed={mTab === k} onClick={() => setMTab(k)}><span aria-hidden>{ic}</span>{label}</button>
+        ))}
+      </nav>
+      <CheckinModals />
       <SessionGate />
     </div>
   );

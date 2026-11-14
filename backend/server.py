@@ -206,7 +206,9 @@ _spend = {"day": time.strftime("%Y-%m-%d"), "usd": 0.0}
 
 
 def guard(req: Request) -> None:
-    ip = req.client.host if req.client else "?"
+    # Ters vekil (nginx/Caddy) arkasında tüm istekler 127.0.0.1 görünür → ilk X-Forwarded-For adresi kullanılır
+    fwd = req.headers.get("x-forwarded-for", "")
+    ip = fwd.split(",")[0].strip() if fwd else (req.client.host if req.client else "?")
     now = time.time()
     q = _hits[ip]
     while q and now - q[0] > 60:
@@ -749,6 +751,7 @@ async def tts_stream(req: Request):
 _crew_last: dict[str, dict] = {}
 _viewers: set = set()
 _astros: set = set()
+_crew_seen: dict[str, float] = {}
 
 
 @app.websocket("/ws/telemetry")
@@ -759,7 +762,9 @@ async def telemetry(ws: WebSocket):
         _astros.add(ws)
     if role != "astronaut":
         _viewers.add(ws)
-        for pkt in list(_crew_last.values()):
+        for k, pkt in list(_crew_last.items()):  # yalnızca son 3 dk içinde veri gönderen cihazlar (kapanmış telefonlar birikmez)
+            if time.time() - _crew_seen.get(k, 0) > 180:
+                _crew_last.pop(k, None); _crew_seen.pop(k, None); continue
             await ws.send_json(pkt)
     try:
         while True:
@@ -783,6 +788,7 @@ async def telemetry(ws: WebSocket):
             if len(json.dumps(pkt)) > 60_000:
                 continue
             _crew_last[crew] = pkt
+            _crew_seen[crew] = time.time()
             for v in list(_viewers):
                 try:
                     await v.send_json(pkt)
@@ -796,3 +802,9 @@ async def telemetry(ws: WebSocket):
 
 
 _warm_cache_loop()
+
+# ---- Tek adres: derlenmiş arayüz (frontend/dist) aynı sunucudan → /api ve /ws aynı köken, HTTPS'te mikrofon/kamera çalışır ----
+_DIST = Path(__file__).resolve().parent.parent / "frontend" / "dist"
+if _DIST.is_dir():
+    from fastapi.staticfiles import StaticFiles
+    app.mount("/", StaticFiles(directory=str(_DIST), html=True), name="ui")

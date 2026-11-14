@@ -10,6 +10,7 @@ import type { Escalation, Status } from '../engine/types';
 import { useTelemetry, useNotices, delayMsFor, type Packet } from '../telemetry';
 import { STATUS_COLOR, STATUS_GLYPH, ProvTag } from './Hud';
 import { InterventionPanel } from './Intervention';
+import { useIsMobile } from '../mobile';
 
 const ROWS = ['heartRate', 'spo2', 'respRate', 'bodyTemp', 'glucose', 'sleepHours', 'mood', 'cabinCO2'] as const;
 const ENV_BY_LABEL: Record<string, EnvId> = { 'ISS (LEO)': 'iss', 'Orion / lunar transit': 'lunar_transit', 'Lunar base': 'lunar_surface', 'Mars transit': 'mars_transit', 'Mars base': 'mars_surface', Interplanetary: 'deep_space_1au' };
@@ -74,7 +75,9 @@ export function CrewView() {
   useEffect(() => { const h = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(h); }, []);
   // Uzak cihazlar önce; aynı kimlikli uzak cihaz varsa yerel kopya gizlenir
   const [sel, setSel] = useState<string | null>(null);
-  const keys = Object.keys(buf).filter((k) => buf[k].length && !(k.startsWith('local:') && buf[k.slice(6)]?.length)).sort((a, b) => Number(a.startsWith('local:')) - Number(b.startsWith('local:')) || a.localeCompare(b));
+  const mobile = useIsMobile();
+  const alive = (k: string) => { const l = buf[k]; const last = l[l.length - 1]; return now - last.t < 180_000 + delayMsFor(last, role, compress); };
+  const keys = Object.keys(buf).filter((k) => buf[k].length && alive(k) && !(k.startsWith('local:') && buf[k.slice(6)]?.length)).sort((a, b) => Number(a.startsWith('local:')) - Number(b.startsWith('local:')) || a.localeCompare(b));
   // Seçili astronot: kullanıcı seçimi; yoksa en ciddi durumdaki (gösterilen pakete göre)
   const shownOf = (k: string) => { const l = buf[k]; const d = delayMsFor(l[l.length - 1], role, compress); return [...l].reverse().find((p) => p.t <= now - d); };
   // Belirti bildirimi de seçimi etkiler: yaşamsal değerleri normal ama "kendimi iyi hissetmiyorum" diyen astronot öne gelir
@@ -107,7 +110,8 @@ export function CrewView() {
         <div className="cv-grid">
           {keys.length === 0 ? <p className="muted">{t('view.empty', lang)}</p> : keys.map((k) => <CrewCard key={k} k={k} list={buf[k]} now={now} sel={k === selKey} onSel={() => setSel(k)} />)}
         </div>
-        {selShown ? <InterventionPanel p={selShown} role={role} compress={compress} /> : <div className="intv muted">{t('iv.pick', lang)}</div>}
+        {mobile ? (sel && selShown && <div className="m-intv"><button className="m-back" onClick={() => setSel(null)}>{t('m.back', lang)}</button><InterventionPanel p={selShown} role={role} compress={compress} /></div>)
+          : selShown ? <InterventionPanel p={selShown} role={role} compress={compress} /> : <div className="intv muted">{t('iv.pick', lang)}</div>}
       </div>
     </div>
   );
