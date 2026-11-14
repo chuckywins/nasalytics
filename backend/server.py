@@ -485,7 +485,8 @@ async def vega(req: Request):
                         txt, flushed = re.sub(r"^\s*(no_update|update_reading)\s*[:：-]?\s*", "", head), True
                     yield f"data: {json.dumps({'t': txt}, ensure_ascii=False)}\n\n"
                 if not flushed and head:
-                    yield f"data: {json.dumps({'t': re.sub(r'^\s*(no_update|update_reading)\s*[:：-]?\s*', '', head)}, ensure_ascii=False)}\n\n"
+                    _t = re.sub(r'^\s*(no_update|update_reading)\s*[:：-]?\s*', '', head)  # Python 3.11: f-string içinde \ olamaz
+                    yield f"data: {json.dumps({'t': _t}, ensure_ascii=False)}\n\n"
                 final = s.get_final_message()
                 account(MODEL_VEGA, final.usage)
                 spoke = any(b.type == "text" and b.text.strip() for b in final.content)
