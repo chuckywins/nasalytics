@@ -131,6 +131,12 @@ export const MEASURE: Record<string, MeasureInfo> = {
     why: { tr: 'Mars görevinde gecikme ve izolasyon davranışsal sağlığı zorlar; erken fark etmek önemlidir.', en: 'On a Mars mission, delay and isolation strain behavioral health; early detection matters.' },
     sources: [S.iso, S.beh],
   },
+  fatigueCam: {
+    inSpace: { tr: 'NASA yorgunluğu bilek aktigrafisi (ARCHeR) ve 10 dakikalık uyanıklık öz testiyle izler. PERCLOS (gözlerin ≥%80 kapalı kaldığı zaman oranı), FHWA\'nın 1998 raporunda PVT ile doğrulanmış en güvenilir gerçek zamanlı uyanıklık ölçüsü bulunmuştur.', en: "NASA tracks fatigue with wrist actigraphy (ARCHeR) and a 10-minute vigilance self-test. PERCLOS (share of time eyelids are ≥80% closed) was found to be the most reliable real-time alertness measure in FHWA's 1998 report, validated against the PVT." },
+    here: { tr: 'Kamera CİHAZDA analiz edilir (MediaPipe Face Landmarker); görüntü hiçbir yere gönderilmez. Göz kapanması yüz ifade katsayılarından yaklaşık hesaplanır. Eşikler (izle ≥%8, uyarı ≥%15) VARSAYIMDIR. Görünen ifade bir DUYGU tespiti değildir.', en: 'The camera is analysed ON DEVICE (MediaPipe Face Landmarker); no image leaves the device. Eye closure is approximated from face blendshapes. Thresholds (watch ≥8%, warn ≥15%) are ASSUMPTIONS. Visible expression is NOT emotion detection.' },
+    why: { tr: 'Uyku kaybı ve sirkadiyen bozulma kritik görevlerde hata riskini artırır; kamera sürekli, temassız bir erken uyarı sağlar.', en: 'Sleep loss and circadian disruption raise error risk in critical tasks; the camera gives continuous, contact-free early warning.' },
+    sources: [{ label: 'FHWA Tech Brief FHWA-MCRT-98-006: PERCLOS (1998)', url: 'https://rosap.ntl.bts.gov/view/dot/113' }, S.archer, { label: 'NASA HRP: Sleep risk', url: 'https://www.nasa.gov/reference/risk-from-inadequate-sleep-and-irregular-schedules/' }],
+  },
   ecg: {
     inSpace: { tr: BIOMON_TR, en: BIOMON_EN },
     here: { tr: 'Dalga formu nabza bağlı SENTETİK bir PQRST şablonudur; tanısal değildir.', en: 'The waveform is a SYNTHETIC PQRST template driven by heart rate; not diagnostic.' },

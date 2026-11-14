@@ -146,7 +146,7 @@ export function VoiceLog({ onClose }: { onClose: () => void }) {
   const SRClass: SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
   const begin = async () => {
-    if (!SRClass) { setErr(t('jarvis.noSpeech', lang)); setState('error'); return; }
+    if (!SRClass) { setErr(t('vega.noSpeech', lang)); setState('error'); return; }
     setText(''); finalT.current = ''; frames.current = { voiced: 0, total: 0 };
     // Duraklama oranı: mikrofon RMS'i, ilk 0,5 sn'lik gürültü tabanının 2,5 katının altında kalan kareler "sessiz"
     try {
@@ -162,7 +162,7 @@ export function VoiceLog({ onClose }: { onClose: () => void }) {
     } catch { /* mikrofon analizi yoksa duraklama oranı null kalır */ }
     const r = new SRClass(); r.lang = lang === 'tr' ? 'tr-TR' : 'en-US'; r.continuous = true; r.interimResults = true;
     r.onresult = (e: SR) => { let fin = '', inter = ''; for (let i = 0; i < e.results.length; i++) { if (e.results[i].isFinal) fin += e.results[i][0].transcript + ' '; else inter += e.results[i][0].transcript; } finalT.current = fin; setText(fin + inter); };
-    r.onerror = (e: SR) => { if (e.error !== 'no-speech') { setErr(`${t('jarvis.micError', lang)} (${e.error})`); } };
+    r.onerror = (e: SR) => { if (e.error !== 'no-speech') { setErr(`${t('vega.micError', lang)} (${e.error})`); } };
     rec.current = r; r.start(); start.current = Date.now(); setState('rec'); setSecs(0);
     tick.current = window.setInterval(() => { const s = Math.round((Date.now() - start.current) / 1000); setSecs(s); if (s >= 60) stop(); }, 250);
   };

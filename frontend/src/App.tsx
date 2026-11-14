@@ -4,8 +4,9 @@ import { useEffect, useMemo } from 'react';
 import Body3D, { type Callout } from './components/Body3D';
 import { TopBar, VitalsPanel, EcgStrip, EntryForm } from './components/Hud';
 import { AssessmentPanel, RegionPanel, CabinPanel, MissionPanel, TrendChart } from './components/Panels';
-import { SessionGate, AlarmBanner, Jarvis } from './components/Ai';
+import { SessionGate, AlarmBanner, Vega } from './components/Ai';
 import { RoutineReminder } from './components/Checkin';
+import { FatigueCam } from './components/FatigueCam';
 import { useAiAssessment } from './ai';
 import { useApp, regionStatuses, evalLatest } from './store';
 import { worst } from './engine/indicators';
@@ -56,8 +57,9 @@ export default function App() {
         <Body3D statuses={statuses} selected={selectedRegion} onSelect={selectRegion} layers={layers} callouts={callouts} />
         <AlarmBanner />
         <RoutineReminder />
+        <FatigueCam />
         <div className="model-credit">3D: BodyParts3D/Z-Anatomy · CC BY-SA</div>
-        <Jarvis />
+        <Vega />
       </main>
       <aside className="col-right"><AssessmentPanel /><RegionPanel /></aside>
       <footer className="row-bottom"><CabinPanel /><MissionPanel /><TrendChart /></footer>

@@ -1,4 +1,4 @@
-// AI istemci katmanı: anlık durum özeti (snapshot), AI değerlendirme tetikleyicisi, JARVIS akışı.
+// AI istemci katmanı: anlık durum özeti (snapshot), AI değerlendirme tetikleyicisi, VEGA akışı.
 // Kural: AI uyarıyı YÜKSELTEBİLİR, asla kapatamaz (eskalasyon = max(kural, AI)). Proxy yoksa kural kartları kalır.
 // AI notu: Claude (Anthropic) yardımıyla yazılmıştır.
 import { useEffect, useRef } from 'react';
@@ -8,6 +8,7 @@ import type { Escalation } from './engine/types';
 import { useApp, evalLatest, activeAlerts, type AiAssessment } from './store';
 import { t } from './i18n';
 import { useCheckin, doneToday, dayKey } from './checkin';
+import { useFatigue } from './fatigue';
 
 const API = import.meta.env.VITE_API_BASE ?? '';
 
@@ -30,6 +31,10 @@ export function buildSnapshot() {
         lastReactionTest: rt ? { today: dayKey(rt.at) === dayKey(), medianMs: rt.medianMs, lapses: rt.lapses, falseStarts: rt.falseStarts } : null,
         lastVoiceLog: vl ? { today: dayKey(vl.at) === dayKey(), metrics: vl.metrics, cues: vl.cues.filter((x) => x.level !== 'none').map((x) => `${x.domain}:${x.level}`) } : null,
       };
+    })(),
+    fatigueCamera: (() => {
+      const f = useFatigue.getState();
+      return f.enabled && f.phase === 'running' ? { onDevice: true, perclos: f.perclos, blinkPerMin: f.blinkPerMin, yawns: f.yawns, longEyeClosureLast2min: !!(f.lastLongClosureAt && Date.now() - f.lastLongClosureAt < 120000), cueStatus: f.status, note: 'PERCLOS thresholds are assumptions; cue not diagnosis' } : null;
     })(),
     cabin: { o2Pct: +s.cabin.o2Pct.toFixed(1), pressurePsia: +s.cabin.pressurePsia.toFixed(2) },
     indicators: INDICATOR_ORDER.map((id) => {
@@ -76,10 +81,10 @@ export function useAiAssessment() {
   }, [sig, lang]);
 }
 
-/** JARVIS: SSE akışı; her cümle tamamlandıkça onSentence çağrılır (hemen seslendirme için). */
-export async function askJarvis(text: string, history: { role: 'user' | 'assistant'; content: string }[], onDelta: (full: string) => void, onSentence: (s: string) => void, signal?: AbortSignal) {
+/** VEGA: SSE akışı; her cümle tamamlandıkça onSentence çağrılır (hemen seslendirme için). */
+export async function askVega(text: string, history: { role: 'user' | 'assistant'; content: string }[], onDelta: (full: string) => void, onSentence: (s: string) => void, signal?: AbortSignal) {
   const { lang } = useApp.getState();
-  const r = await fetch(`${API}/api/jarvis`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lang, text, history, snapshot: buildSnapshot() }), signal });
+  const r = await fetch(`${API}/api/vega`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lang, text, history, snapshot: buildSnapshot() }), signal });
   if (!r.ok || !r.body) throw new Error(`HTTP ${r.status}`);
   const reader = r.body.getReader();
   const dec = new TextDecoder();

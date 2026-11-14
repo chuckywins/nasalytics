@@ -12,6 +12,7 @@
   "dependencies": {
     "@fontsource/chakra-petch": "^5.1.0",
     "@fontsource/jetbrains-mono": "^5.1.1",
+    "@mediapipe/tasks-vision": "^0.10.35",
     "@react-three/drei": "^10.7.9",
     "@react-three/fiber": "^9.8.2",
     "motion": "^12.4.7",

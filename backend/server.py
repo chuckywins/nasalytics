@@ -3,7 +3,7 @@
 Uç noktalar:
   GET  /api/health
   POST /api/assess  → AI sağlık değerlendirmesi (Sonnet 5.5, zorunlu araç çağrısı ile şemalı JSON)
-  POST /api/jarvis  → Sesli asistan (Haiku 5.5, SSE akışı)
+  POST /api/vega  → Sesli asistan (Haiku 5.5, SSE akışı)
 
 Güvenlik: IP başına dakikalık hız sınırı + günlük tahmini harcama tavanı.
 Bilgi bankası (docs/research_notes.md) sistem isteminde, prompt cache ile.
@@ -40,7 +40,7 @@ load_env()
 client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
 
 MODEL_ASSESS = os.environ.get("MODEL_ASSESS", "claude-sonnet-5-5")
-MODEL_JARVIS = os.environ.get("MODEL_JARVIS", "claude-haiku-5-5")
+MODEL_VEGA = os.environ.get("MODEL_VEGA", "claude-haiku-5-5")
 DAILY_BUDGET_USD = float(os.environ.get("DAILY_BUDGET_USD", "40"))
 RATE_PER_MIN = int(os.environ.get("RATE_PER_MIN", "40"))
 # $ / MTok (giriş, çıkış), platform dokümanından (2026-11-14)
@@ -114,7 +114,7 @@ def account(model: str, usage) -> None:
 
 @app.get("/api/health")
 def health():
-    return {"ok": True, "models": {"assess": MODEL_ASSESS, "jarvis": MODEL_JARVIS}, "spentTodayUsd": round(_spend["usd"], 4), "budgetUsd": DAILY_BUDGET_USD}
+    return {"ok": True, "models": {"assess": MODEL_ASSESS, "vega": MODEL_VEGA}, "spentTodayUsd": round(_spend["usd"], 4), "budgetUsd": DAILY_BUDGET_USD}
 
 
 @app.post("/api/assess")
@@ -245,25 +245,25 @@ async def voicelog(req: Request):
     return {"result": out, "model": MODEL_ASSESS, "latencyMs": int((time.time() - t0) * 1000)}
 
 
-@app.post("/api/jarvis")
-async def jarvis(req: Request):
+@app.post("/api/vega")
+async def vega(req: Request):
     guard(req)
     body = await req.json()
     lang = body.get("lang", "tr")
     snapshot = json.dumps(body.get("snapshot", {}), ensure_ascii=False)
     history = body.get("history", [])[-8:]
-    voice_rules = ("\nYou are JARVIS, the spoken voice of this assistant. Your reply is read aloud by text-to-speech: "
+    voice_rules = ("\nYou are VEGA, the spoken voice of this assistant. Your reply is read aloud by text-to-speech: "
                    "max 2 short sentences, no lists, no markdown, no symbols, numbers with units spoken naturally.")
     messages = [m for m in history if m.get("role") in ("user", "assistant") and m.get("content")]
     messages.append({"role": "user", "content": f"Language: {lang}\nLive snapshot: {snapshot}\n\nAstronaut says: {body.get('text', '')}"})
 
     def gen():
         try:
-            with client.messages.stream(model=MODEL_JARVIS, max_tokens=300, extra_body={"thinking": {"type": "disabled"}, "output_config": {"effort": "low"}},  # ölçüldü: TTFT ~1,1 sn; düşünme açıkken Haiku tüm bütçeyi düşünmeye harcıyordu
+            with client.messages.stream(model=MODEL_VEGA, max_tokens=300, extra_body={"thinking": {"type": "disabled"}, "output_config": {"effort": "low"}},  # ölçüldü: TTFT ~1,1 sn; düşünme açıkken Haiku tüm bütçeyi düşünmeye harcıyordu
                                         system=SYSTEM_BLOCKS + [{"type": "text", "text": voice_rules}], messages=messages) as s:
                 for txt in s.text_stream:
                     yield f"data: {json.dumps({'t': txt}, ensure_ascii=False)}\n\n"
-                account(MODEL_JARVIS, s.get_final_message().usage)
+                account(MODEL_VEGA, s.get_final_message().usage)
             yield "data: [DONE]\n\n"
         except Exception as e:  # akış içinde hata → istemciye bildir
             yield f"data: {json.dumps({'error': str(e)[:200]})}\n\n"

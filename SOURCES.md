@@ -109,6 +109,11 @@ data.nasa.gov bu bilgisayardan curl ile bağlantıyı sıfırlıyor, WebFetch il
   - Kaynakları: BodyParts3D (DBCLS, CC BY-SA 2.1 JP) https://lifesciencedb.jp/bp3d/ · Z-Anatomy (CC BY-SA 4.0) https://www.z-anatomy.com/
 - NASA 3D Models: Astronaut (NASA-316): https://data.nasa.gov/dataset/nasa-3d-models-astronaut
 
+## D2d. Kamera yorgunluk modülü (NASA dışı)
+- MediaPipe Face Landmarker (Google, Apache-2.0), tarayıcıda/cihazda: https://ai.google.dev/edge/mediapipe/solutions/vision/face_landmarker · model: https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task (yerelde `frontend/public/models/`)
+- FHWA Tech Brief FHWA-MCRT-98-006 (Ekim 1998), "PERCLOS: A Valid Psychophysiological Measure of Alertness As Assessed by Psychomotor Vigilance": https://rosap.ntl.bts.gov/view/dot/113 · TRID: https://trid.trb.org/view/498744 (PERCLOS = göz kapaklarının ≥%80 kapalı olduğu zaman yüzdesi; PVT ile doğrulanmış). Yazar atfı doğrulanamadı → yazar adı verilmedi. Eşikler (%8/%15) VARSAYIM.
+- Değerlendirilip KULLANILMAYAN: github.com/NkL-M/Real-Time-Facial-Emotion-Recognition (lisans yok).
+
 ## D3. Doğrulanacak bilimsel makaleler (kalite faktörü Q)
 - Zeitlin et al. 2013, *Science* 340:1080, "Measurements of energetic particle radiation in transit to Mars on the Mars Science Laboratory" (transit Q≈3,8)
 - Hassler et al. 2014, *Science* 343:1244797, "Mars' surface radiation environment measured with the Mars Science Laboratory's Curiosity rover" (yüzey Q≈3,05)

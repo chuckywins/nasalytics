@@ -11,6 +11,7 @@ import { t } from '../i18n';
 import { Panel, ProvTag, StatusChip, STATUS_COLOR, STATUS_GLYPH } from './Hud';
 import { AiCard } from './Ai';
 import { RoutinePanel } from './Checkin';
+import { useFatigue } from '../fatigue';
 import { useState } from 'react';
 import { InfoTip, SourceTags, toSteps } from './Info';
 
@@ -25,6 +26,7 @@ export function AssessmentPanel() {
   return (
     <Panel title={t('ui.assessment', lang)} right={<StatusChip s={overall} label={`${alerts.length}`} />} className="assess">
       <AiCard />
+      <FatigueCue />
       <div className="alerts" role="status" aria-live="polite">
         <AnimatePresence initial={false}>
           {alerts.length === 0 && <motion.p key="ok" {...fade} className="nominal">● {t('ui.allNominal', lang)}</motion.p>}
@@ -44,6 +46,19 @@ export function AssessmentPanel() {
         </AnimatePresence>
       </div>
     </Panel>
+  );
+}
+
+function FatigueCue() {
+  const lang = useApp((s) => s.lang);
+  const f = useFatigue();
+  if (!f.enabled || (f.status !== 'watch' && f.status !== 'warn')) return null;
+  return (
+    <div className="alert" style={{ borderLeftColor: STATUS_COLOR[f.status] }}>
+      <div className="alert-h"><span style={{ color: STATUS_COLOR[f.status] }}>{STATUS_GLYPH[f.status]} {t('fc.cardTitle', lang)}: <b className="num">PERCLOS {f.perclos != null ? `%${(f.perclos * 100).toFixed(0)}` : '–'}</b></span><span className="esc esc-self">{t('esc.self', lang)}</span></div>
+      <p>{t('fc.cardBody', lang)}</p>
+      <ol className="steps"><li>{t('fc.step1', lang)}</li><li>{t('fc.step2', lang)}</li><li>{t('fc.step3', lang)}</li></ol>
+    </div>
   );
 }
 

@@ -1,11 +1,11 @@
-// AI bileşenleri: AI değerlendirme kartı, kritik alarm bandı, oturum kapısı, aktivite seçici, JARVIS bas-konuş.
+// AI bileşenleri: AI değerlendirme kartı, kritik alarm bandı, oturum kapısı, aktivite seçici, VEGA bas-konuş.
 // AI notu: Claude (Anthropic) yardımıyla yazılmıştır.
 import { useEffect, useRef, useState } from 'react';
 import { INDICATORS } from '../engine/indicators';
 import { adviceFor } from '../engine/guidance';
 import type { Activity, Escalation, IndicatorId } from '../engine/types';
 import { useApp, activeAlerts } from '../store';
-import { askJarvis, maxEsc } from '../ai';
+import { askVega, maxEsc } from '../ai';
 import { startAlarm, stopAlarm, speak, stopSpeaking, unlockAudio } from '../audio';
 import { t } from '../i18n';
 
@@ -107,12 +107,12 @@ export function ActivitySelect() {
   );
 }
 
-/* ---------------- JARVIS: bas-konuş (Web Speech) + yazılı yedek ---------------- */
+/* ---------------- VEGA: bas-konuş (Web Speech) + yazılı yedek ---------------- */
 type Msg = { role: 'user' | 'assistant'; content: string };
 // Web Speech API tipleri TS lib'de yok
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type SR = any;
-export function Jarvis() {
+export function Vega() {
   const { lang } = useApp();
   const [listening, setListening] = useState(false);
   const [interim, setInterim] = useState('');
@@ -133,7 +133,7 @@ export function Jarvis() {
     const c = new AbortController(); abort.current = c;
     setBusy(true); setReply(''); setErr('');
     try {
-      const full = await askJarvis(q, hist.current, setReply, (s) => speak(s, lang), c.signal);
+      const full = await askVega(q, hist.current, setReply, (s) => speak(s, lang), c.signal);
       hist.current = [...hist.current, { role: 'user' as const, content: q }, { role: 'assistant' as const, content: full }].slice(-8);
     } catch (e) {
       if ((e as Error).name !== 'AbortError') setErr(t('ai.offline', lang));
@@ -141,7 +141,7 @@ export function Jarvis() {
   };
 
   const start = () => {
-    if (!SRClass) { setErr(t('jarvis.noSpeech', lang)); return; }
+    if (!SRClass) { setErr(t('vega.noSpeech', lang)); return; }
     stopSpeaking();
     const r = new SRClass();
     r.lang = lang === 'tr' ? 'tr-TR' : 'en-US'; r.interimResults = true; r.continuous = true;
@@ -151,7 +151,7 @@ export function Jarvis() {
       for (let i = 0; i < e.results.length; i++) { if (e.results[i].isFinal) fin += e.results[i][0].transcript; else inter += e.results[i][0].transcript; }
       finalText.current = fin; setInterim(fin + inter);
     };
-    r.onerror = (e: SR) => { setErr(`${t('jarvis.micError', lang)} (${e.error})`); setListening(false); };
+    r.onerror = (e: SR) => { setErr(`${t('vega.micError', lang)} (${e.error})`); setListening(false); };
     rec.current = r; r.start(); setListening(true); setInterim('');
   };
   const stop = () => {
@@ -169,19 +169,19 @@ export function Jarvis() {
   });
 
   return (
-    <div className="jarvis">
-      <button className={`ptt ${listening ? 'on' : ''}`} onPointerDown={start} onPointerUp={stop} onPointerLeave={() => listening && stop()} aria-pressed={listening} title={t('jarvis.hint', lang)}>
-        <span className="ptt-dot" />{listening ? t('jarvis.listening', lang) : 'JARVIS'}
+    <div className="vega">
+      <button className={`ptt ${listening ? 'on' : ''}`} onPointerDown={start} onPointerUp={stop} onPointerLeave={() => listening && stop()} aria-pressed={listening} title={t('vega.hint', lang)}>
+        <span className="ptt-dot" />{listening ? t('vega.listening', lang) : 'VEGA'}
       </button>
       <div className="j-text">
         {listening || interim ? <p className="j-user">“{interim || '…'}”</p> : null}
         {busy && !reply && <p className="muted">{t('ai.thinking', lang)}</p>}
         {reply && <p className="j-reply"><span className="ai-tag">✦ AI</span> {reply}</p>}
         {err && <p className="j-err">{err}</p>}
-        {!listening && !interim && !reply && !busy && !err && <p className="muted">{t('jarvis.hint', lang)}</p>}
+        {!listening && !interim && !reply && !busy && !err && <p className="muted">{t('vega.hint', lang)}</p>}
       </div>
       <form onSubmit={(e) => { e.preventDefault(); void send(text); setInterim(text); setText(''); }}>
-        <input value={text} onChange={(e) => setText(e.target.value)} placeholder={t('jarvis.type', lang)} aria-label={t('jarvis.type', lang)} />
+        <input value={text} onChange={(e) => setText(e.target.value)} placeholder={t('vega.type', lang)} aria-label={t('vega.type', lang)} />
       </form>
     </div>
   );
