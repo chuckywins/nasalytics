@@ -67,3 +67,12 @@ Her adım buraya kısa notla eklenir (en yeni en altta).
 - Mandallı alarm: son 30 sn'de kritik varsa alarm sürer; eşikte salınan değer alarmı/AI isteğini tekrar tetiklemez (stableStatus).
 - Prompt önbelleği 1 saat TTL + açılışta/50 dk'da ısıtma.
 - Ölçüm (headless Chrome, uçtan uca): VEGA metni ~1,4 sn; ses başlangıcı 13,3 sn → 4,7 sn; alarm sesi önbellekten ~0 sn ek gecikme.
+
+## 2026-11-14 21:53 — Senaryolar (B paketi, kalp durması hariç — kullanıcı kararı)
+- Takvim (kullanıcı): proje 15 Kas 15:00'te biter, sunumlar 18:00'e kadar, detaylar NASA sitesine 23:59'a kadar.
+- Advisor tasarım uyarıları uygulandı: senaryolar addReading kullanmaz (sahte check-in puanı olmasın), koşulla ilerler, Durdur eski hâle döner, hatırlatma penceresi senaryoda çıkmaz, ek uyarılar (radyasyon/kıyafet/DCS) alarm + AI imzası + snapshot'a bağlı.
+- Kural motoru düzeltmesi: egzersiz nabız bandı yanlıştı (≤170 "beklenen"); AHA %85 × (220−40) ≈ 153 → ≤153 beklenen, 153–180 izle, ≥180 uyarı, ≥200 kritik (yaş 40 VARSAYIM).
+- Hata düzeltmesi: aktivite değişince 30 sn kararlı durum penceresi eski aktivitedeki okumaları yeni eşiklerle değerlendiriyordu (egzersizden dinlenmeye dönünce yanlış kritik alarm) → pencere aktivite değişiminden başlar.
+- 1) Taşikardi: dinlenmede 151 → kritik alarm + AI; aynı nabız egzersizde → alarm yok; dinlenmeye dönüş. 2a) ISS Eylül 2017 gerçek TEPC tekrarı (×6000), SAA ve yüksek enlem ayrımı, DONKI X8.2 + SEP olayları, pencere dozu vs 250 mSv. 2b) Mars Mayıs 2024 gerçek MSL-RAD tekrarı (×9000), ≈67× (taban 4,11 medyan), DONKI CME, Dünya gecikmesi 3–22 dk (environments.json). 3a) EVA kıyafet CO₂ (TB-004 belirti aralıkları; V2 [11039] Tablo 35 okunmadı, açıkça yazılır). 3b) EVA DCS: belirti bildirimiyle tetiklenir (TB-037), ilaç yok.
+- Üst bar doz hızı tekrar sırasında tekrar değerini gösterir (çelişki yok). Önbellek isabeti hız sınırına sayılmaz; otomatik testler (?test) ses kotası harcamaz.
+- Playwright testleri (1536×700): 5 senaryo tr/en karışık çalıştı, sayfa hatası yok.
