@@ -108,10 +108,10 @@ export function CabinPanel() {
   const suit = useScenario((s) => s.suit);
   if (suit) return (
     <Panel title={t('suit.title', lang)} right={<ProvTag p="SIMULATED" />} className="cabin">
-      <Gauge label={t('suit.co2', lang)} value={suit.ppCO2mmHg} unit="mmHg" lo={0} hi={8} limitHi={4.5} status={suitCO2Status(suit.ppCO2mmHg)} />
+      <Gauge label={t('suit.co2', lang)} value={suit.ppCO2mmHg} unit="mmHg" lo={0} hi={18} limitHi={15} status={suitCO2Status(suit.ppCO2mmHg)} />
       <Gauge label="ppO₂ (%100 O₂)" value={suit.ppO2mmHg} unit="mmHg" lo={0} hi={300} status="ok" decimals={0} />
       <Gauge label={t('suit.pressure', lang)} value={suit.pressurePsia} unit="psia" lo={0} hi={16} status="ok" />
-      <div className="src"><ProvTag p="NASA_STANDARD" /><span>V2 [11035] · OCHMO-TB-004 · TB-037 (4,3 psia)</span></div>
+      <div className="src"><ProvTag p="NASA_STANDARD" /><span>V2 [11035] [11039] Tablo 23 · TB-037 (4,3 psia)</span></div>
     </Panel>
   );
   return (

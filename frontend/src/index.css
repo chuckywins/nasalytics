@@ -399,3 +399,9 @@ a { color: var(--accent); }
 .intv-appr { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 .intv-src { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
 .intv-auto { border-left: 2px solid #e3a33a; padding-left: 8px; }
+.intv-sym { display: flex; gap: 6px; }
+.intv-sym input { flex: 1; font-size: 12px; }
+.intv-rx { border: 1px solid var(--accent); border-radius: 6px; padding: 8px 10px; display: flex; flex-direction: column; gap: 4px; background: rgba(90,209,230,.05); }
+.intv-off { border: 1px dashed #e3a33a; border-radius: 4px; padding: 4px 8px; }
+.tag-unverified { color: #e3a33a; border: 1px solid #e3a33a; border-radius: 3px; padding: 0 4px; font-size: 11px; }
+.intv-cond { color: var(--accent); font-weight: 600; }

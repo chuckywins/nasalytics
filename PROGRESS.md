@@ -111,3 +111,11 @@ Her adım buraya kısa notla eklenir (en yeni en altta).
 - Türkçe ilaç adları süzgece eklendi; AI özeti süzgeçte boşalırsa satır gizlenir.
 - Veri karşılaştırması: kullanılmayan indirilmiş veri: i4_cardio.csv (kardiyovasküler biyobelirteçler), deep_space_may2024 (storms.json'da, senaryo yok), DONKI GST, GOES protonları, ISS DOSTEL (yalnız araştırmada). TB-033: uyku ilaçları uçuşta en sık akut ilaç nedeni (~%71); uzak görevlerde tıbbi otonomi.
 - Test (Playwright): ISS SpO₂ 90 + KB 75 → şok + solunum + göğüs ağrısı adayları; Mars KB 75 → kısmi yerçekimi dalı + otonomi notu; DCS (arayüzden başlatılan senaryo) → DCS kartı; yer kontrol EN, Onayla → "astronota ulaştı".
+
+## 2026-11-14 23:18 — AI reçete önerisi (Fable ile), kütüphane 12 karta, NASA kıyafet CO₂ Tablo 23
+- Kullanıcı: yarışma prototipi, AI ilaç önerebilmeli. Fable: AI açıkça reçete önersin ama KİMLİKLE; ad/doz/sayfa NASA listesinden; kütüphane dışı yalnız ad/sınıf "miktar uçuş cerrahına göre", "KAYNAKSIZ" etiketli ayrı blok; dozu modelin yazdığı sayı ekrana çıkmaz (sunucu yalnız kütüphane dozlarına izin verir).
+- İlaç adımları artık gizli değil; "Koşul: göğüs ağrısı doğrulanırsa" ile her zaman görünür. CMO serbest metinle belirti yazar → AI'ye gider.
+- Yeni kartlar (JSC-48031, sayfa sayfa doğrulandı): ağır alerji (Epi Pen, *Epinephrine, *Benadryl), nöbet (*Valium IM/IV), uykusuzluk (*Ambien/*Restoril; TB-033: uyku ilacı en sık), irtifa hastalığı (*Diamox), bulantı (*Phenergan), ağrı/baş ağrısı (Aspirin/Tylenol/Motrin). Genel UYARI 6-2 (uyuşukluk yapan ilaçlar birlikte kullanılmaz) ilgili ilaçlarda.
+- "*" kuralının tam metni: acil durumda veya iletişim kopukken tedaviye başla, cerrahı en kısa sürede ara → kilit metnine eklendi (Mars gecikmesi sorununu NASA kuralı çözer).
+- NASA-STD-3001 V2 Rev B indirildi: kıyafet PICO₂ Tablo 23 (≤4: 14 sa … >15 asla). EVA CO₂ senaryosu, kıyafet göstergesi ve anlatım bu tabloya göre; eski "kıyafet 4,5 kritik" varsayımı kaldırıldı.
+- Test: C-21 (nabız 151, KB 150/95, uyku 4,2 sa) + CMO belirti "göğüste baskı, sol kola yayılıyor, terleme" → AI planı: aspirin (JSC-48031 1-37, WARNING 6-3) + kütüphane dışı "nitrat sınıfı · miktar uçuş cerrahına göre"; kartlar göğüs ağrısı, şok, hipertansif kriz, uykusuzluk.

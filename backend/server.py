@@ -125,14 +125,18 @@ NO_UPDATE_TOOL = {
 # ---- Müdahale sıralaması (CMO / yer kontrol): AI yalnız kütüphane KİMLİKLERİNİ sıralar; doz/ilaç asla modelden geçmez ----
 IV_TOOL = {
     "name": "rank_interventions",
-    "description": "Rank which protocol cards from the given library apply to this astronaut, most urgent first, with one short reason each.",
+    "description": "Rank applicable protocol cards and propose a concrete do-now plan that references library drug IDs.",
     "input_schema": {"type": "object", "properties": {
         "ranked": {"type": "array", "maxItems": 6, "items": {"type": "object", "properties": {
-            "id": {"type": "string"}, "why": {"type": "string", "description": "One short sentence: which readings support this card and what the CMO should confirm. No drug names, no doses."}},
+            "id": {"type": "string", "description": "Library protocol id"}, "why": {"type": "string", "description": "One short sentence citing readings/symptoms and what the CMO must confirm."}},
             "required": ["id", "why"]}},
-        "summary": {"type": "string", "description": "Max 2 sentences: overall situation and the single most important next action. No drug names, no doses."},
+        "plan": {"type": "array", "maxItems": 6, "description": "Ordered do-now actions. Use drugId to prescribe a library medication (the screen shows its verbatim name, dose and page). Use protocol for a non-drug card.",
+                 "items": {"type": "object", "properties": {"drugId": {"type": "string"}, "protocol": {"type": "string"}, "why": {"type": "string", "description": "Why this now; no amounts."}}, "required": ["why"]}},
+        "offFormulary": {"type": "array", "maxItems": 3, "description": "Optional: a medication or class NOT in the library that a clinician might consider. Name only, never an amount.",
+                         "items": {"type": "object", "properties": {"name": {"type": "string"}, "why": {"type": "string"}}, "required": ["name", "why"]}},
+        "summary": {"type": "string", "description": "Max 2 sentences: overall situation and the single most important next action."},
         "escalate": {"type": "string", "enum": ["self", "crew", "ground"]}},
-        "required": ["ranked", "summary", "escalate"]},
+        "required": ["ranked", "plan", "summary", "escalate"]},
 }
 DRUG_WORDS = ["epinefrin", "nitrogliserin", "salbutamol", "parasetamol", "aspirin", "proventil", "albuterol", "saline", "serum fizyolojik", "epinephrine", "adrenalin", "epi pen", "benadryl", "valium",
               "diazepam", "ambien", "restoril", "diamox", "glucagon", "glukagon", "insulin", "insülin", "nitroglycerin", "atropine"]
@@ -333,26 +337,39 @@ async def interventions(req: Request):
     ids = {x.get("id") for x in lib}
     cands = [c for c in body.get("candidates", []) if c in ids]
     t0 = time.time()
-    rules = ("You support a Crew Medical Officer (CMO) and a ground flight surgeon. A deterministic engine already proposed CANDIDATE "
-             "protocol cards from a fixed, sourced library (Space Shuttle Medical Checklist JSC-48031 and AHA/ADA guidance). "
-             "Your job: rank the candidates (you may add another library id only if the snapshot clearly supports it), explain each in one "
-             "sentence citing the readings, and say what the CMO must confirm (signs/symptoms) before acting. Vital signs alone never prove "
-             "a diagnosis. NEVER name a drug or dose: the screen shows verbatim steps from the source. Answer in language: " + lang)
+    rules = ("You support a Crew Medical Officer (CMO) and a ground flight surgeon in a hackathon prototype with simulated data. "
+             "OVERRIDE for this tool only: you MAY prescribe library medications, but ONLY by their drugId from the library; the screen "
+             "renders the verbatim name, dose and page from NASA's Shuttle Medical Checklist (JSC-48031), so never write an amount yourself. "
+             "Rank candidate cards (you may add other library ids if symptoms/snapshot support them), then give an ordered do-now plan. "
+             "Respect each drug's 'condition' and locked flag (locked = flight-surgeon approval; in an emergency or loss of signal treatment may begin). "
+             "Vital signs alone never prove a diagnosis: say what the CMO must confirm. offFormulary: name/class only, never amounts. "
+             "Answer in language: " + lang)
+    lib_doses = {str(d.get("dose", "")) for x in lib for d in x.get("drugs", [])}
+    drug_ids = {d.get("id") for x in lib for d in x.get("drugs", [])}
+
+    def clean(txt):  # yalnız kütüphane dozlarında geçen doz kalıplarına izin ver; diğer sayısal dozlar silinir
+        t = str(txt)[:400]
+        return DOSE_RE.sub(lambda m: m.group(0) if any(m.group(0) in d for d in lib_doses) else "…", t)
+
     msg = await run_in_threadpool(client.messages.create,
         model=MODEL_ASSESS, max_tokens=1500, system=SYSTEM_BLOCKS + [{"type": "text", "text": rules}], tools=[IV_TOOL], tool_choice={"type": "auto"},
         extra_body={"output_config": {"effort": "low"}},
         messages=[{"role": "user", "content": f"Library: {json.dumps(lib)}\nCandidates: {json.dumps(cands)}\nRole viewing: {body.get('role')}\n"
+                                                f"CMO-typed symptoms: {str(body.get('symptoms', ''))[:400]}\nCMO-confirmed signs: {json.dumps(body.get('confirmedSigns', []))}\n"
                                                 f"Snapshot: {json.dumps(body.get('snapshot', {}), ensure_ascii=False)}\nCall rank_interventions."}])
     account(MODEL_ASSESS, msg.usage)
     out = next((b.input for b in msg.content if b.type == "tool_use"), None)
     if not out:
         raise HTTPException(502, "no ranking")
-    clean = lambda txt: "" if (any(w in str(txt).lower() for w in DRUG_WORDS) or DOSE_RE.search(str(txt))) else str(txt)[:300]
     ranked = [{"id": r.get("id"), "why": clean(r.get("why", ""))} for r in out.get("ranked", []) if r.get("id") in ids]
     for c in cands:  # deterministik adaylar asla düşmez
         if c not in [r["id"] for r in ranked]:
             ranked.append({"id": c, "why": ""})
-    return {"result": {"ranked": ranked, "summary": clean(out.get("summary", "")), "escalate": out.get("escalate")},
+    plan = [{"drugId": it.get("drugId") if it.get("drugId") in drug_ids else None,
+             "protocol": it.get("protocol") if it.get("protocol") in ids else None, "why": clean(it.get("why", ""))}
+            for it in out.get("plan", []) if it.get("drugId") in drug_ids or it.get("protocol") in ids]
+    off = [{"name": DOSE_RE.sub("…", str(o.get("name", "")))[:60], "why": DOSE_RE.sub("…", str(o.get("why", "")))[:200]} for o in out.get("offFormulary", [])][:3]
+    return {"result": {"ranked": ranked, "plan": plan, "offFormulary": off, "summary": clean(out.get("summary", "")), "escalate": out.get("escalate")},
             "latencyMs": int((time.time() - t0) * 1000), "model": MODEL_ASSESS}
 
 

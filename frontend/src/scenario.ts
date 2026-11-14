@@ -31,6 +31,7 @@ const SRC = {
   radlab: { label: 'NASA OSDR RadLab (MSL-RAD)', url: 'https://visualization.osdr.nasa.gov/radlab/' },
   donki: { label: 'NASA CCMC DONKI', url: 'https://ccmc.gsfc.nasa.gov/DONKI/' },
   tb020: { label: 'OCHMO-TB-020 Radiation (SPE & EVA)', url: 'https://www.nasa.gov/wp-content/uploads/2023/03/radiation-protection-technical-brief-ochmo.pdf' },
+  std3001v2: { label: 'NASA-STD-3001 Vol 2 Rev B [V2 11039] Table 23', url: 'https://standards.nasa.gov/sites/default/files/standards/NASA/C/Historical/nasa-std-3001_vol_2_rev_b.pdf' },
   tb004: { label: 'OCHMO-TB-004 CO₂ · V2 [11035][11036]', url: 'https://nasa.gov/wp-content/uploads/2023/03/co2-technical-brief-ochmo.pdf' },
   tb037: { label: 'OCHMO-TB-037 DCS', url: 'https://www.nasa.gov/wp-content/uploads/2023/12/ochmo-tb-037-decompression-sickness.pdf' },
   aha: { label: 'AHA: Target heart rates', url: 'https://www.heart.org/en/healthy-living/fitness/fitness-basics/target-heart-rates' },
@@ -40,7 +41,7 @@ export const SCEN_META: Record<ScenarioId, { title: L; desc: L; prov: Provenance
   tachy: { title: { tr: 'Taşikardi: dinlenme ve egzersiz', en: 'Tachycardia: rest vs exercise' }, desc: { tr: 'Aynı nabız, farklı bağlam: dinlenmede kritik alarm, egzersizde beklenen.', en: 'Same heart rate, different context: critical at rest, expected during exercise.' }, prov: 'SIMULATED' },
   iss2017: { title: { tr: 'Güneş fırtınası: ISS, Eylül 2017', en: 'Solar storm: ISS, Sep 2017' }, desc: { tr: 'Gerçek TEPC dozimetre verisi + DONKI olayları, hızlandırılmış tekrar.', en: 'Real TEPC dosimeter data + DONKI events, accelerated replay.' }, prov: 'NASA_MEASUREMENT' },
   mars2024: { title: { tr: 'Güneş fırtınası: Mars, Mayıs 2024', en: 'Solar storm: Mars, May 2024' }, desc: { tr: 'Curiosity RAD gerçek doz verisi; Dünya ile iletişim gecikmesi.', en: 'Real Curiosity RAD dose data; Earth communication delay.' }, prov: 'NASA_MEASUREMENT' },
-  evaCO2: { title: { tr: 'Uzay yürüyüşü: kıyafette CO₂ birikimi', en: 'EVA: suit CO₂ build-up' }, desc: { tr: 'Kıyafet ppCO₂ yükselir; ekip kararıyla yürüyüş sonlandırılır.', en: 'Suit ppCO₂ rises; EVA is terminated on crew decision.' }, prov: 'SIMULATED' },
+  evaCO2: { title: { tr: 'Uzay yürüyüşü: kıyafette CO₂ birikimi', en: 'EVA: suit CO₂ build-up' }, desc: { tr: 'Kıyafet CO₂ yükselir; NASA-STD-3001 Tablo 23 süre limitleri; ekip kararıyla yürüyüş sonlandırılır.', en: 'Suit CO₂ rises; NASA-STD-3001 Table 23 duration limits; EVA terminated on crew decision.' }, prov: 'SIMULATED' },
   evaDCS: { title: { tr: 'Uzay yürüyüşü: vurgun (DCS) belirtisi', en: 'EVA: decompression sickness symptom' }, desc: { tr: 'Belirti bildirimiyle tetiklenir (nabızla değil); yürüyüş sonlandırılır.', en: 'Triggered by a symptom report (not a vital sign); EVA is terminated.' }, prov: 'SIMULATED' },
 };
 
@@ -121,8 +122,8 @@ const CAP = {
   evaCO2: {
     s1: { tr: 'Uzay yürüyüşü senaryosu. Kıyafet basıncı dört virgül üç psia, yüzde yüz oksijen.', en: 'Spacewalk scenario. Suit pressure four point three psia, one hundred percent oxygen.' },
     s2: { tr: 'Kıyafetteki karbondioksit temizleme verimi düşüyor. Bu bir simülasyon.', en: 'Carbon dioxide removal in the suit is degrading. This is a simulation.' },
-    s3: { tr: 'Kıyafet karbondioksiti baş ağrısı aralığına girdi. Solunum hızı artıyor.', en: 'Suit carbon dioxide entered the headache range. Breathing rate is rising.' },
-    s4: { tr: 'Karbondioksit yorgunluk ve bulantı aralığında. Durumu ekibe bildir. Ekip kararıyla yürüyüşü sonlandır ve hava kilidine dön.', en: 'Carbon dioxide is in the fatigue and nausea range. Report to the crew. On crew decision, terminate the spacewalk and return to the airlock.' },
+    s3: { tr: 'Kıyafet karbondioksiti yedi milimetreyi aştı. NASA standardına göre bu bantta günde en fazla iki buçuk saat kalınabilir. Solunum hızı artıyor.', en: 'Suit carbon dioxide passed seven millimetres. By the NASA standard, at most two and a half hours a day are allowed in this band. Breathing rate is rising.' },
+    s4: { tr: 'Karbondioksit on iki buçuğu aştı: günde en fazla yarım saat, on beş asla aşılmaz. Durumu ekibe bildir; ekip kararıyla yürüyüşü sonlandır ve hava kilidine dön.', en: 'Carbon dioxide passed twelve point five: at most half an hour a day, and fifteen must never be exceeded. Report to the crew; on crew decision terminate the spacewalk and return to the airlock.' },
     s5: { tr: 'Hava kilidine dönüldü. Kabin atmosferinde değerler normale iniyor.', en: 'Back in the airlock. Values are returning to normal in cabin air.' },
   },
   evaDCS: {
@@ -260,21 +261,26 @@ function radAlert(status: Status, value: string, where: 'iss' | 'mars'): ExtraAl
 }
 
 /* ---------------- 3a. EVA: kıyafet CO₂ ---------------- */
-// Sınıflama: OCHMO-TB-004 BELİRTİ aralıkları (2,8–4,5 mmHg baş ağrısı; >4,5 yorgunluk/bulantı). Bu bir kıyafet limiti DEĞİL:
-// kıyafet PICO₂ limitleri V2 [11039] Tablo 35'tedir ve bu prototipte okunmadı.
-// Kabin göstergesiyle AYNI bantlar (tutarlılık): 2,5–3 izle, 3–4,5 baş ağrısı (uyarı), >4,5 yorgunluk/bulantı (kritik; kritik kademe VARSAYIM)
-export function suitCO2Status(v: number): Status { return INDICATORS.cabinCO2.evaluate(v).status; }
+// NASA-STD-3001 Vol 2 Rev B (2019) [V2 11039] Tablo 23: kıyafet solunan CO₂ (PICO₂) için GÜNLÜK KÜMÜLATİF izin süresi.
+// ≤4 mmHg 14 sa · 4–7 → 7 sa · 7–10 → 2,5 sa · 10–12,5 → 1 sa · 12,5–15 → 0,5 sa · >15 "Do Not Exceed".
+// Durum eşlemesi (bizim seçimimiz, VARSAYIM): ≤4 normal, 4–7 izle, 7–12,5 uyarı, >12,5 kritik.
+// Not: tablodaki değer PICO₂'dir; simüle değer PICO₂ kabul edilir.
+const PICO2_TABLE: [number, number][] = [[4, 14], [7, 7], [10, 2.5], [12.5, 1], [15, 0.5]];
+export const pico2AllowedH = (v: number) => (PICO2_TABLE.find(([lim]) => v <= lim)?.[1] ?? 0);
+export function suitCO2Status(v: number): Status { return v > 12.5 ? 'critical' : v > 7 ? 'warn' : v > 4 ? 'watch' : 'ok'; }
 function suitAlert(v: number): ExtraAlert {
   const s = suitCO2Status(v);
+  const h = pico2AllowedH(v);
+  const allow = h > 0 ? { tr: `günde en fazla ${String(h).replace('.', ',')} sa`, en: `max ${h} h/day` } : { tr: 'ASLA AŞILMAZ', en: 'DO NOT EXCEED' };
   return {
-    id: 'suitCO2', status: s, value: `ppCO₂ ${v.toFixed(1)} mmHg`, prov: 'SIMULATED', escalate: s === 'critical' ? 'crew' : 'self',
+    id: 'suitCO2', status: s, value: `PICO₂ ${v.toFixed(1)} mmHg · ${allow.tr}`, prov: 'SIMULATED', escalate: s === 'critical' ? 'crew' : 'self',
     title: { tr: 'Kıyafet CO₂ (EVA)', en: 'Suit CO₂ (EVA)' },
-    label: s === 'critical' ? { tr: 'Yorgunluk/bulantı aralığı', en: 'Fatigue/nausea range' } : s === 'warn' ? { tr: 'Baş ağrısı aralığı', en: 'Headache range' } : { tr: 'NASA sınırına yakın', en: 'Near NASA limit' },
+    label: { tr: `NASA izin süresi: ${allow.tr}`, en: `NASA allowance: ${allow.en}` },
     steps: s === 'critical'
-      ? [{ tr: 'Durumu IV ekibe / yer kontrolüne bildir', en: 'Report to the IV crew / ground' }, { tr: 'Ekip kararıyla EVA\'yı sonlandır', en: 'On crew decision, terminate the EVA' }, { tr: 'Hava kilidine dön', en: 'Return to the airlock' }]
-      : [{ tr: 'Efor temposunu düşür', en: 'Reduce workload' }, { tr: 'Baş ağrısı / görme değişimi varsa bildir', en: 'Report headache / vision change' }, { tr: 'Kıyafet ppCO₂ eğilimini izle', en: 'Watch suit ppCO₂ trend' }],
-    sources: [SRC.tb004],
-    note: { tr: 'Kabin ile aynı belirti aralıkları (TB-004); kıyafet limiti değil (V2 [11039] Tablo 35 okunmadı); kritik kademe VARSAYIM', en: 'Same symptom bands as cabin (TB-004); not a suit limit (V2 [11039] Table 35 not read); critical tier is an ASSUMPTION' },
+      ? [{ tr: 'Durumu IV ekibe / yer kontrolüne bildir', en: 'Report to the IV crew / ground' }, { tr: 'Ekip kararıyla EVA\'yı sonlandır, hava kilidine dön', en: 'On crew decision, terminate the EVA and return to the airlock' }, { tr: 'Baş ağrısı, görme değişikliği, nefes darlığı belirtilerini izle', en: 'Watch for headache, vision change, shortness of breath' }]
+      : [{ tr: 'Efor temposunu düşür (metabolik hız CO₂ birikimini artırır)', en: 'Reduce workload (metabolic rate drives CO₂ build-up)' }, { tr: 'Bu bantta geçen kümülatif süreyi izle', en: 'Track cumulative time in this band' }, { tr: 'Baş ağrısı / görme değişimi varsa bildir', en: 'Report headache / vision change' }],
+    sources: [SRC.std3001v2, SRC.tb004],
+    note: { tr: 'Eşikler NASA-STD-3001 V2 Tablo 23 (günlük kümülatif süre). Durum renkleri bizim eşlememiz (VARSAYIM).', en: 'Limits from NASA-STD-3001 V2 Table 23 (daily cumulative duration). Status colours are our mapping (ASSUMPTION).' },
   };
 }
 async function evaCO2(my: number) {
@@ -284,10 +290,10 @@ async function evaCO2(my: number) {
   await sayWait(CAP.evaCO2.s1, my); await wait(1500, my);
   say(CAP.evaCO2.s2);
   let saidWatch = false, saidWarn = false;
-  while (co2 < 6.2) {
-    co2 += 0.12;
+  while (co2 < 15.6) {
+    co2 += 0.3;
     useScenario.setState((s) => ({ suit: s.suit && { ...s.suit, ppCO2mmHg: co2 } }));
-    setTarget({ respRate: Math.round(18 + (co2 - 1.5) * 1.8), heartRate: Math.round(112 + (co2 - 1.5) * 3) });
+    setTarget({ respRate: Math.round(18 + (co2 - 1.5) * 0.7), heartRate: Math.round(112 + (co2 - 1.5) * 1.2) });
     const st = suitCO2Status(co2);
     if (st !== 'ok') setExtra(suitAlert(co2), 'suitCO2');
     if (st === 'warn' && !saidWatch) { saidWatch = true; say(CAP.evaCO2.s3); }
