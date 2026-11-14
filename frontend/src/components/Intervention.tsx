@@ -20,11 +20,16 @@ export function snapLite(p: Packet): SnapLite {
   return { activity: s.activity, gravity_g: s.gravity_g, indicators: s.indicators.map((x) => ({ id: x.id, value: x.value, status: x.status })), extra: (s.scenario?.extraAlerts ?? []).map((x) => ({ id: x.id, status: x.status })) };
 }
 
-export function InterventionPanel({ p, role }: { p: Packet; role: Role }) {
+export function InterventionPanel({ p, role, compress }: { p: Packet; role: Role; compress: boolean }) {
   const lang = useApp((s) => s.lang);
   const lite = useMemo(() => snapLite(p), [p]);
-  const matched = matchProtocols(lite);
-  const sig = `${p.crewId}|${matched.map((m) => m.id).join(',')}|${lite.indicators.filter((x) => x.status !== 'ok').map((x) => `${x.id}:${x.status}`).join(',')}|${lang}`;
+  const fresh = matchProtocols(lite);
+  // Sabitleme: eşikte salınan değer kartı aç-kapa yapmasın → eşleşen kart 60 sn ekranda kalır
+  const latch = useRef<Record<string, { at: number; m: (typeof fresh)[number] }>>({});
+  const nowMs = Date.now();
+  for (const m of fresh) latch.current[`${p.crewId}:${m.id}`] = { at: nowMs, m };
+  const matched = Object.entries(latch.current).filter(([k, v]) => k.startsWith(`${p.crewId}:`) && nowMs - v.at < 60_000).map(([, v]) => v.m);
+  const sig = `${p.crewId}|${matched.map((m) => m.id).sort().join(',')}|${lang}`;
   const [ai, setAi] = useState<AiRank | null>(null);
   const [aiErr, setAiErr] = useState('');
   const [confirmed, setConfirmed] = useState<Record<string, boolean[]>>({});
@@ -53,8 +58,9 @@ export function InterventionPanel({ p, role }: { p: Packet; role: Role }) {
   const order: ProtocolId[] = [];
   for (const r of ai?.ranked ?? []) if (PROTOCOLS[r.id] && !order.includes(r.id)) order.push(r.id);
   for (const m of matched) if (!order.includes(m.id)) order.push(m.id);
-  const oneWay = (p.snap.commDelayOneWaySec?.[0] ?? 0);
-  const roundTrip = 2 * oneWay;
+  // Yer ekranı zaten gecikmeli veriyi görür → onayın astronota ulaşması TEK YÖN gecikme (÷60 sıkıştırma seçiliyse o da)
+  const oneWay = (p.snap.commDelayOneWaySec?.[0] ?? 0) / (compress ? 60 : 1);
+  const ground = role === 'ground';
 
   return (
     <div className="intv">
@@ -63,8 +69,9 @@ export function InterventionPanel({ p, role }: { p: Packet; role: Role }) {
         <span className="muted small">{role === 'ground' ? t('iv.groundRole', lang) : t('iv.cmoRole', lang)}</span>
       </div>
       {order.length === 0 ? <p className="muted">{t('iv.none', lang)}</p> : (<>
-        {ai && <div className="intv-ai small"><span className="ai-tag">✦ AI</span> {ai.summary} <span className="muted">· {t('iv.aiRole', lang)}</span></div>}
+        {ai && ai.summary && <div className="intv-ai small"><span className="ai-tag">✦ AI</span> {ai.summary} <span className="muted">· {t('iv.aiRole', lang)}</span></div>}
         {aiErr && <div className="muted small">{t('iv.aiOffline', lang)}</div>}
+        {(p.snap.commDelayOneWaySec?.[0] ?? 0) >= 60 && <div className="intv-auto small">⏱ {t('iv.autonomy', lang)} <a href="https://www.nasa.gov/wp-content/uploads/2023/07/ochmo-tb-033-spaceflight-experience-medical-care-rev-c.pdf" target="_blank" rel="noreferrer">OCHMO-TB-033 ↗</a></div>}
         {order.map((id) => {
           const pr = PROTOCOLS[id];
           const why = ai?.ranked.find((r) => r.id === id)?.why;
@@ -72,7 +79,7 @@ export function InterventionPanel({ p, role }: { p: Packet; role: Role }) {
           const conf = confirmed[`${p.crewId}:${id}`] ?? pr.confirm.map(() => false);
           const anyConf = conf.some(Boolean);
           const apprAt = approved[`${p.crewId}:${id}`];
-          const apprArrives = apprAt ? apprAt + roundTrip * 1000 : 0;
+          const apprArrives = apprAt ? apprAt + oneWay * 1000 : 0;
           const apprOk = apprAt && now >= apprArrives;
           const zeroG = p.snap.gravity_g < 0.05;
           return (
@@ -84,20 +91,21 @@ export function InterventionPanel({ p, role }: { p: Packet; role: Role }) {
               <div className="muted small">{t('iv.candidate', lang)}{reason ? ` · ${reason}` : ''}</div>
               {why && <div className="small"><span className="ai-tag">✦ AI</span> {why}</div>}
               {pr.note && <p className="small muted">{pr.note[lang]}</p>}
-              <div className="intv-conf">
+              {!ground && <div className="intv-conf">
                 <span className="small">{t('iv.confirm', lang)}:</span>
                 {pr.confirm.map((c, i) => (
                   <label key={i} className="small"><input type="checkbox" checked={conf[i]} onChange={(e) => setConfirmed((s) => ({ ...s, [`${p.crewId}:${id}`]: conf.map((v, j) => (j === i ? e.target.checked : v)) }))} /> {c[lang]}</label>
                 ))}
-              </div>
+              </div>}
+              {ground && <div className="muted small">{t('iv.groundReadOnly', lang)}</div>}
               <ol className="steps">
                 {pr.steps.filter((st) => !st.gravity || (st.gravity === 'zeroG') === zeroG).map((st, i) => {
-                  if (st.medical && !anyConf) return <li key={i} className="muted small">{t('iv.hiddenUntil', lang)}</li>;
+                  if (st.medical && !anyConf && !ground) return <li key={i} className="muted small">{t('iv.hiddenUntil', lang)}</li>;
                   return (
                     <li key={i}>{st.text[lang]}
                       {st.drug && (
                         <div className={`intv-drug ${st.drug.locked ? 'locked' : ''}`}>
-                          <code>{st.drug.verbatim}</code> <code>{st.drug.dose}</code>
+                          <code>{st.drug.verbatim}</code>{st.drug.dose && <> <code>{st.drug.dose}</code></>}
                           <span className="muted small"> · {t('iv.verbatim', lang)}</span>
                           {st.drug.locked && <div className="intv-lock">🔒 {t('iv.locked', lang)}{apprOk ? ` · ✓ ${t('iv.approved', lang)}` : apprAt ? ` · ${t('iv.approvalInTransit', lang)} ${fmt((apprArrives - now) / 1000)}` : ''}</div>}
                           {st.drug.warning && <div className="intv-warn small">⚠ {st.drug.warning}</div>}
@@ -107,12 +115,13 @@ export function InterventionPanel({ p, role }: { p: Packet; role: Role }) {
                   );
                 })}
               </ol>
-              {role === 'ground' && pr.steps.some((s) => s.drug?.locked) && (
+              {ground && (
                 <div className="intv-appr">
-                  <button disabled={!!apprAt} onClick={() => setApproved((s) => ({ ...s, [`${p.crewId}:${id}`]: Date.now() }))}>{t('iv.approve', lang)}</button>
-                  <span className="muted small">{t('iv.roundTrip', lang)}: {fmt(roundTrip)} · {t('iv.localOnly', lang)}</span>
+                  <button disabled={!!apprAt} onClick={() => setApproved((s) => ({ ...s, [`${p.crewId}:${id}`]: Date.now() }))}>{t(pr.steps.some((x) => x.drug?.locked) ? 'iv.approve' : 'iv.concur', lang)}</button>
+                  <span className="muted small">{apprAt ? (apprOk ? `✓ ${t('iv.reached', lang)}` : `${t('iv.toAstronaut', lang)} ${fmt((apprArrives - now) / 1000)}`) : `${t('iv.oneWay', lang)}: ${fmt(oneWay)}${compress ? ' (÷60)' : ''}`} · {t('iv.localOnly', lang)}</span>
                 </div>
               )}
+              {!ground && pr.steps.some((x) => x.drug?.locked) && <div className="muted small">{t('iv.cmoNoApproval', lang)}</div>}
               <div className="intv-src"><ProvTag p={pr.kind === 'NASA_CHECKLIST' ? 'PUBLISHED' : 'CLINICAL_GUIDELINE'} /><SourceTags sources={[pr.source]} max={1} /></div>
               {pr.kind === 'NASA_CHECKLIST' && <div className="muted small">{t('iv.shuttleNote', lang)}</div>}
             </div>

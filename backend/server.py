@@ -134,7 +134,7 @@ IV_TOOL = {
         "escalate": {"type": "string", "enum": ["self", "crew", "ground"]}},
         "required": ["ranked", "summary", "escalate"]},
 }
-DRUG_WORDS = ["aspirin", "proventil", "albuterol", "saline", "serum fizyolojik", "epinephrine", "adrenalin", "epi pen", "benadryl", "valium",
+DRUG_WORDS = ["epinefrin", "nitrogliserin", "salbutamol", "parasetamol", "aspirin", "proventil", "albuterol", "saline", "serum fizyolojik", "epinephrine", "adrenalin", "epi pen", "benadryl", "valium",
               "diazepam", "ambien", "restoril", "diamox", "glucagon", "glukagon", "insulin", "insülin", "nitroglycerin", "atropine"]
 DOSE_RE = re.compile(r"\b\d+(?:[.,]\d+)?\s?(?:mg|mcg|µg|ml|mL|tab|tablet|puff|ampul)\b(?!\s?/)", re.I)  # "50 mg/dL" doz değildir
 

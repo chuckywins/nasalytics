@@ -9,7 +9,7 @@ import type { Escalation, SourceRef } from './types';
 
 export type ProtocolId = 'chestPain' | 'shock' | 'breathing' | 'dcs' | 'hypoglycemia' | 'htnCrisis';
 type L = { tr: string; en: string };
-export interface Drug { verbatim: string; dose: string; locked: boolean; warning?: string }
+export interface Drug { verbatim: string; dose?: string; locked: boolean; warning?: string }
 export interface PStep { text: L; drug?: Drug; medical?: boolean /* onaydan önce gizlenir */; gravity?: 'zeroG' | 'partialG' }
 export interface Protocol {
   id: ProtocolId; title: L; source: SourceRef & { page: string }; kind: 'NASA_CHECKLIST' | 'CLINICAL_GUIDELINE';
@@ -42,7 +42,7 @@ export const PROTOCOLS: Record<ProtocolId, Protocol> = {
     steps: [CPR_BOX, VITALS,
       { text: { tr: 'Kanama varsa gazlı bezle bastır.', en: 'If bleeding: apply pressure w/gauze pads.' } },
       { text: { tr: 'Vücut ısısı kaybını önle.', en: 'Prevent loss of body heat.' } },
-      { medical: true, text: { tr: 'Damar yolu aç ve serum başlat:', en: 'Start I.V. and begin infusion:' }, drug: { verbatim: 'Start I.V. Begin infusing 1 L of normal Saline', dose: '1 L', locked: false } },
+      { medical: true, text: { tr: 'Damar yolu aç ve serum başlat:', en: 'Start I.V. and begin infusion:' }, drug: { verbatim: '5. Start I.V. (see INJECTIONS, INTRAVENOUS (I.V.), 4-11). Begin infusing 1 L of normal Saline (IV Admin-1, Saline Supply Bag, EENT Subpack-1)', locked: false } },
       ECG, SURGEON,
       { gravity: 'zeroG', text: { tr: 'Mikro-yerçekimi: kontrol listesi hastayı bağlarla sabitlemeyi söyler; bacak kaldırma yerçekimi olmadan etki etmez (VARSAYIM).', en: 'Microgravity: the checklist uses patient restraints; leg elevation has no effect without gravity (ASSUMPTION).' } },
       { gravity: 'partialG', text: { tr: 'Kısmi yerçekimi (Ay/Mars): bilinci açık ve nefes alıyorsa sırtüstü yatır (AHA ilk yardım, Sınıf 2a). Travma yoksa ayakları ~15–30 cm kaldırmak düşünülebilir (Sınıf 2b); ağrı yaparsa kaldırma (Sınıf 3: zarar). Dünya kılavuzunun kısmi yerçekimine uygulanması VARSAYIMDIR.', en: 'Partial gravity (Moon/Mars): if responsive and breathing, place supine (AHA first aid, Class 2a). Without trauma, raising the feet ~6–12 in may be considered (Class 2b); do not if it causes pain (Class 3: harm). Applying Earth guidance to partial gravity is an ASSUMPTION.' } }],
@@ -66,9 +66,9 @@ export const PROTOCOLS: Record<ProtocolId, Protocol> = {
     steps: [
       { text: { tr: 'QDM maskesiyle toplam 2 saat oksijen ver.', en: 'Apply QDM and deliver oxygen for a total of 2 hours.' } },
       { text: { tr: 'Fiziksel aktiviteyi en aza indir.', en: 'Minimize physical activity.' } },
-      { medical: true, text: { tr: 'Sıvı:', en: 'Hydration:' }, drug: { verbatim: 'Hydrate w/ 1 liter/hour for 2 hours orally or by Saline I.V. if unable to drink', dose: '1 L/h × 2 h', locked: false } },
+      { medical: true, text: { tr: 'Sıvı:', en: 'Hydration:' }, drug: { verbatim: '5. Hydrate w/ 1 liter/hour for 2 hours orally or by Saline I.V. if unable to drink. (Breaking QDM seal to hydrate is allowed)', locked: false } },
       { text: { tr: 'Uçuş cerrahıyla iletişime geç (ilaçları değerlendirir).', en: 'Contact Surgeon (consider medications).' } },
-      { text: { tr: 'Belirtiler 20 dakikalık tedaviye rağmen kötüleşir veya düzelmezse kabin basıncını 14,7 psi\'ye çıkar.', en: 'If symptoms worsen or do not improve after 20 minutes of treatment, increase cabin pressure to 14.7 psi.' } }],
+      { text: { tr: 'Belirtiler 20 dk tedaviye rağmen kötüleşir/düzelmezse: Shuttle listesi kabini 14,7 psi\'ye çıkarmayı söyler (EVA öncesi kabin 10,2 psi\'ye düşürüldüğü için; Shuttle\'a özgü). ISS kabini zaten ~14,7 psi: TB-037\'ye göre ≥16,4 psia belirtileri hafifletebilir, protokol senaryoya bağlıdır → uçuş cerrahı karar verir.', en: 'If symptoms worsen/do not improve after 20 min: the Shuttle checklist raises cabin pressure to 14.7 psi (the cabin was lowered to 10.2 psi before EVA; Shuttle-specific). The ISS cabin is already ~14.7 psi: per TB-037 ≥16.4 psia may alleviate symptoms, protocol is scenario dependent → flight surgeon decides.' } }],
   },
   hypoglycemia: {
     id: 'hypoglycemia', kind: 'CLINICAL_GUIDELINE', escalate: 'crew',
@@ -96,7 +96,7 @@ export const PROTOCOLS: Record<ProtocolId, Protocol> = {
 };
 
 /** İlaç adı listesi: AI serbest metninde geçerse metin reddedilir (doz modelden geçmez) */
-export const DRUG_WORDS = ['aspirin', 'proventil', 'albuterol', 'saline', 'serum', 'epinephrine', 'epi pen', 'benadryl', 'valium', 'diazepam', 'ambien', 'restoril', 'diamox', 'glucagon', 'glukagon', 'insulin', 'insülin', 'nitroglycerin', 'atropine'];
+export const DRUG_WORDS = ['epinefrin', 'nitrogliserin', 'salbutamol', 'parasetamol', 'aspirin', 'proventil', 'albuterol', 'saline', 'serum', 'epinephrine', 'epi pen', 'benadryl', 'valium', 'diazepam', 'ambien', 'restoril', 'diamox', 'glucagon', 'glukagon', 'insulin', 'insülin', 'nitroglycerin', 'atropine'];
 
 /** Deterministik eşleştirici: gösterilen anlık durumdan ADAY kartlar (CMO belirtileri doğrular). Çevrimdışı çalışır. */
 export interface SnapLite { activity: string; gravity_g: number; indicators: { id: string; value: number; status: string }[]; extra: { id: string; status: string }[] }

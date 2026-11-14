@@ -101,3 +101,13 @@ Her adım buraya kısa notla eklenir (en yeni en altta).
 - Vitaller teşhis koymaz: kartlar "ADAY · CMO doğrular"; kontrol listesinin kendi belirti listesi işaretlenmeden ilaç/sıvı adımı görünmez. "*" ilaçlar kilitli: uçuş cerrahı onayı (yer kontrol "Onayla"; onay gidiş-dönüş = 2 × tek yön gecikme sonra ulaşır; yerel durum, aktarılmaz).
 - Şok: 0 g'de kontrol listesi hasta sabitleme; kısmi yerçekiminde AHA sırtüstü (2a) / ayak kaldırma (2b) — uygulama VARSAYIM etiketli. VEGA ve research_notes'a protokol eklenmedi (VEGA doz söylemesin).
 - Test (Playwright, 2 tarayıcı): C-02'de nabız 151 + şeker 50 + KB 190/125 → CMO panelinde 3 aday kart, AI özeti ve kart gerekçeleri Türkçe, ilaç adı yok; belirti işaretlenince aspirin satırı + WARNING 6-3 göründü.
+
+## 2026-11-14 23:03 — Müdahale paneli: advisor incelemesi düzeltmeleri + veri karşılaştırması
+- Kart titremesi: eşleşen kart 60 sn sabitlenir; AI isteği yalnız kart kümesi değişince (60 sn testte 2 çağrı).
+- "Birebir" satırlar tam kaynak cümlesi (şok I.V., DCS sıvı); kendi notasyonumuz kaldırıldı. DCS "14,7 psi" adımı Shuttle'a özgü olarak etiketlendi (ISS kabini zaten ~14,7; TB-037 ≥16,4 psia).
+- CMO ↔ yer kontrol ayrıldı: CMO belirti işaretler, ilaç adımı işaretlenmeden gizli; uçuş cerrahı tam protokolü salt okunur görür ve her kartta "Onayla/Planı onayla" (astronota tek yön gecikmeyle ulaşır, ÷60'a uyar; yerel durum, CMO'ya aktarılmaz — ekranda yazılı).
+- Mars gibi ≥60 sn gecikmede "gerçek zamanlı yer desteği yok → tıbbi otonomi" notu (OCHMO-TB-033).
+- CO₂ tutarlılığı: kıyafet CO₂ artık kabin ile aynı bantlar (>4,5 kritik, kritik kademe VARSAYIM); kıyafet CO₂ alarm anonsu eklendi.
+- Türkçe ilaç adları süzgece eklendi; AI özeti süzgeçte boşalırsa satır gizlenir.
+- Veri karşılaştırması: kullanılmayan indirilmiş veri: i4_cardio.csv (kardiyovasküler biyobelirteçler), deep_space_may2024 (storms.json'da, senaryo yok), DONKI GST, GOES protonları, ISS DOSTEL (yalnız araştırmada). TB-033: uyku ilaçları uçuşta en sık akut ilaç nedeni (~%71); uzak görevlerde tıbbi otonomi.
+- Test (Playwright): ISS SpO₂ 90 + KB 75 → şok + solunum + göğüs ağrısı adayları; Mars KB 75 → kısmi yerçekimi dalı + otonomi notu; DCS (arayüzden başlatılan senaryo) → DCS kartı; yer kontrol EN, Onayla → "astronota ulaştı".

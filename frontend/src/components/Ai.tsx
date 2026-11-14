@@ -65,6 +65,8 @@ export function SessionGate() {
 const alarmPhrase = (id: IndicatorId, lang: 'tr' | 'en') => `${t('alarm.critical', lang)}. ${t(`ind.${id}`, lang)}. ${adviceFor(id, 'critical').action[lang].split('.')[0]}.`;
 let prewarmed = '';
 const radPhrase = (lang: 'tr' | 'en') => `${t('alarm.critical', lang)}. ${t('alarm.radiation', lang)}. ${t('alarm.radAction', lang)}.`;
+const suitPhrase = (lang: 'tr' | 'en') => `${t('alarm.critical', lang)}. ${t('alarm.suitCO2', lang)}. ${t('alarm.suitAction', lang)}.`;
+const extraPhrase = (id: string, lang: 'tr' | 'en') => (id === 'suitCO2' ? suitPhrase(lang) : radPhrase(lang));
 
 export function AlarmBanner() {
   const { readings, acked, ack, lang, sessionStarted } = useApp();
@@ -81,7 +83,7 @@ export function AlarmBanner() {
   useEffect(() => {
     if (!sessionStarted || prewarmed === lang || location.search.includes('test')) return; // otomatik testler kota harcamasın
     prewarmed = lang;
-    void prewarmVoice([...INDICATOR_ORDER.map((id) => alarmPhrase(id, lang)), radPhrase(lang)], lang, 'urgent').then(() => prewarmVoice(allCaptions(lang), lang, 'calm'));
+    void prewarmVoice([...INDICATOR_ORDER.map((id) => alarmPhrase(id, lang)), radPhrase(lang), suitPhrase(lang)], lang, 'urgent').then(() => prewarmVoice(allCaptions(lang), lang, 'calm'));
   }, [sessionStarted, lang]);
   useEffect(() => {
     if (!sessionStarted) return;
@@ -90,7 +92,7 @@ export function AlarmBanner() {
       if (spokenFor.current !== key) {
         spokenFor.current = key;
         if (!useScenario.getState().id) beginReply(); // senaryo anlatımı kesilmez; alarm anonsu sıraya girer
-        speakSentence(xcrit.length ? radPhrase(lang) : alarmPhrase(unacked[0].id, lang), lang, 'urgent');
+        speakSentence(xcrit.length ? extraPhrase(xcrit[0].id, lang) : alarmPhrase(unacked[0].id, lang), lang, 'urgent');
       }
     } else { stopAlarm(); spokenFor.current = ''; }
   }, [key, sessionStarted, lang]); // eslint-disable-line react-hooks/exhaustive-deps

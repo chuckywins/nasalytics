@@ -262,18 +262,19 @@ function radAlert(status: Status, value: string, where: 'iss' | 'mars'): ExtraAl
 /* ---------------- 3a. EVA: kıyafet CO₂ ---------------- */
 // Sınıflama: OCHMO-TB-004 BELİRTİ aralıkları (2,8–4,5 mmHg baş ağrısı; >4,5 yorgunluk/bulantı). Bu bir kıyafet limiti DEĞİL:
 // kıyafet PICO₂ limitleri V2 [11039] Tablo 35'tedir ve bu prototipte okunmadı.
-export function suitCO2Status(v: number): Status { return v >= 4.5 ? 'warn' : v >= 2.8 ? 'watch' : 'ok'; }
+// Kabin göstergesiyle AYNI bantlar (tutarlılık): 2,5–3 izle, 3–4,5 baş ağrısı (uyarı), >4,5 yorgunluk/bulantı (kritik; kritik kademe VARSAYIM)
+export function suitCO2Status(v: number): Status { return INDICATORS.cabinCO2.evaluate(v).status; }
 function suitAlert(v: number): ExtraAlert {
   const s = suitCO2Status(v);
   return {
-    id: 'suitCO2', status: s, value: `ppCO₂ ${v.toFixed(1)} mmHg`, prov: 'SIMULATED', escalate: s === 'warn' ? 'crew' : 'self',
+    id: 'suitCO2', status: s, value: `ppCO₂ ${v.toFixed(1)} mmHg`, prov: 'SIMULATED', escalate: s === 'critical' ? 'crew' : 'self',
     title: { tr: 'Kıyafet CO₂ (EVA)', en: 'Suit CO₂ (EVA)' },
-    label: s === 'warn' ? { tr: 'Yorgunluk/bulantı aralığı', en: 'Fatigue/nausea range' } : { tr: 'Baş ağrısı aralığı', en: 'Headache range' },
-    steps: s === 'warn'
+    label: s === 'critical' ? { tr: 'Yorgunluk/bulantı aralığı', en: 'Fatigue/nausea range' } : s === 'warn' ? { tr: 'Baş ağrısı aralığı', en: 'Headache range' } : { tr: 'NASA sınırına yakın', en: 'Near NASA limit' },
+    steps: s === 'critical'
       ? [{ tr: 'Durumu IV ekibe / yer kontrolüne bildir', en: 'Report to the IV crew / ground' }, { tr: 'Ekip kararıyla EVA\'yı sonlandır', en: 'On crew decision, terminate the EVA' }, { tr: 'Hava kilidine dön', en: 'Return to the airlock' }]
       : [{ tr: 'Efor temposunu düşür', en: 'Reduce workload' }, { tr: 'Baş ağrısı / görme değişimi varsa bildir', en: 'Report headache / vision change' }, { tr: 'Kıyafet ppCO₂ eğilimini izle', en: 'Watch suit ppCO₂ trend' }],
     sources: [SRC.tb004],
-    note: { tr: 'Belirti aralıkları (TB-004); kıyafet limiti değil (V2 [11039] Tablo 35 okunmadı)', en: 'Symptom bands (TB-004); not a suit limit (V2 [11039] Table 35 not read)' },
+    note: { tr: 'Kabin ile aynı belirti aralıkları (TB-004); kıyafet limiti değil (V2 [11039] Tablo 35 okunmadı); kritik kademe VARSAYIM', en: 'Same symptom bands as cabin (TB-004); not a suit limit (V2 [11039] Table 35 not read); critical tier is an ASSUMPTION' },
   };
 }
 async function evaCO2(my: number) {
@@ -289,8 +290,8 @@ async function evaCO2(my: number) {
     setTarget({ respRate: Math.round(18 + (co2 - 1.5) * 1.8), heartRate: Math.round(112 + (co2 - 1.5) * 3) });
     const st = suitCO2Status(co2);
     if (st !== 'ok') setExtra(suitAlert(co2), 'suitCO2');
-    if (st === 'watch' && !saidWatch) { saidWatch = true; say(CAP.evaCO2.s3); }
-    if (st === 'warn' && !saidWarn) { saidWarn = true; say(CAP.evaCO2.s4); }
+    if (st === 'warn' && !saidWatch) { saidWatch = true; say(CAP.evaCO2.s3); }
+    if (st === 'critical' && !saidWarn) { saidWarn = true; say(CAP.evaCO2.s4); }
     await wait(700, my);
   }
   await wait(9000, my);

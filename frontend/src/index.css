@@ -398,3 +398,4 @@ a { color: var(--accent); }
 .intv-warn { color: #ffb4a8; margin-top: 2px; }
 .intv-appr { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 .intv-src { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.intv-auto { border-left: 2px solid #e3a33a; padding-left: 8px; }

@@ -91,7 +91,7 @@ export function CrewView() {
         <div className="cv-grid">
           {keys.length === 0 ? <p className="muted">{t('view.empty', lang)}</p> : keys.map((k) => <CrewCard key={k} k={k} list={buf[k]} now={now} sel={k === selKey} onSel={() => setSel(k)} />)}
         </div>
-        {selShown ? <InterventionPanel p={selShown} role={role} /> : <div className="intv muted">{t('iv.pick', lang)}</div>}
+        {selShown ? <InterventionPanel p={selShown} role={role} compress={compress} /> : <div className="intv muted">{t('iv.pick', lang)}</div>}
       </div>
     </div>
   );
