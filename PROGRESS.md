@@ -51,3 +51,9 @@ Her adım buraya kısa notla eklenir (en yeni en altta).
 - /api/tts sırası: Azure Speech (tr-TR-AhmetNeural / en-US-AndrewNeural, F0 ücretsiz katman) → Gemini TTS → tarayıcı sesi.
 - İstemci cümle cümle boru hattı: her cümlenin sesi hemen istenir, sırayla çalınır. Ölçülen: cümle başına 0,5–1,0 sn (eastus).
 - Değer kaydedilen cevaplarda hafif hızlı (acil) ton. Alarm anonsları tarayıcı sesi (çevrimdışı güvence).
+
+## 2026-11-14 20:32 — VEGA güncelleme hatası düzeltildi + Gemini çoklu anahtar
+- Hata: Vite izleyicisi ai.ts değişikliğini kaçırmış, tarayıcı eski kodu çalıştırıyordu (eylem olayı "undefined" metin olarak eklendi). Vite yeniden başlatıldı.
+- Model bazen "kaydettim" deyip aracı çağırmıyordu → güncelleme niyetli mesajlarda araç seçimi zorunlu (update_reading | no_update); onay ayrı turda, iç anlatım konuşulmaz.
+- Uçtan uca tarayıcı testi (Playwright, headless Chrome): nabız 150 → taşikardi alarmı; açlık şekeri 50 → ciddi hipoglisemi; tansiyon 145/95 → evre 2; uyku 5 sa → kısa uyku; "kaydetme sadece sor" → kayıt yok.
+- TTS sırası: Gemini (GEMINI_API_KEYS, anahtar × model döngüsü, kota dolanı atlanır) → Azure → tarayıcı. Cevabın tamamı tek istekte; ton metinleri: sakin/endişeli.

@@ -142,7 +142,7 @@ export function Vega() {
       const frame = withCam && camOn ? grabCameraFrame() : null;
       setSentFrame(!!frame);
       const done: string[] = [];
-      const full = await askVega(q, hist.current, setReply, (s) => speakSentence(s, lang), c.signal, frame, (a) => {
+      const full = await askVega(q, hist.current, setReply, () => undefined, c.signal, frame, (a) => {
         // Sesli komutla değer girişi: kimlik ve fizyolojik aralık burada doğrulanır, kural motoru hemen değerlendirir
         const id = a.indicator as IndicatorId;
         const d = INDICATORS[id];
@@ -151,6 +151,7 @@ export function Vega() {
         done.push(`${t(`ind.${id}`, lang)} ${a.value.toFixed(d.decimals)} ${d.unit}`);
         setApplied([...done]);
       });
+      if (!c.signal.aborted) speakSentence(full, lang, done.length ? 'urgent' : 'calm'); // tek istek: tüm cevap aynı sesle
       hist.current = [...hist.current, { role: 'user' as const, content: q }, { role: 'assistant' as const, content: full }].slice(-8);
     } catch (e) {
       if ((e as Error).name !== 'AbortError') setErr(t('ai.offline', lang));

@@ -13,6 +13,7 @@ AI notu: Claude (Anthropic) yardımıyla yazılmıştır.
 from __future__ import annotations
 
 import json
+import re
 import os
 import time
 from collections import defaultdict, deque
@@ -110,6 +111,13 @@ UPDATE_TOOL = {
         },
         "required": ["indicator", "value"],
     },
+}
+
+NO_UPDATE_TOOL = {
+    "name": "no_update",
+    "description": "Use when the message is NOT an explicit request to record a value (a question, hypothetical, unclear value/unit). "
+                   "Put your short spoken answer in 'reply'. Never claim that something was recorded here.",
+    "input_schema": {"type": "object", "properties": {"reply": {"type": "string", "description": "Spoken answer, max 2 sentences, in the requested language."}}, "required": ["reply"]},
 }
 
 app = FastAPI(title="Astronaut Health Monitor proxy")
@@ -285,7 +293,7 @@ async def vega(req: Request):
     voice_rules = ("\nYou are VEGA, the spoken voice of this assistant. Your reply is read aloud by text-to-speech: "
                    "max 2 short sentences, no lists, no markdown, no symbols, numbers with units spoken naturally."
                    "\nIf the astronaut explicitly asks to update/enter/set a value, call update_reading and in the SAME reply say one short "
-                   "sentence confirming what was recorded and how the rule-engine thresholds classify it (the snapshot still shows the OLD value). "
+                   "sentence confirming what was recorded and how the rule-engine thresholds classify it (the snapshot still shows the OLD value; never mention the old value or the snapshot). "
                    "If the value or unit is unclear, ask instead of calling the tool.")
     messages = [m for m in history if m.get("role") in ("user", "assistant") and m.get("content")]
     user_text = f"Language: {lang}\nLive snapshot: {snapshot}\n\nAstronaut says: {body.get('text', '')}"
@@ -300,8 +308,38 @@ async def vega(req: Request):
     else:
         messages.append({"role": "user", "content": user_text})
 
+    XB = {"thinking": {"type": "disabled"}, "output_config": {"effort": "low"}}
+    SYS = SYSTEM_BLOCKS + [{"type": "text", "text": voice_rules}]
+    intent = bool(re.search(r"güncelle|kaydet|ayarla|değiştir|olarak gir|\byap\b|\bgir\b|\bset\b|update|record|change|\blog\b",
+                            str(body.get("text", "")).lower()))
+
+    def confirm(uses):  # kayıttan sonra yalnızca sözlü onay (araçsız ikinci tur) → iç düşünce/İngilizce anlatım konuşulmaz
+        follow = messages + [{"role": "assistant", "content": [{"type": "tool_use", "id": b.id, "name": b.name, "input": b.input} for b in uses]},
+                             {"role": "user", "content": [{"type": "tool_result", "tool_use_id": b.id, "content": f"recorded. Now speak the confirmation in language={lang}."} for b in uses]}]
+        with client.messages.stream(model=MODEL_VEGA, max_tokens=200, extra_body=XB, system=SYS, messages=follow,
+                                    tools=[UPDATE_TOOL], tool_choice={"type": "none"}) as s2:
+            for txt in s2.text_stream:
+                yield f"data: {json.dumps({'t': txt}, ensure_ascii=False)}\n\n"
+            account(MODEL_VEGA, s2.get_final_message().usage)
+
     def gen():
         try:
+            if intent:  # güncelleme komutu: önce kayıt (akışsız), sonra temiz sözlü onay
+                # Araç seçimi zorunlu: ya update_reading ya no_update → "kaydettim" deyip kaydetmeme durumu olamaz
+                first = client.messages.create(model=MODEL_VEGA, max_tokens=400, extra_body=XB, system=SYS, messages=messages,
+                                               tools=[UPDATE_TOOL, NO_UPDATE_TOOL], tool_choice={"type": "any"})
+                account(MODEL_VEGA, first.usage)
+                uses = [b for b in first.content if b.type == "tool_use" and b.name == "update_reading"]
+                for b in uses:
+                    yield f"data: {json.dumps({'action': b.input}, ensure_ascii=False)}\n\n"
+                if uses:
+                    yield from confirm(uses)
+                else:
+                    nu = [b for b in first.content if b.type == "tool_use" and b.name == "no_update"]
+                    txt = nu[0].input.get("reply", "") if nu else "".join(b.text for b in first.content if b.type == "text")
+                    yield f"data: {json.dumps({'t': txt}, ensure_ascii=False)}\n\n"
+                yield "data: [DONE]\n\n"
+                return
             with client.messages.stream(model=MODEL_VEGA, max_tokens=400, extra_body={"thinking": {"type": "disabled"}, "output_config": {"effort": "low"}},  # ölçüldü: TTFT ~1,1 sn; düşünme açıkken Haiku tüm bütçeyi düşünmeye harcıyordu
                                         system=SYSTEM_BLOCKS + [{"type": "text", "text": voice_rules}], messages=messages,
                                         tools=[UPDATE_TOOL], tool_choice={"type": "auto"}) as s:
@@ -314,14 +352,7 @@ async def vega(req: Request):
                 for b in uses:  # değer güncelleme komutları → istemci aralık kontrolüyle uygular, kural motoru değerlendirir
                     yield f"data: {json.dumps({'action': b.input}, ensure_ascii=False)}\n\n"
             if uses and not spoke:  # model yalnızca aracı çağırdıysa: kısa sözlü onay için ikinci tur (araçsız)
-                follow = messages + [{"role": "assistant", "content": [{"type": "tool_use", "id": b.id, "name": b.name, "input": b.input} for b in uses]},
-                                     {"role": "user", "content": [{"type": "tool_result", "tool_use_id": b.id, "content": "recorded"} for b in uses]}]
-                with client.messages.stream(model=MODEL_VEGA, max_tokens=200, extra_body={"thinking": {"type": "disabled"}, "output_config": {"effort": "low"}},
-                                            system=SYSTEM_BLOCKS + [{"type": "text", "text": voice_rules}], messages=follow, tools=[UPDATE_TOOL],
-                                            tool_choice={"type": "none"}) as s2:
-                    for txt in s2.text_stream:
-                        yield f"data: {json.dumps({'t': txt}, ensure_ascii=False)}\n\n"
-                    account(MODEL_VEGA, s2.get_final_message().usage)
+                yield from confirm(uses)
             yield "data: [DONE]\n\n"
         except Exception as e:  # akış içinde hata → istemciye bildir
             yield f"data: {json.dumps({'error': str(e)[:200]})}\n\n"
@@ -335,11 +366,14 @@ AZURE_REGION = os.environ.get("AZURE_SPEECH_REGION", "eastus")
 AZURE_VOICE_TR = os.environ.get("AZURE_VOICE_TR", "tr-TR-AhmetNeural")
 AZURE_VOICE_EN = os.environ.get("AZURE_VOICE_EN", "en-US-AndrewNeural")
 _azure = httpx.AsyncClient(timeout=15)  # bağlantı yeniden kullanımı → ilk istekten sonra daha düşük gecikme
-GEMINI_KEY = os.environ.get("GEMINI_API_KEY", "")
+# Birden çok anahtar: GEMINI_API_KEYS=k1,k2,... (ve/veya GEMINI_API_KEY). Kotası dolan anahtar+model bir süre atlanır.
+GEMINI_KEYS = [k.strip() for k in (os.environ.get("GEMINI_API_KEYS", "") + "," + os.environ.get("GEMINI_API_KEY", "")).split(",") if k.strip()]
+GEMINI_KEYS = list(dict.fromkeys(GEMINI_KEYS))
+GEMINI_KEY = GEMINI_KEYS[0] if GEMINI_KEYS else ""
 GEMINI_VOICE = os.environ.get("GEMINI_VOICE", "Achird")
 TTS_MODELS = [m.strip() for m in os.environ.get("GEMINI_TTS_MODEL", "gemini-3.8-flash-tts,gemini-3.8-flash-lite-tts,gemini-2.5-flash-preview-tts").split(",") if m.strip()]
-TTS_STYLE = {"calm": "calm, clear and reassuring, like a spacecraft assistant, natural pace",
-             "urgent": "urgent but controlled and clear, slightly faster, like a flight controller"}
+TTS_STYLE = {"calm": "warm, calm and friendly, natural conversational pace",
+             "urgent": "gentle, caring and a little concerned"}
 _tts_cool: dict[str, float] = {}
 
 
@@ -366,10 +400,75 @@ def _find_audio(node):
     return None
 
 
+def _retry_s(body: str) -> float:
+    m = re.search(r"retry in (?:(\d+)h)?(?:(\d+)m)?(?:([\d.]+)s)?", body, re.I)
+    if m and any(m.groups()):
+        return (int(m.group(1) or 0) * 3600 + int(m.group(2) or 0) * 60 + float(m.group(3) or 0)) + 1
+    return 86400 if re.search(r"limit: 0", body, re.I) else 60
+
+
+async def _gemini(text: str, style: str):
+    async with httpx.AsyncClient(timeout=30) as hc:
+        for ki, key in enumerate(GEMINI_KEYS):
+            for model in TTS_MODELS:
+                tag = f"{ki}:{model}"
+                if _tts_cool.get(tag, 0) > time.time():
+                    continue
+                legacy = model.startswith("gemini-2.")
+                content = {"type": "text", "text": f"Say in a {style} tone: {text}"} if legacy else \
+                          {"type": "text", "text": text, "annotations": [{"type": "speech_metadata", "style": style}]}
+                payload = {"model": model, "input": [{"type": "user_input", "content": [content]}],
+                           "response_format": {"type": "audio"}, "generation_config": {"speech_config": [{"voice": GEMINI_VOICE}]}}
+                try:
+                    r = await hc.post("https://generativelanguage.googleapis.com/v1beta/interactions", json=payload, headers={"x-goog-api-key": key})
+                except Exception:
+                    continue
+                if r.status_code in (404, 429):  # kota / model yok → bu anahtar+model bir süre atlanır, sıradaki denenir
+                    _tts_cool[tag] = time.time() + (86400 if r.status_code == 404 else _retry_s(r.text))
+                    print(f"[tts] key#{ki} {model} {r.status_code} -> skip")
+                    continue
+                if r.status_code in (400, 401, 403):  # geçersiz anahtar → bu anahtarı 1 saat atla
+                    for m in TTS_MODELS:
+                        _tts_cool[f"{ki}:{m}"] = time.time() + 3600
+                    print(f"[tts] key#{ki} {r.status_code} -> key skipped")
+                    break
+                if r.status_code != 200:
+                    continue
+                a = _find_audio(r.json())
+                if not a:
+                    continue
+                buf = base64.b64decode(a["data"])
+                if buf[:4] != b"RIFF":
+                    m = re.search(r"rate=(\d+)", a.get("mime_type", ""))
+                    buf = _pcm_to_wav(buf, int(m.group(1)) if m else 24000)
+                return buf, f"gemini:{model}#key{ki}"
+    return None, None
+
+
+async def _azure_tts(text: str, lang: str, urgent: bool):
+    if not AZURE_KEY or _tts_cool.get("azure", 0) > time.time():
+        return None, None
+    voice = AZURE_VOICE_EN if lang == "en" else AZURE_VOICE_TR
+    ssml = (f"<speak version='1.0' xml:lang='{'en-US' if lang == 'en' else 'tr-TR'}'><voice name='{voice}'>"
+            f"<prosody rate='{'+8%' if urgent else '+0%'}'>{xml_escape(text)}</prosody></voice></speak>")
+    try:
+        r = await _azure.post(f"https://{AZURE_REGION}.tts.speech.microsoft.com/cognitiveservices/v1", content=ssml.encode("utf-8"),
+                              headers={"Ocp-Apim-Subscription-Key": AZURE_KEY, "Content-Type": "application/ssml+xml",
+                                       "X-Microsoft-OutputFormat": "audio-24khz-48kbitrate-mono-mp3", "User-Agent": "vega-proto"})
+        if r.status_code == 200 and r.content:
+            return r.content, f"azure:{voice}"
+        if r.status_code in (401, 403, 429):
+            _tts_cool["azure"] = time.time() + (3600 if r.status_code != 429 else 60)
+    except Exception:
+        pass
+    return None, None
+
+
 @app.post("/api/tts")
 async def tts(req: Request):
+    """Sıra: Gemini (birden çok anahtar × model) → Azure (varsa) → 429 (istemci tarayıcı sesine düşer)."""
     from fastapi.responses import Response
-    if not (AZURE_KEY or GEMINI_KEY):
+    if not (GEMINI_KEYS or AZURE_KEY):
         raise HTTPException(503, "no TTS key")
     guard(req)
     body = await req.json()
@@ -378,51 +477,11 @@ async def tts(req: Request):
         raise HTTPException(400, "empty")
     lang = "en" if body.get("lang") == "en" else "tr"
     urgent = body.get("style") == "urgent"
-    style = TTS_STYLE["urgent" if urgent else "calm"]
-    # 1) Azure nöral ses (Ahmet/Emel) — düşük gecikme, cümle cümle
-    if AZURE_KEY and _tts_cool.get("azure", 0) < time.time():
-        voice = AZURE_VOICE_EN if lang == "en" else AZURE_VOICE_TR
-        ssml = (f"<speak version='1.0' xml:lang='{'en-US' if lang == 'en' else 'tr-TR'}'><voice name='{voice}'>"
-                f"<prosody rate='{'+8%' if urgent else '+0%'}'>{xml_escape(text)}</prosody></voice></speak>")
-        try:
-            r = await _azure.post(f"https://{AZURE_REGION}.tts.speech.microsoft.com/cognitiveservices/v1", content=ssml.encode("utf-8"),
-                                  headers={"Ocp-Apim-Subscription-Key": AZURE_KEY, "Content-Type": "application/ssml+xml",
-                                           "X-Microsoft-OutputFormat": "audio-24khz-48kbitrate-mono-mp3", "User-Agent": "vega-proto"})
-            if r.status_code == 200 and r.content:
-                return Response(r.content, media_type="audio/mpeg", headers={"Cache-Control": "no-store", "X-TTS-Model": f"azure:{voice}"})
-            if r.status_code in (401, 403, 429):  # kota/anahtar → bir süre Gemini'ye geç
-                _tts_cool["azure"] = time.time() + (3600 if r.status_code != 429 else 60)
-        except Exception:
-            pass
-    if not GEMINI_KEY:
-        raise HTTPException(429, "tts unavailable")
-    # 2) Gemini TTS (yedek)
-    async with httpx.AsyncClient(timeout=30) as hc:
-        for model in TTS_MODELS:
-            if _tts_cool.get(model, 0) > time.time():
-                continue
-            legacy = model.startswith("gemini-2.")
-            content = {"type": "text", "text": f"Say in a {style} tone: {text}"} if legacy else \
-                      {"type": "text", "text": text, "annotations": [{"type": "speech_metadata", "style": style}]}
-            payload = {"model": model, "input": [{"type": "user_input", "content": [content]}],
-                       "response_format": {"type": "audio"}, "generation_config": {"speech_config": [{"voice": GEMINI_VOICE}]}}
-            try:
-                r = await hc.post("https://generativelanguage.googleapis.com/v1beta/interactions", json=payload,
-                                  headers={"x-goog-api-key": GEMINI_KEY})
-            except Exception:
-                continue
-            if r.status_code in (404, 429):  # kota / model yok → bir süre atla, sıradakini dene
-                _tts_cool[model] = time.time() + (86400 if r.status_code == 404 else 60)
-                continue
-            if r.status_code != 200:
-                continue
-            a = _find_audio(r.json())
-            if not a:
-                continue
-            buf = base64.b64decode(a["data"])
-            if buf[:4] != b"RIFF":
-                import re
-                m = re.search(r"rate=(\d+)", a.get("mime_type", ""))
-                buf = _pcm_to_wav(buf, int(m.group(1)) if m else 24000)
-            return Response(buf, media_type="audio/wav", headers={"Cache-Control": "no-store", "X-TTS-Model": model})
-    raise HTTPException(429, "tts quota")
+    buf, model = await _gemini(text, TTS_STYLE["urgent" if urgent else "calm"])
+    mt = "audio/wav"
+    if not buf:
+        buf, model = await _azure_tts(text, lang, urgent)
+        mt = "audio/mpeg"
+    if not buf:
+        raise HTTPException(429, "tts quota")
+    return Response(buf, media_type=mt, headers={"Cache-Control": "no-store", "X-TTS-Model": model})
