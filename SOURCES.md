@@ -148,3 +148,43 @@ data.nasa.gov bu bilgisayardan curl ile bağlantıyı sıfırlıyor, WebFetch il
 - **AHA Part 8: First Aid** (2020 metni, https://cpr.heart.org/en/resuscitation-science/first-aid-guidelines/first-aid): 2024 sürümüyle değiştirildiği için yalnız karşılaştırma için okundu (eski şok açısı 30°–60°).
 - **AHA "When to call 911 for high blood pressure"** (https://www.heart.org/en/health-topics/high-blood-pressure/understanding-blood-pressure-readings/when-to-call-911-for-high-blood-pressure, son gözden geçirme 14 Ağu 2025): kullanıcı sayfayı yapay zekâ ile Türkçe özete çevirtip verdi → birebir alıntı yapılmadı, içerik (en az 1 dk arayla 2 ölçüm; "şiddetli hipertansiyon" / "hipertansif acil durum") kartta özet kaynağı belirtilerek kullanıldı.
 - **OCHMO-TB-033** Uzay Adaptasyon Sendromu: "Affects 50-70% of crewmembers"; tedavi: ilaç seçenekleri, hareketsizlik, baş hareketi egzersizleri, baş sabitleme (yerel docs/refs/ochmo_tb033_medical_care.txt) → "sas" senaryosu.
+
+## Kaynak denetimi (2026-11-15): kodda kullanılıp burada URL'siyle kayıtlı olmayanlar eklendi
+`python tools/check_sources.py` koddaki tüm bağlantıları bu dosyayla karşılaştırır; commit öncesi çalıştırılır.
+
+### Klinik eşik ve rehber sayfaları (göstergeler, kartlar)
+- AHA: All About Heart Rate (dinlenme nabzı 60–100) — `engine/indicators.ts`: https://www.heart.org/en/health-topics/high-blood-pressure/the-facts-about-high-blood-pressure/all-about-heart-rate-pulse
+- AHA: Target heart rates (maks. ≈ 220−yaş, hedef %50–85; egzersiz bandı) — `engine/indicators.ts`, `scenario.ts`: https://www.heart.org/en/healthy-living/fitness/fitness-basics/target-heart-rates
+- ADA: Diagnosis (açlık şekeri 70–99 / 100–125 / ≥126) — `engine/indicators.ts`: https://diabetes.org/about-diabetes/diagnosis
+- ADA: Hypoglycemia (15-15 kuralı, web sayfası) — `engine/guidance.ts`: https://diabetes.org/living-with-diabetes/treatment-care/hypoglycemia
+- AASM/SRS: Yetişkinler için önerilen uyku (≥7 sa) — `engine/indicators.ts`: https://aasm.org/resources/pdf/pressroom/adult-sleep-duration-consensus.pdf
+- CDC: Ateş tanımı (38,0 °C / 100,4 °F) — `engine/indicators.ts`: https://www.cdc.gov/quarantine/maritime/definitions-signs-symptoms-conditions-ill-travelers.html
+- AHA/Red Cross First Aid 2024 (DOI bağlantısı) — `engine/protocols.ts`: https://doi.org/10.1161/CIR.0000000000001281
+
+### NASA HRP risk ve tehlike sayfaları (organ paneli, öneriler, ölçüm notları)
+- https://www.nasa.gov/reference/risk-of-cardiovascular-adaptations/
+- https://www.nasa.gov/reference/risk-of-decompression-sickness/
+- https://www.nasa.gov/reference/risk-of-hypoxia/
+- https://www.nasa.gov/reference/risk-from-inadequate-sleep-and-irregular-schedules/
+- https://www.nasa.gov/reference/risk-of-altered-immune-system-responses/
+- https://www.nasa.gov/reference/risk-of-behavioral-conditions-and-psychiatric-disorders/
+- https://www.nasa.gov/reference/risk-of-altered-sensorimotor-and-vestibular-function/
+- https://www.nasa.gov/reference/risk-of-inadequate-food-and-nutrition/
+- https://www.nasa.gov/reference/risk-of-radiation-induced-cancers/
+- https://www.nasa.gov/reference/risk-of-reduced-cardiorespiratory-and-musculoskeletal-fitness/
+- https://www.nasa.gov/reference/risk-of-spaceflight-associated-neuro-ocular-syndrome-sans/
+- https://www.nasa.gov/reference/risk-of-spaceflight-induced-bone-changes/
+- https://www.nasa.gov/hrp/hazard-gravity-fields/ · https://www.nasa.gov/hrp/hazard-isolation-and-confinement/
+- NASA ARCHeR (Artemis II izleme) — `engine/measurement.ts`: https://www.nasa.gov/reference/archer/
+- NASA Standard Measures — `engine/measurement.ts`: https://www.nasa.gov/reference/standard-measures/
+- CSA Bio-Analyzer (yerinde kan/idrar analizi; ölçüm yöntemi notu) — `engine/measurement.ts`: https://www.asc-csa.gc.ca/eng/iss/bio-analyzer.asp
+
+## Kullanılan yapay zekâ modelleri, servisler ve yazılım (açıklama)
+Uygulama ve bu repo yapay zekâ yardımıyla geliştirildi; dosyalarda "AI notu" satırı var. NASA logosu veya markası AI ile üretilmedi.
+- **Anthropic Claude API**: sağlık değerlendirmesi, müdahale sıralaması, görüntü yorumu → `claude-sonnet-5-5`; VEGA sesli asistanı ve belirti sınıflandırma → `claude-haiku-5-5` (`backend/server.py`). Geliştirmede Claude Code (Claude Opus 5.5) kullanıldı.
+- **Google Gemini API (metinden sese)**: VEGA ve alarm sesleri; modeller `gemini-3.8-flash-tts`, `gemini-3.8-flash-lite-tts`, `gemini-2.5-flash-preview-tts`.
+- **Microsoft Azure Speech**: Gemini kullanılamazsa yedek ses (tr-TR-AhmetNeural, en-US-AndrewNeural).
+- **Tarayıcı Web Speech API**: bas-konuş konuşma tanıma.
+- **MediaPipe Tasks Vision** (`@mediapipe/tasks-vision`, Apache-2.0): cihaz üstünde yorgunluk kamerası (yüz işaretleri; görüntü cihazdan çıkmaz).
+- **3D anatomi modeli**: BodyParts3D / Z-Anatomy, CC BY-SA (ekranda atıf var).
+- Açık kaynak kütüphaneler: React 19, three.js + @react-three/fiber/drei, zustand, motion, Vite, TypeScript, FastAPI, httpx, anthropic (Python SDK), Playwright (yalnız test), gltf-transform + meshoptimizer (model sıkıştırma), Fontsource (Chakra Petch, JetBrains Mono; OFL).
