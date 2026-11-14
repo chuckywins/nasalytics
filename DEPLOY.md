@@ -77,6 +77,19 @@ sudo setsebool -P httpd_can_network_connect 1
   ```
 Sonra: `sudo apachectl configtest && sudo systemctl reload httpd` (cPanel'de `sudo /scripts/restartsrv_httpd`).
 
+**DirectAdmin:** dosyaları elle düzenlemeyin (DirectAdmin yeniden yazınca silinir). Önce hangi web sunucusunun kullanıldığına bakın:
+```bash
+grep -E "^webserver=" /usr/local/directadmin/custombuild/options.conf
+getenforce                      # "Enforcing" ise yukarıdaki setsebool gerekli; "Disabled" ise atlanır
+```
+- `webserver=apache`: Panel → **Admin seviyesi → Custom HTTPD Configurations → asicservices.com → httpd.conf** → metin kutusuna
+  `Include /opt/nasalytics/deploy/apache-nasalytics.conf` yazıp **Save**. Proxy modüllerini kontrol edin:
+  `httpd -M | grep -E "proxy_http|proxy_wstunnel"` — eksikse `/etc/httpd/conf/extra/httpd-includes.conf` sonuna
+  `LoadModule proxy_http_module /usr/lib/apache/mod_proxy_http.so` ve `LoadModule proxy_wstunnel_module /usr/lib/apache/mod_proxy_wstunnel.so` ekleyin.
+  Sonra `httpd -t && systemctl restart httpd`.
+- `webserver=nginx_apache` veya `nginx`: aynı ekranda **nginx.conf** sekmesine `include /opt/nasalytics/deploy/nginx-nasalytics.conf;` yazıp **Save**; sonra `nginx -t && systemctl restart nginx`.
+- `litespeed` / `openlitespeed`: ProxyPass desteklenmez; bu durumda ayrı ayar gerekir.
+
 **nginx:** sitenin `server { listen 443 ssl; ... }` bloğuna `include /opt/nasalytics/deploy/nginx-nasalytics.conf;` ekleyin, sonra `sudo nginx -t && sudo systemctl reload nginx`.
 
 ## 7. Kontrol
