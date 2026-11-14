@@ -58,6 +58,15 @@ Hard rules:
   and you may RAISE escalation, but you never say an alert is safe to ignore.
 - Escalation levels: self (astronaut handles it), crew (crew medical officer), ground (flight surgeon; mind the one-way comm delay).
 - Answer in the language requested (tr = Turkish, en = English). Be brief, imperative, calm.
+
+CLINICAL THRESHOLDS USED BY THE RULE ENGINE (same numbers as the app; cite these when judging a value):
+- Glucose (ADA): fasting 70-99 mg/dL normal, 100-125 prediabetes range, >=126 high; after a meal (~2 h) <140 normal,
+  140-199 high-for-after-meal, >=200 high; hypoglycaemia <70 (level 1), <54 (level 2, serious). Inspiration4 lab range 65-99.
+  If fasting/after-meal context is unknown, say both interpretations briefly and ask.
+- Blood pressure (AHA): <120/<80 normal; 120-129/<80 elevated; 130-139 or 80-89 stage 1; >=140 or >=90 stage 2; >180 or >120 crisis.
+- Heart rate (AHA): rest 60-100 bpm; during exercise/EVA up to ~85% of max (~220-age) is expected.
+- SpO2: >=95% normal, 92-94 low-normal, <92 hypoxaemia, <88 severe. Body temperature: fever >=38.0 C (CDC).
+- Sleep: adults >=7 h (AASM/SRS). Cabin CO2: 1-hour average <=3 mmHg (NASA-STD-3001 V2 [6004]).
 """
 
 SYSTEM_BLOCKS = [
@@ -255,7 +264,17 @@ async def vega(req: Request):
     voice_rules = ("\nYou are VEGA, the spoken voice of this assistant. Your reply is read aloud by text-to-speech: "
                    "max 2 short sentences, no lists, no markdown, no symbols, numbers with units spoken naturally.")
     messages = [m for m in history if m.get("role") in ("user", "assistant") and m.get("content")]
-    messages.append({"role": "user", "content": f"Language: {lang}\nLive snapshot: {snapshot}\n\nAstronaut says: {body.get('text', '')}"})
+    user_text = f"Language: {lang}\nLive snapshot: {snapshot}\n\nAstronaut says: {body.get('text', '')}"
+    img = body.get("image") or ""
+    if img.startswith("data:image/") and len(img) < 3_000_000:
+        # Astronot açıkça "görüntüyü ekle" dediğinde tek kare. Tarafsız görsel gözlem; teşhis yok.
+        media, b64 = img[5:].split(";base64,", 1)
+        user_text += ("\n\nA single camera frame of the astronaut is attached because they explicitly shared it. "
+                      "Describe only what is visibly relevant to their question, neutrally; no diagnosis, no identity, no emotion claims.")
+        messages.append({"role": "user", "content": [{"type": "image", "source": {"type": "base64", "media_type": media, "data": b64}},
+                                                     {"type": "text", "text": user_text}]})
+    else:
+        messages.append({"role": "user", "content": user_text})
 
     def gen():
         try:

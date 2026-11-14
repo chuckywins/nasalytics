@@ -9,6 +9,17 @@ import { t } from '../i18n';
 import { STATUS_COLOR, STATUS_GLYPH } from './Hud';
 import { InfoTip } from './Info';
 
+/** Yorgunluk kamerasının o anki karesi (VEGA'ya açık paylaşım için). Kamera kapalıysa null. */
+let sharedVideo: HTMLVideoElement | null = null;
+export function grabCameraFrame(): string | null {
+  const v = sharedVideo;
+  if (!v || v.readyState < 2 || !v.videoWidth || !useFatigue.getState().enabled) return null;
+  const scale = Math.min(1, 640 / v.videoWidth);
+  const c = document.createElement('canvas'); c.width = Math.round(v.videoWidth * scale); c.height = Math.round(v.videoHeight * scale);
+  c.getContext('2d')!.drawImage(v, 0, 0, c.width, c.height);
+  return c.toDataURL('image/jpeg', 0.8);
+}
+
 async function createLandmarker() {
   const fileset = await FilesetResolver.forVisionTasks('/mediapipe');
   const opts = (delegate: 'GPU' | 'CPU') => ({
@@ -35,6 +46,7 @@ export function FatigueCam() {
       } catch { if (alive) useFatigue.setState({ phase: 'nocam' }); return; }
       if (!alive || !video.current) { stream.getTracks().forEach((tr) => tr.stop()); return; }
       video.current.srcObject = stream; await video.current.play().catch(() => undefined);
+      sharedVideo = video.current;
       try { lm = await createLandmarker(); } catch { if (alive) useFatigue.setState({ phase: 'error' }); return; }
       if (!alive) { lm.close(); return; }
       useFatigue.setState({ phase: 'calibrating' });
@@ -52,7 +64,7 @@ export function FatigueCam() {
       };
       loop();
     })();
-    return () => { alive = false; cancelAnimationFrame(raf); stream?.getTracks().forEach((tr) => tr.stop()); lm?.close(); };
+    return () => { alive = false; sharedVideo = null; cancelAnimationFrame(raf); stream?.getTracks().forEach((tr) => tr.stop()); lm?.close(); };
   }, [f.enabled]);
 
   const s = f.status;

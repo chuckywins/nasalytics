@@ -34,7 +34,7 @@ export function buildSnapshot() {
     })(),
     fatigueCamera: (() => {
       const f = useFatigue.getState();
-      return f.enabled && f.phase === 'running' ? { onDevice: true, perclos: f.perclos, blinkPerMin: f.blinkPerMin, yawns: f.yawns, longEyeClosureLast2min: !!(f.lastLongClosureAt && Date.now() - f.lastLongClosureAt < 120000), cueStatus: f.status, note: 'PERCLOS thresholds are assumptions; cue not diagnosis' } : null;
+      return f.enabled && f.phase === 'running' ? { onDevice: true, perclos: f.perclos, blinkPerMin: f.blinkPerMin, yawns: f.yawns, visibleExpression: f.face ? f.expression : 'no face', longEyeClosureLast2min: !!(f.lastLongClosureAt && Date.now() - f.lastLongClosureAt < 120000), cueStatus: f.status, note: 'PERCLOS thresholds are assumptions; cue not diagnosis' } : null;
     })(),
     cabin: { o2Pct: +s.cabin.o2Pct.toFixed(1), pressurePsia: +s.cabin.pressurePsia.toFixed(2) },
     indicators: INDICATOR_ORDER.map((id) => {
@@ -82,9 +82,9 @@ export function useAiAssessment() {
 }
 
 /** VEGA: SSE akışı; her cümle tamamlandıkça onSentence çağrılır (hemen seslendirme için). */
-export async function askVega(text: string, history: { role: 'user' | 'assistant'; content: string }[], onDelta: (full: string) => void, onSentence: (s: string) => void, signal?: AbortSignal) {
+export async function askVega(text: string, history: { role: 'user' | 'assistant'; content: string }[], onDelta: (full: string) => void, onSentence: (s: string) => void, signal?: AbortSignal, image?: string | null) {
   const { lang } = useApp.getState();
-  const r = await fetch(`${API}/api/vega`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lang, text, history, snapshot: buildSnapshot() }), signal });
+  const r = await fetch(`${API}/api/vega`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lang, text, history, snapshot: buildSnapshot(), image: image ?? undefined }), signal });
   if (!r.ok || !r.body) throw new Error(`HTTP ${r.status}`);
   const reader = r.body.getReader();
   const dec = new TextDecoder();

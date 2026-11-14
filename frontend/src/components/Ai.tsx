@@ -6,6 +6,8 @@ import { adviceFor } from '../engine/guidance';
 import type { Activity, Escalation, IndicatorId } from '../engine/types';
 import { useApp, activeAlerts } from '../store';
 import { askVega, maxEsc } from '../ai';
+import { grabCameraFrame } from './FatigueCam';
+import { useFatigue } from '../fatigue';
 import { startAlarm, stopAlarm, speak, stopSpeaking, unlockAudio } from '../audio';
 import { t } from '../i18n';
 
@@ -120,6 +122,9 @@ export function Vega() {
   const [busy, setBusy] = useState(false);
   const [text, setText] = useState('');
   const [err, setErr] = useState('');
+  const [withCam, setWithCam] = useState(false);
+  const [sentFrame, setSentFrame] = useState(false);
+  const camOn = useFatigue((s) => s.enabled);
   const hist = useRef<Msg[]>([]);
   const rec = useRef<SR>(null);
   const finalText = useRef('');
@@ -133,7 +138,9 @@ export function Vega() {
     const c = new AbortController(); abort.current = c;
     setBusy(true); setReply(''); setErr('');
     try {
-      const full = await askVega(q, hist.current, setReply, (s) => speak(s, lang), c.signal);
+      const frame = withCam && camOn ? grabCameraFrame() : null;
+      setSentFrame(!!frame);
+      const full = await askVega(q, hist.current, setReply, (s) => speak(s, lang), c.signal, frame);
       hist.current = [...hist.current, { role: 'user' as const, content: q }, { role: 'assistant' as const, content: full }].slice(-8);
     } catch (e) {
       if ((e as Error).name !== 'AbortError') setErr(t('ai.offline', lang));
@@ -176,10 +183,11 @@ export function Vega() {
       <div className="j-text">
         {listening || interim ? <p className="j-user">“{interim || '…'}”</p> : null}
         {busy && !reply && <p className="muted">{t('ai.thinking', lang)}</p>}
-        {reply && <p className="j-reply"><span className="ai-tag">✦ AI</span> {reply}</p>}
+        {reply && <p className="j-reply"><span className="ai-tag">✦ AI{sentFrame ? ' · ◉' : ''}</span> {reply}</p>}
         {err && <p className="j-err">{err}</p>}
         {!listening && !interim && !reply && !busy && !err && <p className="muted">{t('vega.hint', lang)}</p>}
       </div>
+      <button type="button" className={`camshare ${withCam && camOn ? 'on' : ''}`} disabled={!camOn} aria-pressed={withCam && camOn} onClick={() => setWithCam(!withCam)} title={t('vega.camHint', lang)}>◉ {t('vega.cam', lang)}</button>
       <form onSubmit={(e) => { e.preventDefault(); void send(text); setInterim(text); setText(''); }}>
         <input value={text} onChange={(e) => setText(e.target.value)} placeholder={t('vega.type', lang)} aria-label={t('vega.type', lang)} />
       </form>
