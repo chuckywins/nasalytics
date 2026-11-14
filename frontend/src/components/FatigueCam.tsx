@@ -70,6 +70,7 @@ export function FatigueCam() {
             <div className="fcam-o">
               {!f.face && <span className="fcam-warn">{t('fc.noFace', lang)}</span>}
               {f.face && f.eyesClosed && <span className="fcam-warn">{t('fc.eyesClosed', lang)}</span>}
+              {location.search.includes('fcDebug') && f.raw && <span className="fcam-dbg num">eye {f.raw.eye.toFixed(2)} · jaw {f.raw.jaw.toFixed(2)}</span>}
             </div>
           ) : <div className="fcam-o center"><span>{t(`fc.${f.phase}`, lang)}</span></div>}
         </div>

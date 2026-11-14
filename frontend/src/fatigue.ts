@@ -20,6 +20,7 @@ export interface FatigueState {
   eyesClosed: boolean;
   expression: Expression;
   status: Status;
+  raw?: { eye: number; jaw: number };
   setEnabled: (b: boolean) => void;
 }
 
@@ -31,6 +32,8 @@ export const useFatigue = create<FatigueState>((set) => ({
 
 type BS = Record<string, number>;
 const WINDOW_MS = 60_000, CLOSED = 0.55, PERCLOS_CLOSED = 0.75, MIN_DATA_MS = 20_000;
+// Esneme eşikleri: ilk sürüm (0,55 / 1,2 sn) gerçek esnemeleri kaçırdı → kullanıcı testine göre gevşetildi
+const YAWN_ON = 0.35, YAWN_OFF = 0.2, YAWN_MS = 800;
 
 /** Kare kare blendshape işleyen durum makinesi; store'u saniyede ~2 kez günceller */
 export class FatigueAnalyzer {
@@ -43,6 +46,8 @@ export class FatigueAnalyzer {
   private lastLong: number | null = null;
   private lastPush = 0;
   private started = 0;
+  rawEye = 0;
+  rawJaw = 0;
 
   push(t: number, bs: BS | null) {
     if (!this.started) this.started = t;
@@ -54,8 +59,12 @@ export class FatigueAnalyzer {
     if (eye > CLOSED) { if (this.closedSince == null) this.closedSince = t; if (t - this.closedSince >= 1500 && this.lastLong !== this.closedSince) this.lastLong = this.closedSince; }
     else if (this.closedSince != null) { const d = t - this.closedSince; if (d >= 60 && d < 500) this.blinks.push(t); this.closedSince = null; }
     // Esneme
-    if (jaw > 0.55) { if (this.jawSince == null) this.jawSince = t; if (!this.yawnCounted && t - this.jawSince >= 1200) { this.yawns++; this.yawnCounted = true; } }
-    else { this.jawSince = null; this.yawnCounted = false; }
+    // Esneme: çene açıklığı > YAWN_ON en az YAWN_MS sürerse; < YAWN_OFF olunca biter (histerezis, titreme sayılmaz)
+    if (jaw > YAWN_ON || (this.jawSince != null && jaw > YAWN_OFF)) {
+      if (this.jawSince == null) this.jawSince = t;
+      if (!this.yawnCounted && t - this.jawSince >= YAWN_MS) { this.yawns++; this.yawnCounted = true; }
+    } else { this.jawSince = null; this.yawnCounted = false; }
+    this.rawEye = eye; this.rawJaw = jaw;
     // PERCLOS penceresi
     this.frames.push({ t, closed80: eye > PERCLOS_CLOSED });
     while (this.frames.length && t - this.frames[0].t > WINDOW_MS) this.frames.shift();
@@ -75,7 +84,7 @@ export class FatigueAnalyzer {
     useFatigue.setState({
       face: true, phase: enough ? 'running' : 'calibrating', perclos: enough ? perclos : null, blinkPerMin,
       yawns: this.yawns, lastLongClosureAt: this.lastLong ? Date.now() - (t - this.lastLong) : null,
-      eyesClosed: eye > CLOSED, expression, status: st.enabled ? status : 'unknown',
+      eyesClosed: eye > CLOSED, expression, status: st.enabled ? status : 'unknown', raw: { eye, jaw },
     });
   }
 }

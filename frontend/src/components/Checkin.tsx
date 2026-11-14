@@ -2,7 +2,7 @@
 // AI notu: Claude (Anthropic) yardımıyla yazılmıştır.
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { useApp } from '../store';
+import { useApp, activeAlerts } from '../store';
 import { useCheckin, TASKS, syncToday, doneToday, streak, totalXp, badges, type TaskId, type ReactionResult, type VoiceResult } from '../checkin';
 import type { IndicatorId } from '../engine/types';
 import { t } from '../i18n';
@@ -17,7 +17,7 @@ export function RoutinePanel() {
   const readings = useApp((s) => s.readings);
   const ck = useCheckin();
   // Öz-test: ?rtSelfTest reaksiyon testini açar ve otomatik yanıtlar (headless doğrulama için)
-  const [modal, setModal] = useState<'reaction' | 'voice' | null>(() => (location.search.includes('rtSelfTest') ? 'reaction' : null));
+  const setModal = useCheckin((s) => s.setModal);
   const done = doneToday(); // render: yalnızca okur
   useEffect(() => { syncToday(); }, [done.length, readings]); // kayıt: efektte
   const sk = streak(ck.days), xp = totalXp(ck.days);
@@ -49,8 +49,6 @@ export function RoutinePanel() {
           );
         })}
       </div>
-      {modal === 'reaction' && createPortal(<ReactionTest onClose={() => setModal(null)} />, document.body)}
-      {modal === 'voice' && createPortal(<VoiceLog onClose={() => setModal(null)} />, document.body)}
     </div>
   );
 }
@@ -221,23 +219,62 @@ export function VoiceLog({ onClose }: { onClose: () => void }) {
   );
 }
 
-/* ---------------- Rutin hatırlatma (kritik olmayan bildirim, 6 sn) ---------------- */
+/* ---------------- Test pencereleri (genel) ---------------- */
+export function CheckinModals() {
+  const { modal, setModal } = useCheckin();
+  if (modal === 'reaction') return createPortal(<ReactionTest onClose={() => setModal(null)} />, document.body);
+  if (modal === 'voice') return createPortal(<VoiceLog onClose={() => setModal(null)} />, document.body);
+  return null;
+}
+
+/* ---------------- Rutin hatırlatma: ortada açılan pencere ----------------
+   İlk hatırlatma oturum başladıktan 30 sn sonra, sonra 5 dk'da bir. "5 dk sonra" erteler.
+   Kritik alarm çalarken veya başka bir pencere açıkken GÖSTERİLMEZ (alarm her zaman önceliklidir). */
+const FIRST_MS = 30_000, EVERY_MS = 300_000, SNOOZE_MS = 300_000;
 export function RoutineReminder() {
-  const { lang, sessionStarted } = useApp();
-  const [msg, setMsg] = useState('');
+  const { lang, sessionStarted, readings, acked } = useApp();
+  const modal = useCheckin((s) => s.modal);
+  const [open, setOpen] = useState(false);
+  const nextAt = useRef(0);
+  const critical = activeAlerts(readings).some((a) => a.status === 'critical' && !acked.includes(a.id));
+  const blocked = critical || !!modal;
   useEffect(() => {
     if (!sessionStarted) return;
-    const fire = () => {
-      const { done } = syncToday();
-      const pending = TASKS.filter((x) => !done.includes(x));
-      if (!pending.length) return;
-      setMsg(`${t('ck.reminder', lang)}: ${t(`task.${pending[0]}`, lang)}${pending.length > 1 ? ` (+${pending.length - 1})` : ''}`);
-      window.setTimeout(() => setMsg(''), 6000);
-    };
-    const first = window.setTimeout(fire, 20000);
-    const every = window.setInterval(fire, 180000);
-    return () => { clearTimeout(first); clearInterval(every); };
-  }, [sessionStarted, lang]);
-  if (!msg) return null;
-  return <div className="toast" role="status">◷ {msg}</div>;
+    nextAt.current = Date.now() + FIRST_MS;
+    const h = window.setInterval(() => {
+      if (Date.now() < nextAt.current) return;
+      const pending = TASKS.filter((x) => !doneToday().includes(x));
+      nextAt.current = Date.now() + EVERY_MS;
+      if (pending.length) setOpen(true);
+    }, 1000);
+    return () => clearInterval(h);
+  }, [sessionStarted]);
+  const pending = TASKS.filter((x) => !doneToday().includes(x));
+  useEffect(() => { if (open && pending.length === 0) setOpen(false); }, [open, pending.length]);
+  if (!open || blocked || pending.length === 0) return null;
+  const go = (task: TaskId) => {
+    setOpen(false);
+    if (TASK_IND[task]) useApp.getState().selectIndicator(TASK_IND[task]!);
+    else if (task === 'reaction' || task === 'voice') useCheckin.getState().setModal(task);
+    else useCheckin.getState().toggleManual(task);
+  };
+  return createPortal(
+    <div className="gate soft" role="dialog" aria-modal="true" aria-labelledby="rem-title" onKeyDown={(e) => e.key === 'Escape' && setOpen(false)}>
+      <div className="rem-box">
+        <header className="panel-h"><span id="rem-title">◷ {t('ck.reminder', lang)}</span><button className="x" aria-label="close" onClick={() => setOpen(false)}>×</button></header>
+        <p>{t('rem.text', lang).replace('{n}', String(pending.length))}</p>
+        <div className="rem-list">
+          {pending.map((task) => (
+            <button key={task} className="task" onClick={() => go(task)} autoFocus={task === pending[0]}>
+              <span className="t-check">○</span><span className="t-name">{t(`task.${task}`, lang)}</span>
+              <span className="t-cta">{t(TASK_IND[task] ? 'ck.measure' : task === 'exercise' ? 'ck.mark' : 'ck.start', lang)} →</span>
+            </button>
+          ))}
+        </div>
+        <div className="rem-actions">
+          <button onClick={() => { nextAt.current = Date.now() + SNOOZE_MS; setOpen(false); }}>{t('rem.snooze', lang)}</button>
+          <button className="primary" onClick={() => go(pending[0])}>{t('rem.startFirst', lang)}</button>
+        </div>
+      </div>
+    </div>, document.body);
 }

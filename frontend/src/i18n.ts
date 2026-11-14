@@ -233,6 +233,9 @@ const D = {
   'fc.step1': { tr: 'Kısa bir mola ver ve reaksiyon testini yap', en: 'Take a short break and do the reaction test' },
   'fc.step2': { tr: 'Kritik görevleri (EVA, robot kol) gözden geçir', en: 'Review critical tasks (EVA, robotic arm)' },
   'fc.step3': { tr: 'Bu gece uyku programına öncelik ver', en: 'Prioritise the sleep schedule tonight' },
+  'rem.text': { tr: 'Bugünkü rutininde {n} görev bekliyor. Düzenli ölçüm, değişimleri erken fark etmeni sağlar.', en: '{n} tasks are waiting in today\'s routine. Regular measurement helps you spot changes early.' },
+  'rem.snooze': { tr: '5 dk sonra hatırlat', en: 'Remind me in 5 min' },
+  'rem.startFirst': { tr: 'İLKİNİ BAŞLAT', en: 'START FIRST' },
   'ui.noIndicator': { tr: 'Bu bölge için doğrudan gösterge yok; rutin muayene ile izlenir.', en: 'No direct indicator for this region; monitored by routine exam.' },
 };
 

@@ -23,6 +23,8 @@ interface CheckinState {
   addReaction: (r: ReactionResult) => void;
   addVoice: (v: VoiceResult) => void;
   toggleManual: (t: TaskId) => void;
+  modal: 'reaction' | 'voice' | null;
+  setModal: (m: 'reaction' | 'voice' | null) => void;
 }
 
 export const dayKey = (t = Date.now()) => new Date(t).toISOString().slice(0, 10);
@@ -36,6 +38,8 @@ export const useCheckin = create<CheckinState>((set) => ({
   ...load(),
   addReaction: (r) => set((s) => ({ reaction: [...s.reaction, r].slice(-30) })),
   addVoice: (v) => set((s) => ({ voice: [...s.voice, v].slice(-14) })),
+  modal: typeof location !== 'undefined' && location.search.includes('rtSelfTest') ? 'reaction' : null,
+  setModal: (modal) => set({ modal }),
   toggleManual: (t) => set((s) => {
     const m = { ...s.manual };
     if (m[t] && dayKey(m[t]) === dayKey()) delete m[t]; else m[t] = Date.now();
