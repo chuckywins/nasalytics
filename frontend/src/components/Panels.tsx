@@ -10,6 +10,7 @@ import { useApp, activeAlerts, evalLatest, latest } from '../store';
 import { t } from '../i18n';
 import { Panel, ProvTag, StatusChip, STATUS_COLOR, STATUS_GLYPH } from './Hud';
 import { AiCard } from './Ai';
+import { InfoTip, SourceTags, toSteps } from './Info';
 
 // Uyarı görünürlüğü animasyona BAĞLI DEĞİL: yalnızca konum kayar, opaklık her zaman 1 (animasyon çalışmasa da okunur).
 const fade = { initial: { y: 8 }, animate: { y: 0 }, transition: { duration: 0.2 } };
@@ -33,8 +34,8 @@ export function AssessmentPanel() {
                   <span style={{ color: STATUS_COLOR[a.status] }}>{STATUS_GLYPH[a.status]} {t(`ind.${a.id}`, lang)}: <b className="num">{a.reading.value.toFixed(INDICATORS[a.id].decimals)} {INDICATORS[a.id].unit}</b> · {t(a.labelKey, lang)}</span>
                   <span className={`esc esc-${adv.escalate}`}>{t(`esc.${adv.escalate}`, lang)}</span>
                 </div>
-                <p>{adv.action[lang]}</p>
-                {adv.sources.length > 0 && <div className="src">{adv.sources.map((s) => <a key={s.url} href={s.url} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()}>{s.label}</a>)}</div>}
+                <ol className="steps">{toSteps(adv.action[lang]).map((st, i) => <li key={i}>{st}</li>)}</ol>
+                <SourceTags sources={adv.sources} />
               </motion.button>
             );
           })}
@@ -59,17 +60,17 @@ export function RegionPanel() {
           return <button key={id} className="chip" style={{ borderColor: STATUS_COLOR[ev.status] }} onClick={() => selectIndicator(id)}>{STATUS_GLYPH[ev.status]} {t(`ind.${id}`, lang)}</button>;
         })}
       </div>
-      <div className="src">{info.sources.map((s) => <a key={s.url} href={s.url} target="_blank" rel="noreferrer">{s.label}</a>)}</div>
+      <SourceTags sources={info.sources} />
     </Panel>
   );
 }
 
 /* ---------------- Kabin atmosferi ---------------- */
-function Gauge({ label, value, unit, lo, hi, limitLo, limitHi, status, decimals = 1 }: { label: string; value: number; unit: string; lo: number; hi: number; limitLo?: number; limitHi?: number; status: Status; decimals?: number }) {
+function Gauge({ label, info, value, unit, lo, hi, limitLo, limitHi, status, decimals = 1 }: { label: string; info?: string; value: number; unit: string; lo: number; hi: number; limitLo?: number; limitHi?: number; status: Status; decimals?: number }) {
   const pct = (v: number) => `${Math.min(100, Math.max(0, ((v - lo) / (hi - lo)) * 100))}%`;
   return (
     <div className="gauge">
-      <div className="g-h"><span>{label}</span><b className="num" style={{ color: status === 'ok' ? undefined : STATUS_COLOR[status] }}>{value.toFixed(decimals)} <small>{unit}</small></b></div>
+      <div className="g-h"><span>{label} {info && <InfoTip k={info} />}</span><b className="num" style={{ color: status === 'ok' ? undefined : STATUS_COLOR[status] }}>{value.toFixed(decimals)} <small>{unit}</small></b></div>
       <div className="g-bar">
         <div className="g-fill" style={{ width: pct(value), background: status === 'ok' ? '#5ad1e6' : STATUS_COLOR[status] }} />
         {limitLo != null && <div className="g-lim" style={{ left: pct(limitLo) }} />}
@@ -84,10 +85,10 @@ export function CabinPanel() {
   const pStatus: Status = cabin.pressurePsia < 5.0 || cabin.pressurePsia > 15.0 ? 'critical' : 'ok';
   return (
     <Panel title={t('ui.cabin', lang)} right={<ProvTag p="SIMULATED" />} className="cabin">
-      <Gauge label={`CO₂ (${t('ui.limit', lang)} 3 mmHg)`} value={co2.reading.value} unit="mmHg" lo={0} hi={8} limitHi={3} status={co2.status} />
-      <Gauge label={t('ui.o2', lang)} value={cabin.o2Pct} unit="%" lo={15} hi={30} status="ok" />
-      <Gauge label={`${t('ui.pressure', lang)} (5.0–15.0 psia)`} value={cabin.pressurePsia} unit="psia" lo={0} hi={16} limitLo={5} limitHi={15} status={pStatus} />
-      <div className="src"><ProvTag p="NASA_STANDARD" /><a href="https://nasa.gov/wp-content/uploads/2023/03/co2-technical-brief-ochmo.pdf" target="_blank" rel="noreferrer">NASA-STD-3001 V2 [6004] [6006]</a></div>
+      <Gauge info="cabinCO2" label={`CO₂ (${t('ui.limit', lang)} 3 mmHg)`} value={co2.reading.value} unit="mmHg" lo={0} hi={8} limitHi={3} status={co2.status} />
+      <Gauge info="o2" label={t('ui.o2', lang)} value={cabin.o2Pct} unit="%" lo={15} hi={30} status="ok" />
+      <Gauge info="pressure" label={`${t('ui.pressure', lang)} (5.0–15.0 psia)`} value={cabin.pressurePsia} unit="psia" lo={0} hi={16} limitLo={5} limitHi={15} status={pStatus} />
+      <div className="src"><ProvTag p="NASA_STANDARD" /><span>NASA-STD-3001 V2 [6004] [6006]</span></div>
     </Panel>
   );
 }
@@ -109,7 +110,7 @@ export function MissionPanel() {
       </div>
       <div className="proj">
         <div>
-          <span className="lbl">{t('ui.cumDose', lang)} <ProvTag p={h.basis === 'measured' ? 'PROJECTION' : h.basis === 'derived' ? 'PUBLISHED' : 'ASSUMPTION'} /></span>
+          <span className="lbl">{t('ui.cumDose', lang)} <InfoTip k="cumDose" /> <ProvTag p={h.basis === 'measured' ? 'PROJECTION' : h.basis === 'derived' ? 'PUBLISHED' : 'ASSUMPTION'} /></span>
           {cum != null ? (<>
             <div className="g-bar big"><div className="g-fill" style={{ width: `${Math.min(100, (cum / 600) * 100)}%`, background: cum > 480 ? STATUS_COLOR.warn : '#5ad1e6' }} /></div>
             <span className="num">≈{cum.toFixed(0)} / 600 mSv · %{((cum / 600) * 100).toFixed(0)}</span>
@@ -117,7 +118,7 @@ export function MissionPanel() {
           </>) : <span className="muted">{t('ui.noData', lang)}</span>}
         </div>
         <div>
-          <span className="lbl">{t('ui.boneLoss', lang)} <ProvTag p="PROJECTION" /></span>
+          <span className="lbl">{t('ui.boneLoss', lang)} <InfoTip k="boneLoss" /> <ProvTag p="PROJECTION" /></span>
           {bone ? (<>
             <div className="g-bar big"><div className="g-fill" style={{ width: `${Math.min(100, (bone.hi / 10) * 100)}%`, background: bone.hi > 5 ? STATUS_COLOR.warn : '#5ad1e6' }} /><div className="g-lim" style={{ left: '50%' }} /></div>
             <span className="num">%{bone.lo.toFixed(1)}–{bone.hi.toFixed(1)}</span>
@@ -166,7 +167,7 @@ export function TrendChart() {
         {data.map((r, i) => r.provenance === 'USER_INPUT' || data.length === 1 ? <circle key={i} cx={x(r.t)} cy={y(r.value)} r={4} fill="none" stroke={STATUS_COLOR[d.evaluate(r.value, { glucose: r.ctx, activity }).status]} strokeWidth={2} vectorEffect="non-scaling-stroke" /> : null)}
       </svg>
       <div className="src"><StatusChip s={ev.status} label={t(ev.labelKey, lang)} /><span>{t('ui.threshold', lang)}:</span><ProvTag p={d.thresholdProvenance} />
-        {d.sources.slice(0, 2).map((s) => <a key={s.url} href={s.url} target="_blank" rel="noreferrer">{s.label}</a>)}
+        <SourceTags sources={d.sources} max={2} />
       </div>
     </Panel>
   );

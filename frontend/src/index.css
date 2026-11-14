@@ -75,7 +75,7 @@ a { color: var(--accent); }
 
 /* ---- Yaşamsal bulgular: kompakt satır ızgarası ---- */
 .vitals { display: flex; flex-direction: column; gap: 3px; overflow: hidden; }
-.vrow { display: grid; grid-template-columns: minmax(0, 1fr) auto 22px; grid-template-rows: auto auto; column-gap: 8px; row-gap: 1px; text-align: left; background: transparent; border: 1px solid transparent; border-left: 3px solid; border-radius: 3px; padding: 3px 8px; }
+.vrow { display: grid; grid-template-columns: minmax(0, 1fr) auto 46px; cursor: pointer; grid-template-rows: auto auto; column-gap: 8px; row-gap: 1px; text-align: left; background: transparent; border: 1px solid transparent; border-left: 3px solid; border-radius: 3px; padding: 3px 8px; }
 .vrow:hover { background: var(--panel-2); }
 .vrow.sel { border-color: var(--line-2); background: var(--panel-2); }
 .vname { font-size: 13px; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -83,7 +83,7 @@ a { color: var(--accent); }
 .vval { grid-row: 1 / span 2; grid-column: 2; align-self: center; font-size: 22px; font-weight: 600; white-space: nowrap; }
 .vval small { font-size: 12px; color: var(--ink-3); margin-left: 4px; font-family: var(--font); }
 .vstat { font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.vrow .prov { grid-row: 1 / span 2; grid-column: 3; align-self: center; justify-self: center; }
+.vtags { grid-row: 1 / span 2; grid-column: 3; align-self: center; justify-self: end; display: flex; gap: 3px; align-items: center; }
 .vglyph { margin-right: 6px; font-weight: 400; }
 .prov.compact { padding: 2px 3px; min-width: 18px; text-align: center; }
 .prov.compact::before { margin-right: 0; }
@@ -217,12 +217,26 @@ a { color: var(--accent); }
 .jarvis input { width: 100%; }
 .model-credit { bottom: 10px; }
 
+/* ---- Info ikonu + kutusu ---- */
+.info { width: 18px; height: 18px; padding: 0; border-radius: 50%; font: 600 11px/16px var(--mono); color: var(--accent); border: 1px solid var(--accent-dim); background: transparent; display: inline-grid; place-items: center; vertical-align: middle; flex: none; }
+.info:hover, .info:focus-visible { background: var(--accent); color: var(--bg); }
+.infobox { position: fixed; z-index: 100; width: 340px; background: #0b1520; border: 1px solid var(--accent-dim); border-radius: 4px; padding: 10px 12px; box-shadow: 0 8px 24px rgba(0,0,0,.6); display: flex; flex-direction: column; gap: 6px; font-size: 13px; line-height: 1.45; color: var(--ink); text-transform: none; letter-spacing: 0; font-weight: 400; white-space: normal; }
+.infobox p { margin: 0; }
+.infobox b { color: var(--accent); font-weight: 600; }
+/* ---- Adımlar ve kaynak etiketleri ---- */
+.steps { margin: 4px 0 2px; padding-left: 20px; font-size: 13px; line-height: 1.4; }
+.steps li { margin-bottom: 2px; }
+.srctags { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; font-size: 12px; }
+.srctag { max-width: 210px; overflow: hidden; text-overflow: ellipsis; font-size: 12px; color: var(--ink-2); border: 1px solid var(--line-2); border-radius: 3px; padding: 0 5px; text-decoration: none; white-space: nowrap; }
+.srctag:hover { color: var(--accent); border-color: var(--accent-dim); }
+.panel-h .info { margin-right: 4px; }
+
 /* Kısa ekran (≈1536×700, %125 ölçek): satırlar tek satıra iner; durum etiketi glif + üzerine gelince başlık olarak kalır */
 @media (max-height: 860px) {
   .vrow { grid-template-rows: auto; padding: 2px 8px; }
   .vstat { display: none; }
   .vval { grid-row: 1; font-size: 18px; }
-  .vrow .prov { grid-row: 1; }
+  .vtags { grid-row: 1; }
   .vname { align-self: center; }
   .ecg { flex-basis: 64px; }
   .vitals { gap: 1px; }

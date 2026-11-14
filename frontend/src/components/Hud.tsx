@@ -7,6 +7,7 @@ import { ENVS, ENV_LABEL, ENV_ORDER, equivUSvH, cumulativeMSv, type EnvId } from
 import { useApp, evalLatest, latest } from '../store';
 import { t } from '../i18n';
 import { ActivitySelect } from './Ai';
+import { InfoTip } from './Info';
 
 export const STATUS_COLOR: Record<Status, string> = {
   ok: '#3fb950', watch: '#d4a72c', warn: '#f0883e', critical: '#f85149', unknown: '#6e7681',
@@ -56,11 +57,11 @@ export function TopBar() {
       <ActivitySelect />
       <div className="tb-item"><span>{t('ui.day', lang)}</span><b className="num">{missionDay}</b></div>
       <div className="tb-item"><span>{t('ui.delay', lang)} ({t('ui.oneWay', lang)})</span><b className="num">{d0 === d1 ? fmtDelay(d0) : `${fmtDelay(d0)}–${fmtDelay(d1)}`}</b></div>
-      <div className="tb-item"><span>{t('ui.doseRate', lang)}</span>
+      <div className="tb-item"><span>{t('ui.doseRate', lang)} <InfoTip k="doseRate" /></span>
         <b className="num">{e.absorbedUGyH != null ? `${e.absorbedUGyH.toFixed(1)} µGy/h` : t('ui.noData', lang)}</b>
         {e.absorbedUGyH != null && <ProvTag p="NASA_MEASUREMENT" />}
       </div>
-      <div className="tb-item"><span>{t('ui.cumDose', lang)}</span>
+      <div className="tb-item"><span>{t('ui.cumDose', lang)} <InfoTip k="cumDose" /></span>
         <b className="num">{cum != null ? `≈${cum.toFixed(0)} mSv` : t('ui.noData', lang)}</b>
         {cum != null && <ProvTag p={h.basis === 'measured' ? 'PROJECTION' : 'PUBLISHED'} />}
       </div>
@@ -95,14 +96,14 @@ export function VitalsPanel() {
           const sel = r.id === selectedIndicator || (row === 'bp' && selectedIndicator === 'diastolic');
           const spot = INDICATORS[r.id].mode === 'spot';
           return (
-            <button key={row} className={`vrow ${sel ? 'sel' : ''}`} style={{ borderLeftColor: STATUS_COLOR[r.status] }} onClick={() => selectIndicator(r.id)} aria-pressed={sel}>
+            <div key={row} role="button" tabIndex={0} className={`vrow ${sel ? 'sel' : ''}`} style={{ borderLeftColor: STATUS_COLOR[r.status] }} onClick={() => selectIndicator(r.id)} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectIndicator(r.id); } }} aria-pressed={sel}>
               <span className="vname"><b className="vglyph" style={{ color: STATUS_COLOR[r.status] }} aria-label={t(r.labelKey, lang)}>{STATUS_GLYPH[r.status]}</b>{t(row === 'bp' ? 'ind.bp' : `ind.${row}`, lang)}
                 <small>{spot ? ago(Date.now() - r.reading.t, lang) : t('ui.live', lang)}{r.reading.ctx ? ` · ${t(`ui.${r.reading.ctx}`, lang)}` : ''}</small>
               </span>
               <span className="vval num">{r.value}<small>{r.unit}</small></span>
               <span className="vstat" style={{ color: STATUS_COLOR[r.status] }} title={t(r.labelKey, lang)}>{STATUS_GLYPH[r.status]} {t(r.labelKey, lang)}</span>
-              <ProvTag p={r.reading.provenance} compact />
-            </button>
+              <span className="vtags"><InfoTip k={row} /><ProvTag p={r.reading.provenance} compact /></span>
+            </div>
           );
         })}
       </div>
@@ -151,7 +152,7 @@ export function EcgStrip() {
     return () => { cancelAnimationFrame(raf); ro.disconnect(); };
   }, []);
   return (
-    <Panel title={t('ui.ecg', lang)} right={<><span className="num ecg-hr">{hr.toFixed(0)} bpm</span><ProvTag p="SIMULATED" /></>} className="ecg">
+    <Panel title={t('ui.ecg', lang)} right={<><InfoTip k="ecg" /><span className="num ecg-hr">{hr.toFixed(0)} bpm</span><ProvTag p="SIMULATED" /></>} className="ecg">
       <canvas ref={ref} className="ecg-canvas" aria-label="ECG" />
     </Panel>
   );

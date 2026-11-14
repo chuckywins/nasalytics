@@ -93,7 +93,7 @@ const D = {
   'esc.crew': { tr: 'MÜRETTEBAT CMO', en: 'CREW CMO' },
   'esc.ground': { tr: 'UÇUŞ CERRAHI', en: 'FLIGHT SURGEON' },
   'ui.vitals': { tr: 'Yaşamsal bulgular', en: 'Vital signs' },
-  'ui.ecg': { tr: 'EKG (Derivasyon II)', en: 'ECG (Lead II)' },
+  'ui.ecg': { tr: 'EKG', en: 'ECG' },
   'ui.cabin': { tr: 'Kabin atmosferi', en: 'Cabin atmosphere' },
   'ui.o2': { tr: 'O₂', en: 'O₂' },
   'ui.pressure': { tr: 'Basınç', en: 'Pressure' },
@@ -132,6 +132,11 @@ const D = {
   'jarvis.type': { tr: 'veya yazın…', en: 'or type…' },
   'jarvis.noSpeech': { tr: 'Bu tarayıcı konuşma tanımayı desteklemiyor; Chrome veya Edge kullanın ya da yazın.', en: 'Speech recognition not supported; use Chrome or Edge, or type.' },
   'jarvis.micError': { tr: 'Mikrofon hatası', en: 'Microphone error' },
+  'info.label': { tr: 'Bu değer nereden geliyor?', en: 'Where does this value come from?' },
+  'info.inSpace': { tr: 'Uzayda nasıl ölçülür:', en: 'How it is measured in space:' },
+  'info.here': { tr: 'Bu prototipte:', en: 'In this prototype:' },
+  'info.why': { tr: 'Neden önemli:', en: 'Why it matters:' },
+  'ui.source': { tr: 'Kaynak', en: 'Source' },
   'ui.noIndicator': { tr: 'Bu bölge için doğrudan gösterge yok; rutin muayene ile izlenir.', en: 'No direct indicator for this region; monitored by routine exam.' },
 };
 
