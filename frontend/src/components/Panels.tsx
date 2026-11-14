@@ -1,0 +1,171 @@
+// Sağ ve alt paneller: değerlendirme, bölge bilgisi, kabin, görev zaman çizelgesi, trend.
+// AI notu: Claude (Anthropic) yardımıyla yazılmıştır.
+import { AnimatePresence, motion } from 'motion/react';
+import { INDICATORS } from '../engine/indicators';
+import { REGIONS } from '../engine/regions';
+import { adviceFor } from '../engine/guidance';
+import { ENVS, MISSION_DAYS, boneLossPct, cumulativeMSv, equivUSvH } from '../engine/environment';
+import type { IndicatorId, Status } from '../engine/types';
+import { useApp, activeAlerts, evalLatest, latest } from '../store';
+import { t } from '../i18n';
+import { Panel, ProvTag, StatusChip, STATUS_COLOR, STATUS_GLYPH } from './Hud';
+
+// Uyarı görünürlüğü animasyona BAĞLI DEĞİL: yalnızca konum kayar, opaklık her zaman 1 (animasyon çalışmasa da okunur).
+const fade = { initial: { y: 8 }, animate: { y: 0 }, transition: { duration: 0.2 } };
+
+/* ---------------- Sağlık değerlendirmesi ---------------- */
+export function AssessmentPanel() {
+  const { readings, lang, selectIndicator } = useApp();
+  const alerts = activeAlerts(readings).filter((a) => a.id !== 'diastolic' || evalLatest(readings, 'systolic').status === 'ok');
+  const overall: Status = alerts[0]?.status ?? 'ok';
+  return (
+    <Panel title={t('ui.assessment', lang)} right={<StatusChip s={overall} label={`${alerts.length}`} />} className="assess">
+      <div className="alerts" role="status" aria-live="polite">
+        <AnimatePresence initial={false}>
+          {alerts.length === 0 && <motion.p key="ok" {...fade} className="nominal">● {t('ui.allNominal', lang)}</motion.p>}
+          {alerts.map((a) => {
+            const adv = adviceFor(a.id, a.status);
+            return (
+              <motion.button key={a.id} layout {...fade} className="alert" style={{ borderLeftColor: STATUS_COLOR[a.status] }} onClick={() => selectIndicator(a.id)}>
+                <div className="alert-h">
+                  <span style={{ color: STATUS_COLOR[a.status] }}>{STATUS_GLYPH[a.status]} {t(`ind.${a.id}`, lang)}: <b className="num">{a.reading.value.toFixed(INDICATORS[a.id].decimals)} {INDICATORS[a.id].unit}</b> · {t(a.labelKey, lang)}</span>
+                  <span className={`esc esc-${adv.escalate}`}>{t(`esc.${adv.escalate}`, lang)}</span>
+                </div>
+                <p>{adv.action[lang]}</p>
+                {adv.sources.length > 0 && <div className="src">{adv.sources.map((s) => <a key={s.url} href={s.url} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()}>{s.label}</a>)}</div>}
+              </motion.button>
+            );
+          })}
+        </AnimatePresence>
+      </div>
+    </Panel>
+  );
+}
+
+/* ---------------- Bölge bilgisi ---------------- */
+export function RegionPanel() {
+  const { selectedRegion, lang, readings, selectIndicator, selectRegion } = useApp();
+  if (!selectedRegion) return <Panel title={t('ui.clickBody', lang)} className="region"><p className="muted">{lang === 'tr' ? 'Organ işlevi, uzayda ne olduğu ve ilgili NASA kaynakları burada görünür.' : 'Organ function, what happens in space and NASA sources appear here.'}</p></Panel>;
+  const info = REGIONS[selectedRegion];
+  return (
+    <Panel title={info.name[lang]} right={<><span className="haz" title="RIDGE">{info.hazards.join(' ')}</span><button className="x" aria-label="close" onClick={() => selectRegion(null)}>×</button></>} className="region">
+      <p><b>{t('ui.function', lang)}:</b> {info.func[lang]}</p>
+      <p><b>{t('ui.inSpace', lang)}</b> {info.spaceEffect[lang]}</p>
+      <div className="chips">
+        {info.indicators.length === 0 ? <span className="muted">{t('ui.noIndicator', lang)}</span> : info.indicators.map((id) => {
+          const ev = evalLatest(readings, id);
+          return <button key={id} className="chip" style={{ borderColor: STATUS_COLOR[ev.status] }} onClick={() => selectIndicator(id)}>{STATUS_GLYPH[ev.status]} {t(`ind.${id}`, lang)}</button>;
+        })}
+      </div>
+      <div className="src">{info.sources.map((s) => <a key={s.url} href={s.url} target="_blank" rel="noreferrer">{s.label}</a>)}</div>
+    </Panel>
+  );
+}
+
+/* ---------------- Kabin atmosferi ---------------- */
+function Gauge({ label, value, unit, lo, hi, limitLo, limitHi, status, decimals = 1 }: { label: string; value: number; unit: string; lo: number; hi: number; limitLo?: number; limitHi?: number; status: Status; decimals?: number }) {
+  const pct = (v: number) => `${Math.min(100, Math.max(0, ((v - lo) / (hi - lo)) * 100))}%`;
+  return (
+    <div className="gauge">
+      <div className="g-h"><span>{label}</span><b className="num" style={{ color: status === 'ok' ? undefined : STATUS_COLOR[status] }}>{value.toFixed(decimals)} <small>{unit}</small></b></div>
+      <div className="g-bar">
+        <div className="g-fill" style={{ width: pct(value), background: status === 'ok' ? '#5ad1e6' : STATUS_COLOR[status] }} />
+        {limitLo != null && <div className="g-lim" style={{ left: pct(limitLo) }} />}
+        {limitHi != null && <div className="g-lim" style={{ left: pct(limitHi) }} />}
+      </div>
+    </div>
+  );
+}
+export function CabinPanel() {
+  const { readings, cabin, lang } = useApp();
+  const co2 = evalLatest(readings, 'cabinCO2');
+  const pStatus: Status = cabin.pressurePsia < 5.0 || cabin.pressurePsia > 15.0 ? 'critical' : 'ok';
+  return (
+    <Panel title={t('ui.cabin', lang)} right={<ProvTag p="SIMULATED" />} className="cabin">
+      <Gauge label={`CO₂ (${t('ui.limit', lang)} 3 mmHg)`} value={co2.reading.value} unit="mmHg" lo={0} hi={8} limitHi={3} status={co2.status} />
+      <Gauge label={t('ui.o2', lang)} value={cabin.o2Pct} unit="%" lo={15} hi={30} status="ok" />
+      <Gauge label={`${t('ui.pressure', lang)} (5.0–15.0 psia)`} value={cabin.pressurePsia} unit="psia" lo={0} hi={16} limitLo={5} limitHi={15} status={pStatus} />
+      <div className="src"><ProvTag p="NASA_STANDARD" /><a href="https://nasa.gov/wp-content/uploads/2023/03/co2-technical-brief-ochmo.pdf" target="_blank" rel="noreferrer">NASA-STD-3001 V2 [6004] [6006]</a></div>
+    </Panel>
+  );
+}
+
+/* ---------------- Görev zaman çizelgesi + tahminler ---------------- */
+export function MissionPanel() {
+  const { env, missionDay, setMissionDay, lang } = useApp();
+  const e = ENVS[env];
+  const len = MISSION_DAYS[env];
+  const day = Math.min(missionDay, len);
+  const cum = cumulativeMSv(e, day);
+  const bone = boneLossPct(e, day);
+  const h = equivUSvH(e);
+  return (
+    <Panel title={t('ui.timeline', lang)} className="mission">
+      <div className="timeline">
+        <input type="range" min={0} max={len} value={day} onChange={(ev) => setMissionDay(+ev.target.value)} aria-label={t('ui.day', lang)} />
+        <div className="ticks num"><span>0</span><span>{Math.round(len / 4)}</span><span>{Math.round(len / 2)}</span><span>{Math.round((3 * len) / 4)}</span><span>{len}</span></div>
+      </div>
+      <div className="proj">
+        <div>
+          <span className="lbl">{t('ui.cumDose', lang)} <ProvTag p={h.basis === 'measured' ? 'PROJECTION' : h.basis === 'derived' ? 'PUBLISHED' : 'ASSUMPTION'} /></span>
+          {cum != null ? (<>
+            <div className="g-bar big"><div className="g-fill" style={{ width: `${Math.min(100, (cum / 600) * 100)}%`, background: cum > 480 ? STATUS_COLOR.warn : '#5ad1e6' }} /></div>
+            <span className="num">≈{cum.toFixed(0)} / 600 mSv · %{((cum / 600) * 100).toFixed(0)}</span>
+            <small className="muted">{t('ui.detectorProxy', lang)}{h.basis === 'derived' && e.qSource ? ` · Q=${e.qualityFactor} (${e.qSource})` : ''}</small>
+          </>) : <span className="muted">{t('ui.noData', lang)}</span>}
+        </div>
+        <div>
+          <span className="lbl">{t('ui.boneLoss', lang)} <ProvTag p="PROJECTION" /></span>
+          {bone ? (<>
+            <div className="g-bar big"><div className="g-fill" style={{ width: `${Math.min(100, (bone.hi / 10) * 100)}%`, background: bone.hi > 5 ? STATUS_COLOR.warn : '#5ad1e6' }} /><div className="g-lim" style={{ left: '50%' }} /></div>
+            <span className="num">%{bone.lo.toFixed(1)}–{bone.hi.toFixed(1)}</span>
+            <small className="muted">{t('ui.boneNote', lang)}</small>
+          </>) : <span className="muted">{t('ui.partialG', lang)}</span>}
+        </div>
+      </div>
+    </Panel>
+  );
+}
+
+/* ---------------- Trend grafiği (sabit klinik aralık + eşik bantları) ---------------- */
+const RANGE: Record<IndicatorId, [number, number]> = {
+  heartRate: [30, 180], systolic: [70, 190], diastolic: [40, 130], spo2: [80, 100], respRate: [4, 36],
+  bodyTemp: [34, 41], glucose: [40, 260], sleepHours: [0, 10], mood: [1, 5], cabinCO2: [0, 8],
+};
+export function TrendChart() {
+  const { readings, selectedIndicator: id, lang } = useApp();
+  const d = INDICATORS[id];
+  const data = readings[id];
+  const [lo0, hi0] = RANGE[id];
+  const vals = data.map((r) => r.value);
+  const lo = Math.min(lo0, ...vals), hi = Math.max(hi0, ...vals);
+  const W = 560, H = 110, P = 4;
+  const t0 = data[0].t, t1 = Math.max(latest(data).t, t0 + 1);
+  const x = (tt: number) => P + ((tt - t0) / (t1 - t0)) * (W - 2 * P);
+  const y = (v: number) => H - P - ((v - lo) / (hi - lo)) * (H - 2 * P);
+  // Eşik bantları: değer ekseninde örnekleyip durum değişim noktalarını bul
+  const bands: { from: number; to: number; s: Status }[] = [];
+  const ctx = latest(data).ctx;
+  const N = 120;
+  for (let i = 0; i < N; i++) {
+    const v0 = lo + ((hi - lo) * i) / N, v1 = lo + ((hi - lo) * (i + 1)) / N;
+    const s = d.evaluate((v0 + v1) / 2, ctx).status;
+    const lastB = bands[bands.length - 1];
+    if (lastB && lastB.s === s) lastB.to = v1; else bands.push({ from: v0, to: v1, s });
+  }
+  const path = data.map((r, i) => `${i ? 'L' : 'M'}${x(r.t).toFixed(1)},${y(r.value).toFixed(1)}`).join('');
+  const last = latest(data);
+  const ev = d.evaluate(last.value, last.ctx);
+  return (
+    <Panel title={`${t('ui.trend', lang)} · ${t(`ind.${id}`, lang)}`} right={<span className="num">{lo}–{hi} {d.unit}</span>} className="trend">
+      <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" role="img" aria-label={t(`ind.${id}`, lang)}>
+        {bands.map((b, i) => b.s !== 'ok' && <rect key={i} x={0} width={W} y={y(b.to)} height={Math.max(0, y(b.from) - y(b.to))} fill={STATUS_COLOR[b.s]} opacity={0.08} />)}
+        {data.length > 1 ? <path d={path} fill="none" stroke="#c9d6e3" strokeWidth={1.6} vectorEffect="non-scaling-stroke" /> : null}
+        {data.map((r, i) => r.provenance === 'USER_INPUT' || data.length === 1 ? <circle key={i} cx={x(r.t)} cy={y(r.value)} r={4} fill="none" stroke={STATUS_COLOR[d.evaluate(r.value, r.ctx).status]} strokeWidth={2} vectorEffect="non-scaling-stroke" /> : null)}
+      </svg>
+      <div className="src"><StatusChip s={ev.status} label={t(ev.labelKey, lang)} /><span>{t('ui.threshold', lang)}:</span><ProvTag p={d.thresholdProvenance} />
+        {d.sources.slice(0, 2).map((s) => <a key={s.url} href={s.url} target="_blank" rel="noreferrer">{s.label}</a>)}
+      </div>
+    </Panel>
+  );
+}

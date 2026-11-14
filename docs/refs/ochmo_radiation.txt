@@ -1,0 +1,510 @@
+                                                      NASA-STD-3001 Technical Brief
+
+Design for Ionizing
+Radiation Protection
+
+OCHMO-TB-020                                                     Relevant Technical
+Rev E                                                               Requirements
+
+   Executive Summary                                  NASA-STD-3001 Volume 1, Rev B
+                                                      [V1 4029] As Low as Reasonably Achievable
+  During any mission, crewmembers face threats of
+  ionizing radiation from a variety of sources.          (ALARA) Principle
+  Standards outlined in NASA-STD-3001 state that      [V1 4030] Career Space Permissible Exposure
+  individual crewmember's total career effective
+  radiation dose during spaceflight radiation            Limit for Space Flight Radiation
+  exposure is not to exceed 600 millisieverts (mSv).  [V1 4031] Short-Term Radiation Limits ­
+  Additionally, short-term radiation exposure to
+  solar particle events is limited to an effective       Solar Particle Events
+  dose of 250 mSv per event to minimize acute         [V1 4032] Crew Radiation Limits for Nuclear
+  effects. Design choices and shielding strategies
+  can be implemented to reduce the threat posed          Technologies
+  by radiation and ensure crew safety and health.
+                                                      NASA-STD-3001 Volume 2, Rev C
+                                                      [V2 6095] Ionizing Radiation Protection Limit
+                                                      [V2 6097] Crew Radiation Exposure Limits
+                                                      [V2 6098] Radiation Environments
+                                                      [V2 6099] Space Weather Monitoring
+                                                      [V2 6100] Ionizing Radiation Alerting
+                                                      [V2 6101] Ionizing Radiation Dose
+
+                                                         Monitoring
+NASA-STD-3001 Technical Brief                        Design for Ionizing Radiation Protection
+OCHMO-TB-020
+
+Background
+
+Space Radiation Environment Overview
+
+                       Galactic Cosmic Rays (GCR) ­ penetrating protons and heavy nuclei
+
+     Occurs continuously, omni-directional, varying
+     in flux with solar cycle. Lower GCR levels occur
+
+                    during solar maximum.
+
+       Shielding is NOT effective due to secondary
+        radiation produced in shielding and tissue.
+
+        Countermeasures: Biological uncertainties
+         cloud understanding of effectiveness of
+                     possible mitigations.
+
+                  Solar Particle Events (SPE) ­ low to medium energy protons
+
+Infrequent events occurring most often during
+solar cycle maximum (~22-year cycles) ­ peak
+
+         activity during solar maximum.
+
+Lunar surface provides significant protection
+     vs. free space. Shielding (5-20 g/cm2
+
+  aluminum and polyethylene) IS effective,
+        optimization to reduce weight.
+
+       Countermeasures: Shielding, monitoring,                   Risks of Radiation Exposure
+    accurate event determination, dosimetry, and
+     timely reporting to alert crew to seek shelter           Long Term Health Impact ­ Post Mission
+                                                                              Carcinogenesis
+               are essential for crew safety.
+                                                     Radiation exposure may cause increased cancer
+Trapped particles are a third type of radiation      morbidity or mortality risk for astronauts. There is also a
+that is a risk in certain circumstances              risk of changes in cognition, motor function, and
+(International Space Station (ISS): South            behavior or neurological disorders.
+Atlantic Anomaly (SAA); Lunar: Van Allen belts).
+These medium-to-low energy protons and                                        In Mission Risk
+electrons are a secondary source of exposure                   Acute Radiation Syndromes from SPEs
+that contribute to long-term health effects (not     Acute radiation syndromes, such as nausea, vomiting,
+acute). However due to short passes through          and fatigue, may occur due to in mission radiation
+the SAA and Van Allen belts, and the fact that       exposure, as well as skin injuries and depletion of blood-
+typical SPE shielding is effective against trapped   forming organs. Effective shielding and environmental
+particles, additional radiation shielding is not     monitoring minimizes this risk. See shielding guidelines.
+required.
+
+NASA Office of the Chief Health & Medical Officer (OCHMO)                           12/27/2022  2
+This Technical Brief is derived from NASA-STD-3001 and is for reference only.           Rev E
+It does not supersede or waive existing Agency, Program, or Contract requirements.
+NASA-STD-3001 Technical Brief  Design for Ionizing Radiation Protection
+OCHMO-TB-020
+
+Background
+
+Space Radiation Environment Overview
+
+   Probability of Space Radiation Events
+            · GCR dose & SPE probability are anti-correlated over 11-year solar cycle.
+            · Near or long-term prediction of SPE occurrence is not accurate, however the dose-rates
+                  for the large majority of past SPEs show real-time responses and should be adequate to
+                  reduce exposures to well below NASA dose limits.
+            · In an effort of prudence and preparation, current plans are in place for 1 in 100
+                  (centennial) and 1 in 1000 (millennium) SPE events.
+
+· To better understand risk of GCR exposure, dose rates are calculated utilizing simulators
+     which retrospectively estimate secondary particle fluence as well as ambient dose
+     equivalent rates and effective dose rates at any point in the atmosphere. Further
+     information can be found in the reference article: Numerical calculation of the radiation
+     exposure from galactic cosmic rays at aviation altitudes with the Professional Aviation
+     Dose Calculator (PANDOCA) core model (Matthia, Meier, & Reitz, 2014).
+
+NASA Office of the Chief Health & Medical Officer (OCHMO)                           12/27/2022            3
+This Technical Brief is derived from NASA-STD-3001 and is for reference only.           Rev E
+It does not supersede or waive existing Agency, Program, or Contract requirements.
+NASA-STD-3001 Technical Brief  Design for Ionizing Radiation Protection
+OCHMO-TB-020
+
+Background
+
+Radiation Technical Requirements Overview
+
+        NASA updated the astronaut Space Flight Radiation Permissible Exposure Limit, the solar
+        particle event standards and also added a nuclear technologies standard. The graphic below
+        summarizes the standards. The standards are all based on dose (mSv) with a relationship to
+        Risk of Exposure-Induced Death (REID) for cancer mortality. Note : The Galactic Cosmic
+        Radiation (GCR) has not been formally adopted but is under consideration.
+
+ Career Space Permissible Exposure Limit for Space Flight Radiation [V1 4030] An individual astronaut's
+total career effective radiation dose due to space flight radiation exposure shall be less than 600 mSv. This
+
+                 limit is universal for all ages and sexes. From NASA-STD-3001 Volume 1, Rev B
+
+The NASA effective dose for determining the standard threshold limit is calculated using the NASA Q
+(based on the NASA cancer model of 2012), 35-year-old female model parameters (tissue weighting
+factors, phantom, etc.) for both males and females. Individual astronaut risk of exposure-induced death
+(REID) calculations are calculated using the appropriate NASA Q (based on the NASA cancer model of 2012)
+sex and age model parameters. See next page.
+
+NASA Office of the Chief Health & Medical Officer (OCHMO)                           12/27/2022      4
+This Technical Brief is derived from NASA-STD-3001 and is for reference only.           Rev E
+It does not supersede or waive existing Agency, Program, or Contract requirements.
+NASA-STD-3001 Technical Brief  Design for Ionizing Radiation Protection
+OCHMO-TB-020
+
+Background
+
+Radiation Technical Requirements Overview
+
+  The table below provides an example of a notional crewmember with three flights and their total dose
+  exposure and mean REID calculations for both female and male.
+
+                                                                                    This graph illustrates the
+                                                                                    maximum excess risk
+                                                                                    based on the NASA
+                                                                                    spaceflight radiation
+                                                                                    exposure standard and
+                                                                                    provides a comparison to
+                                                                                    lifestyle factors.
+
+NASA Office of the Chief Health & Medical Officer (OCHMO)                           12/27/2022          5
+This Technical Brief is derived from NASA-STD-3001 and is for reference only.           Rev E
+It does not supersede or waive existing Agency, Program, or Contract requirements.
+NASA-STD-3001 Technical Brief                            Design for Ionizing Radiation Protection
+OCHMO-TB-020
+
+Background
+
+Radiation Technical Requirements Overview
+
+    NASA-STD-3001 Volume 1 Rev B: Short-Term Radiation Limits ­ Solar Particle Events [V1 4031] The
+    program shall protect crewmembers from exposure to the design reference solar particle event (SPE)
+   environment proton energy spectrum (sum of the October 1989 events) to less than a NASA effective
+
+                               dose of 250 mSv. From NASA-STD-3001 Volume 1, Rev B
+
+                        Recommendations for types of SPE shielding for mission location and duration
+
+    NASA-STD-3001 Volume 1 Rev B: Crew Radiation Limits for Nuclear Technologies [V1 4032]
+Radiological exposure from nuclear technologies emitting ionizing radiation to crewmembers (e.g.,
+radioisotope power systems, fission reactors, etc.) shall be less than an effective dose of 20 mSv per
+ mission year (prorated/extrapolated to mission durations). From NASA-STD-3001 Volume 1, Rev B
+
+This limit is based on not adding more than 10% radiation exposure beyond the space environment
+
+radiation of the mission. Based on an analysis for a surface-based mission, the radiation environment
+
+exposure is approximately 0.5 mSv per day; and 10% of this value sets the standard to 0.05 mSv per day
+
+and ~20 mSv/mission year. This standard is applied to both surface and free-space missions regardless of
+
+mission solar cycle. Exact mission assumptions should be considered when performing the calculation;
+
+parameters should include estimates of time in a habitat, habitat shielding, and EVA frequency. For
+
+missions that are leveraging nuclear sources for a propulsion system, the tradeoff of reduced mission
+
+duration due to faster transit which reduces the crew exposure
+
+to space flight radiation exposure should be considered
+
+compared to the increased exposure due to the nuclear source.
+
+For example, if the nuclear propulsion system saved 90 days of
+
+exposure during the transit to Mars which equates to
+
+1.5 mSv/day × 90 days = 135 mSv "saved" space flight radiation
+
+exposure and the source generates 150 mSv, then the net
+
+exposure is +15 mSv.
+
+NASA Office of the Chief Health & Medical Officer (OCHMO)                           12/27/2022            6
+This Technical Brief is derived from NASA-STD-3001 and is for reference only.           Rev E
+It does not supersede or waive existing Agency, Program, or Contract requirements.
+NASA-STD-3001 Technical Brief                Design for Ionizing Radiation Protection
+OCHMO-TB-020
+
+Reference Data
+
+Effective Dose (mSv per Mission Day) Variation with Solar Cycle
+
+Engineering Countermeasures
+· The best way to shield from ionizing
+
+   radiation is to provide as much physical
+   material between a person and the
+   source of radiation as possible. Dense
+   and thick materials that essentially
+   absorb the high energy particles from
+   incoming radiation are ideal but prove
+   difficult in space travel due to their
+   significant amounts of mass.
+
+Shielding Materials
+· Aluminum and polyethylene are the most
+
+   commonly used shielding materials. They
+   provide an average 50% reduction in
+   dosage levels from SPE radiation. GCR
+   radiation does not respond to shielding,
+   with only an average 7% reduction in
+   dosage levels. Additionally, secondary
+   radiation is produced within tissues,
+   further reducing any benefits of GCR
+   shielding.
+
+NASA Office of the Chief Health & Medical Officer (OCHMO)                           12/27/2022  7
+This Technical Brief is derived from NASA-STD-3001 and is for reference only.           Rev E
+It does not supersede or waive existing Agency, Program, or Contract requirements.
+NASA-STD-3001 Technical Brief                     Design for Ionizing Radiation Protection
+OCHMO-TB-020
+
+Reference Data
+
+Ray Tracing tools and Effectiveness of Shielding
+
+Ray Tracing technology examines the
+effectiveness of shielding tools in blocking
+radiation. Evenly distributed rays are
+created to start from dose point and end
+outside the vehicle. Each ray records
+distance and respective density of the parts
+it passes. Areal mass density is calculated
+and used in transport code that evaluates
+particle flux at dose point.
+
+Effect of ISS Shielding on crew daily dose
+
+Effect of using water bags/stowage as a shelter during an SPE event
+                   beyond low earth orbit in a Capsule
+
+Effective Dose (mSv) by crew location within      Crew  Crew                        Crew  Crew
+capsule*                                           #1    #2                          #3    #4
+Effective Dose E                                  214   210                         259   231
+Effective Dose (Optimized Pre-Launch Stowage)      68    65                          66    66
+Effective Dose (Optimized Return Stowage)          83    75                          73    83
+
+*Note the different doses based on location within a vehicle
+
+NASA Office of the Chief Health & Medical Officer (OCHMO)                                 12/27/2022  8
+This Technical Brief is derived from NASA-STD-3001 and is for reference only.                 Rev E
+It does not supersede or waive existing Agency, Program, or Contract requirements.
+NASA-STD-3001 Technical Brief  Design for Ionizing Radiation Protection
+OCHMO-TB-020
+
+Application
+
+Design Considerations
+· Shielding design must implement ALARA for mission duration < 6 months with respect to SPE
+
+     protection.
+
+· For missions > 6 months, it is recommended that vehicle shielding be at least 20 g/cm2 to protect the
+     crew from SPEs.
+
+· Storm shelter: Additional Storm Shelter with an added 10 cm water equivalent in crew quarters to
+     protect against centennial solar particle event.
+
+         · This can be achieved by rearranging items such as water containers and/or high hydrogen
+              content materials.
+
+         · Timelines of SPEs allow sufficient time for re-configuration.
+
+         · Protection for a 1000-year SPE event would require ~20 cm water equivalent for shielding.
+
+· Due to the nature of GCRs, shielding is less effective. GCR particles scatter into multiple particles when
+     they strike shielding.
+
+· Radiation alerting provides an additional layer of protection to limit exposure to SPEs (early warning
+     allows for crew to safe vehicle and configure shelter).
+
+         · Real-time alert dosimetry also provides a very high level of protection for EVAs if termination
+              occurs within 2 hours and there is access to shielding.
+
+· Radiation dose monitoring provides critical occupational health information to understand the effects
+     of radiation exposure.
+
+· Designs can be evaluated and maximized for shielding effectiveness utilizing existing Shield Geometry
+     Model and Shielding Analysis by computer-aided design (CAD) tools, as well as conducting Ray Tracing.
+
+Vehicle Design Considerations                                  Source: Bailey (2012) ­ Deep
+· Current engineering and design teams are researching             Space Habitat Project
+
+   the possibility of utilizing a `surrounded' vs. `in-line'
+   architecture approach for crew habitat in hopes that
+   there is a reduction in overall exposure to GCR radiation.
+   A surrounded architecture approach utilizes the hub and
+   spoke ideology, with a centralized node module acting as
+   the core/hub at the center of the layout where crew
+   activity takes place most of the time. The structure
+   surrounding the core/hub would be comprised of major
+   structural elements that contain logistics, equipment,
+   trash, props, etc.
+
+NASA Office of the Chief Health & Medical Officer (OCHMO)                           12/27/2022  9
+This Technical Brief is derived from NASA-STD-3001 and is for reference only.           Rev E
+It does not supersede or waive existing Agency, Program, or Contract requirements.
+NASA-STD-3001 Technical Brief  Design for Ionizing Radiation Protection
+OCHMO-TB-020
+
+Application
+
+Guidelines for Space Radiation Shielding Requirements for Exploration Missions
+
+· NASA's Health and Medical Technical Authority has developed Shielding Requirement
+     Guidelines for exploration missions that were reviewed by Space Radiation Research
+     Clinical Advisory Panel (RCAP). These Guidelines are intended to provide closure for
+     vehicle design requirements.
+
+       · Analysis shows decennially large SPEs lead to doses for average spacecraft
+             shielding below NASA Dose limits requiring only ALARA.
+
+       · However centennial and millennial events require a well designed "storm
+             shelter".
+
+· Large majority (~95%) of SPEs require only ALARA considerations and do not approach
+     dose limits.
+
+       · A Centennial Event (1 per 100 years) can be shielded below NASA dose limits
+             with additional 10 cm water equivalent storm-shelter shielding.
+
+       · Millennial Event (1 per 1000 year) with additional 20 cm water equivalent storm-
+             shelter shielding.
+
+· Assuming a vehicle with 20 g/cm2 aluminum ­ Additional Storm Shelter with additional
+     10 cm water equivalent in crew quarters to protect against centennial solar particle
+     event.
+
+       · Combination of inherent and reconfigurable shielding.
+
+       · Timelines of SPEs allow sufficient time for re-configuration.
+
+· Mission disruption is a major risk from SPEs, especially for extravehicular activities
+     (EVAs).
+
+       · Spacecraft shielding requirements could be impacted by additional doses
+             incurred by crew during EVA, especially on lunar surface.
+
+       · Real-time alert dosimetry provides a very high level of protection if EVA
+             termination occurs within 2 hrs.
+
+       · The probability of EVA organs doses >100 mSv is less than one in a million based
+             on SPE statistics of event frequency, size and energy spectra.
+
+· Shielding guidelines could be modified by new knowledge of GCR, central nervous
+     system functioning, cancer, and other risks.
+
+NASA Office of the Chief Health & Medical Officer (OCHMO)                           12/27/2022  10
+This Technical Brief is derived from NASA-STD-3001 and is for reference only.           Rev E
+It does not supersede or waive existing Agency, Program, or Contract requirements.
+NASA-STD-3001 Technical Brief  Design for Ionizing Radiation Protection
+OCHMO-TB-020
+
+Back-Up
+
+NASA Office of the Chief Health & Medical Officer (OCHMO)                           12/27/2022  11
+This Technical Brief is derived from NASA-STD-3001 and is for reference only.           Rev E
+It does not supersede or waive existing Agency, Program, or Contract requirements.
+            NASA-STD-3001 Technical Brief  Design for Ionizing Radiation Protection
+            OCHMO-TB-020
+
+Major Changes Between Revisions
+
+Rev D  Rev E
+· Updated format.
+· Added additional information to be consistent with NASA-
+
+   STD-3001 Volume 1 Rev C and Volume 2 Rev D.
+
+Rev C  Rev D
+· Updated information to be consistent with NASA-STD-3001
+
+   Volume 1 Rev B and Volume 2 Rev C.
+
+Rev B  Rev C
+· Added information regarding shielding materials and
+
+   vehicle/spacecraft design considerations.
+· Added information regarding frequency of radiation events.
+· Added additional information about ray tracing.
+· Added new HMTA proposed guidelines for space radiation
+
+   shielding requirements.
+· Overall formatting/template updates.
+
+NASA Office of the Chief Health & Medical Officer (OCHMO)                           12/27/2022  12
+This Technical Brief is derived from NASA-STD-3001 and is for reference only.           Rev E
+It does not supersede or waive existing Agency, Program, or Contract requirements.
+NASA-STD-3001 Technical Brief  Design for Ionizing Radiation Protection
+OCHMO-TB-020
+
+Referenced Technical Requirements
+
+NASA-STD-3001 Volume 1 Revision B
+[V1 4029] As Low as Reasonably Achievable (ALARA) Principle All crew radiation exposures shall
+be minimized using the ALARA principle.
+[V1 4030] Career Space Permissible Exposure Limit for Space Flight Radiation An individual
+astronaut's total career effective radiation dose due to space flight radiation exposure shall be less
+than 600 mSv. This limit is universal for all ages and sexes.
+The NASA effective dose for determining the standard threshold limit is calculated using the NASA
+Q (based on the NASA cancer model of 2012), 35-year-old female model parameters (tissue
+weighting factors, phantom etc.) for both males and females. Individual astronaut REID calculations
+are calculated using the appropriate NASA Q (based on the NASA cancer model of 2012) sex and
+age model parameters.
+[V1 4031] Short-Term Radiation Limits ­ Solar Particle Events The program shall protect
+crewmembers from exposure to the design reference solar particle event (SPE) environment proton
+energy spectrum (sum of the October 1989 events) to less than a NASA effective dose of 250 mSv.
+[V1 4032] Crew Radiation Limits for Nuclear Technologies Radiological exposure from nuclear
+technologies emitting ionizing radiation to crewmembers (e.g., radioisotope power systems, fission
+reactors, etc.) shall be less than an effective dose of 20 mSv per mission year
+(prorated/extrapolated to mission durations) and utilizing the ALARA principle.
+
+NASA-STD-3001 Volume 2 Revision C
+[V2 6095] Ionizing Radiation Protection Limit The program shall set system design requirements to
+prevent potential crewmembers from exceeding PELs as set forth in NASA-STD-3001, Volume 1.
+[V2 6097] Crew Radiation Exposure Limits The program/project shall design systems using the
+ALARA principle to limit crew radiation exposure.
+[V2 6098] Radiation Environments The program shall specify the radiation environments to be
+used in verifying the radiation design requirements.
+[V2 6099] Space Weather Monitoring The program shall set requirements specifying appropriate
+capabilities to be provided for real-time monitoring of space weather (solar particle events (SPE),
+galactic cosmic rays (GCR), etc.) for characterization of the radiation environment and operational
+response by ground personnel and the crew.
+[V2 6100] Ionizing Radiation Alerting The system shall include a method to alert all crewmembers
+the crew locally and remotely when radiation levels are expected to exceed acceptable levels.
+[V2 6101] Ionizing Radiation Dose Monitoring To characterize and manage radiation exposures,
+the program shall provide methods for monitoring personal dose and dose equivalent exposure,
+ambient monitoring of particle fluence as a function of direction, energy, and elemental charge and
+monitoring of ambient dose and ambient dose equivalent.
+
+NASA Office of the Chief Health & Medical Officer (OCHMO)                           12/27/2022          13
+This Technical Brief is derived from NASA-STD-3001 and is for reference only.           Rev E
+It does not supersede or waive existing Agency, Program, or Contract requirements.
+NASA-STD-3001 Technical Brief  Design for Ionizing Radiation Protection
+OCHMO-TB-020
+
+Reference List
+
+1. Chancellor, J., Scott, G., & Sutton, J. (2014). Space Radiation: The Number One Risk to Astronaut
+    Health beyond Low Earth Orbit. Life, 4(3), 491­510.
+
+2. Real Martians: How to Protect Astronauts from Space Radiation on Mars (Frazier 2017).
+    https://www.nasa.gov/feature/goddard/real-martians-how-to-protect-astronauts-from-space-
+    radiation-on-mars
+
+3. Space Faring: The Radiation Challenge. An Interdisciplinary Guide on Radiation and Human Space
+    Flight. https://www.nasa.gov/sites/default/files/atoms/files/space_radiation_ebook.pdf
+
+4. Countermeasures to Space Radiation. NASA Space Radiation Program (Cucinotta 2013).
+5. Deep Space Habitat Project: Radiation Studies for a Long Duration Deep Space Transit Habitat.
+
+    Engineering Directorate (Bailey 2012).
+6. HMTA Proposed Guidelines for Space Radiation Shielding Requirements for Exploration Missions.
+
+    Health and Medical Technical Authority ­ Human Health and Performance Directorate (Francisco
+    2015).
+7. Antonsen, E. Report on Virtual Radiation Risk Panel. September 24, 2020. Internal NASA document.
+8. CR-HSRB-16-005: Risk of Adverse Health Outcomes and Performance Decrements Resulting from
+    Space Radiation Exposure.
+9. Simonsen & Semones. Agency radiation requirements and overview of radiation risk. Internal NASA
+    document.
+10. Matthia, D., Meier, M.M., and Reitz, G. Numerical calculation of the radiation exposure from galactic
+    cosmic rays at aviation altitudes with the PANDOCA core model. Space Weather, 12(3): 161-171.
+11. Artemis, meet ARTEMIS: Pursuing Sun Science at the Moon. (Oct 7 2019).
+    https://www.nasa.gov/feature/goddard/2019/artemis-meet-artemis-pursuing-sun-science-at-the-
+    moon
+
+NASA Office of the Chief Health & Medical Officer (OCHMO)                           12/27/2022             14
+This Technical Brief is derived from NASA-STD-3001 and is for reference only.           Rev E
+It does not supersede or waive existing Agency, Program, or Contract requirements.
+

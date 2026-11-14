@@ -1,0 +1,798 @@
+                                                      NASA-STD-3001 Technical Brief
+
+Carbon Dioxide (CO2)                                              Relevant Technical
+                                                                     Requirements
+OCHMO-TB-004
+Rev B                                                 NASA-STD-3001 Volume 1, Rev B
+                                                      [V1 3003] In-Mission Preventive Health Care
+   Executive Summary                                  [V1 3004] In-Mission Medical Care
+                                                      [V1 5002] Astronaut Training
+    On Earth, our Carbon Dioxide (CO2) levels are     [V1 5009] Physiological Exposure Mission
+    managed by our lungs and environment. Our         Training
+    lungs collect vital oxygen (O2) through
+    inhalation, circulate O2 throughout our body      NASA-STD-3001 Volume 2, Rev C
+    and to vital organs via bloodstream, and then     [V2 4015] Aerobic Capacity
+    upon exhale, release CO2 into the                 [V2 6001] Trend Analysis of Environmental
+    environment. When our respiratory system          Data
+    does not function nominally, either from          [V2 6004] Nominal Vehicle/Habitat Carbon
+    physical or environmental limits, CO2 can build   Dioxide Levels
+    up in our bodies (hypercapnia) and cause          [V2 6006] Total Pressure Tolerance Range for
+    symptoms such as headache, dyspnea, fatigue,      Indefinite Crew Exposure
+    and in extreme cases, death. Our environment      [V2 7041] Environmental Control
+    naturally eliminates CO2 through                  [V2 6020] Atmospheric Data Recording
+    photosynthesis of plants and trees,               [V2 6021] Atmospheric Data Displaying
+    weathering, and other experimental CO2            [V2 6022] Atmospheric Monitoring and
+    removal processes. Humans in space face           Alerting Parameters
+    hostile, enclosed environments (including         [V2 6107] Nominal Vehicle/Habitat
+    vehicles and suits) that do not have the benefit  Atmospheric Ventilation
+    of natural CO2 removal, relying on CO2 removal    [V2 6108] Off-Nominal Vehicle/Habitat
+    equipment (e.g., the Carbon Dioxide Removal       Atmospheric Ventilation
+    Assembly (CDRA), lithium hydroxide, and           [V2 11034] Suited Atmospheric Data Recording
+    amine systems) to help regulate CO2 levels in     [V2 11035] Suited Atmospheric Data Displaying
+    the environment and help decrease risk of         [V2 11036] Suited Atmospheric Monitoring and
+    negative consequences of elevated CO2             Alerting
+    exposure.                                         [V2 11037] EVA Suited Metabolic Rate
+                                                      Measurement
+                                                      [V2 11038] EVA Suited Metabolic Rate Display
+                                                      [V2 11039] Nominal Spacesuit Carbon Dioxide
+                                                      Levels
+NASA-STD-3001 Technical Brief                                                       Carbon Dioxide (CO2)
+OCHMO-TB-004
+
+Background
+
+            Main Symptoms of CO2 Toxicity (Hypercapnia)
+
+                                These symptoms represent potential
+                               side-effects of hypercapnia, however it
+                               is important to note that most of these
+                               symptoms have never been observed
+
+                                           during spaceflight.
+
+· The most common symptoms experienced during spaceflight are headaches and vision changes
+   (Spaceflight Associated Neuro-ocular Syndrome [SANS]).
+
+· These two symptoms are commonly linked to fluid shifts and potential increase in intra-cranial
+   pressure (ICP) due to the microgravity environment in spaceflight.
+
+NASA Office of the Chief Health & Medical Officer (OCHMO)                           11/10/2022  2
+This Technical Brief is derived from NASA-STD-3001 and is for reference only.           Rev B
+It does not supersede or waive existing Agency, Program, or Contract requirements.
+NASA-STD-3001 Technical Brief                                                       Carbon Dioxide (CO2)
+OCHMO-TB-004
+
+Background
+
+Effects of CO2 on Cognitive Functioning
+Prior research offers conflicting data on CO2 exposure and the effects on cognitive functioning, including
+memory, concentration, decision-making, and task performance. However, several recent terrestrial studies have
+shown the CO2 exposure at levels currently maintained onboard spacecraft and submarines does not reduce
+cognition and performance in astronaut-like subjects or submarine officers.
+
+· Effects of acute exposures to carbon dioxide on decision-making and cognition in astronaut-like subjects (Scully
+   et al., 2019). Findings state "There were no clear dose-response patterns for performance on either Strategic
+   Management Simulation or Cognition".
+
+· Acute Exposure to Low-to-Moderate Carbon Dioxide Levels and Submariner Decision Making (Rodehe et al.,
+   2018). Findings state "There were no significant differences for any of the nine Strategic Management
+   Simulation measures of decision making between CO2 exposure conditions".
+
+· Effects of -12° head-down tilt with and without elevated levels of CO2 on cognitive performance: the SPACECOT
+   study (Basner et al., 2017). Findings state "There were no statistically significant time-in-CO2 effects for any
+   cognitive outcome".
+
+       Effects of -12° head-down tilt (HDT) with and without elevated CO2 on cognitive performance
+
+                                                                                       The chart represents a summary of
+                                                                                       results from a subset of tests from
+
+                                                                                           a widely used and validated
+                                                                                        neurocognitive battery, the Penn
+
+                                                                                          Computerized Neurocognitive
+                                                                                         Battery, as well as a number of
+                                                                                         additional tests that have either
+
+                                                                                             been used extensively in
+                                                                                       spaceflight or that assess cognitive
+
+                                                                                         domains of particular interest in
+                                                                                           spaceflight (including spatial
+
+                                                                                        orientation, emotion recognition,
+                                                                                            and risk decision making).
+
+1=0.1 hours   Displayed data reflect Standard Deviation (SD) units. Error bars reflect 95%
+2= 5.2 hours
+3= 21 hours   confidence intervals. A confidence interval that does not include 0 indicates a
+
+  into HDT    statistically significant difference relative to baseline data collection (BDC) at P <
+
+              0.05. The only outcomes with a significant time-in-HDT main effect in both the
+
+              discrete and the continuous exposure duration models were physical exhaustion
+
+              (P = 0.0012 and P = 0.0043, respectively) and mental fatigue (P = 0.0328 and P =
+
+              0.0205, respectively). The severity of these symptoms increased with increasing
+
+              exposure duration. 0.5% CO2 = 3.8 mmHg CO2.                           Source: Basner et al., 2017.
+
+NASA Office of the Chief Health & Medical Officer (OCHMO)                           11/10/2022        3
+This Technical Brief is derived from NASA-STD-3001 and is for reference only.           Rev B
+It does not supersede or waive existing Agency, Program, or Contract requirements.
+NASA-STD-3001 Technical Brief                                                       Carbon Dioxide (CO2)
+OCHMO-TB-004
+
+Background
+
+                                   Key Historical CO2 Concentrations
+
+Current NASA-STD-3001 Volume       Anecdotal evidence from previous spaceflight missions
+
+2 Rev C [V2 6004] limits the       have found the following associations between CO2 levels
+                                   and symptomology:
+average 1-hour CO2 partial
+pressure (ppCO2) in the habitable  · Headaches at levels between 2.8-4.5 mmHg; worsening
+volume to no more than 3 mmHg.
+                                      with increasing levels of CO2 accompanied by fatigue
+Previous requirements accepted        and malaise flushing.
+
+a larger range (3.8 to 7.5 mmHg)   · Fatigue malaise, decreased sleep, and nausea reported
+
+that has been lowered to 3
+
+mmHg due to evidence from             at levels above 4.5 mmHg.
+observed operational and           · 5th cranial nerve dysesthesia at 4.5-5.0 mmHg.
+research data.                     · Chronic cough, poor sleep, blurred vision, and frontal
+
+*Referenced New NIOSH              headaches reported at 3.5 mmHg.
+
+Recommended Exposure Limit         See source (NASA/TP­2010­ 216126) for listed references
+dated 2005.
+
+NASA Office of the Chief Health & Medical Officer (OCHMO)                           11/10/2022  4
+This Technical Brief is derived from NASA-STD-3001 and is for reference only.           Rev B
+It does not supersede or waive existing Agency, Program, or Contract requirements.
+NASA-STD-3001 Technical Brief                                                       Carbon Dioxide (CO2)
+OCHMO-TB-004
+
+Background
+
+CO2-Induced Headaches
+Research and past historical data has revealed an association between reported headaches and CO2 levels
+among crewmembers.
+· A study of data collected from Expeditions 2 to 31 (N=49) found that CO2 level, age at launch, time in-flight,
+
+   and data source were significantly associated with reported headaches on the ISS.
+· 19 of the 49 astronauts reported experiencing headaches (~38.7%).
+· To keep the risk of headache below 1%, average 7-day CO2 needs to be maintained below 2.5 mmHg (current
+
+   ISS range: 1 to 9 mmHg; 3001 standard requires <3 mmHg).
+· Most experienced headaches were moderate intensity, requiring the use of analgesics in many cases.
+· A retrospective analysis of the case reports found a total of 46 days with reported headaches and 1,670 days
+
+   of non-reports (no headaches observed).
+· Based on this data, the current NASA-STD-3001 Volume 2 Rev C [V2 6004] limits the average 1-hour CO2
+
+   partial pressure (ppCO2) in the habitat volume to no more than 3 mmHg to keep incidence of headaches
+   below 1.4%.
+
+               Figure: Predicted probability of headache on the basis of average 7-day CO2 levels
+
+Some observations suggest that what appears to be increased CO2 sensitivity during spaceflight may
+  actually be attributed to individual predisposition to CO2 retention, adaption to microgravity, and
+local fluctuations of CO2 that are not measured by fixed sensors (Law, Watkins, & Alexander, 2010).
+  Fluid shift due to decreased venous and lymphatic drainage in microgravity largely contributes to
+
+                       symptoms similar to CO2 over-exposure, including headaches.
+
+NASA Office of the Chief Health & Medical Officer (OCHMO)                           11/10/2022         5
+This Technical Brief is derived from NASA-STD-3001 and is for reference only.           Rev B
+It does not supersede or waive existing Agency, Program, or Contract requirements.
+         NASA-STD-3001 Technical Brief                                               Carbon Dioxide (CO2)
+         OCHMO-TB-004
+
+Reference Information
+
+Contributors to CO2 Levels During Spaceflight
+· On earth, average indoor air contains CO2 concentrations between 0.08% to 0.1% (0.608 to 0.76 mmHg).
+· NASA-STD-3001 Volume 2 Rev C [V2 6004]: The system shall limit the average one-hour CO2 partial pressure
+
+   (ppCO2) in the habitable volume to no more than 3 mmHg.
+
+               Crew-Induced Metabolic Loads for a Standard Mission Day with Exercise
+
+Crewmember Activity Description     Duration of    O2 Consumption                      CO2 Output
+                                    Activity (hr)    kg/min 10-4                      kg/min 10-4
+                                                                                     (lbm/min 10-4)
+                                                   (lbm/min 10-4)                      4.55 (10.03)
+                                                                                       7.2 (15.87)
+Sleep                                   8                     3.60 (7.94)            49.85 (109.90)
+                                                                                     49.85 (109.90)
+Nominal                                 0.25       5.68 (12.55)                        7.2 (15.86)
+                                                                                       7.2 (15.86)
+Exercise 0-15 min at 75% VO2max         0.25       39.40 (86.86)                       7.2 (15.86)
+                                                   39.40 (86.86)                       7.2 (15.86)
+Exercise 15-30 min at 75% VO2max        0.25       5.68 (12.55)                        1.04 (2.29)
+                                                   5.68 (12.55)                        0.91 (2.00)
+Recovery 0-15 min post 75% VO2max       0.25       5.68 (12.55)
+                                                   5.68 (12.55)
+Recovery 15-30 min post 75% VO2max      0.25
+                                                    0.82 (1.80)
+Recovery 30-45 min post 75% VO2max      0.25
+
+Recovery 45-60 min post 75% VO2max      0.25
+
+Total Per Day                           24
+
+Total Per Day (no exercise)             24                    0.72 (1.59)
+
+Source: Human Integration Design Handbook (HIDH) NASA (2014)
+
+· Respiratory quotient (RQ) is used in calculations of                               11/10/2022      6
+   basal metabolic rate when estimated from CO2                                          Rev B
+   production. It is calculated from the ratio of CO2
+   produced to O2 consumed by the body
+   (RQ = CO2 eliminated / O2 consumed). The RQ value is
+   linked to intake of macronutrients (carbohydrates,
+   fats, and proteins). An RQ of 0.92 is assumed for the
+   O2 consumption and CO2 output determinations in
+   the table above. Modifying crew diet can help
+   lower the environmental CO2 output levels
+   (example: consuming more protein and less
+   carbohydrates).
+
+ NASA Office of the Chief Health & Medical Officer (OCHMO)
+ This Technical Brief is derived from NASA-STD-3001 and is for reference only.
+ It does not supersede or waive existing Agency, Program, or Contract requirements.
+NASA-STD-3001 Technical Brief                                                       Carbon Dioxide (CO2)
+OCHMO-TB-004
+
+Application                                                           ISS CO2 Removal Assembly (CDRA)
+                                                         Crewmember performing maintenance on ISS CDRA
+Existing Technology
+Carbon Dioxide Removal Assembly (CDRA) on the ISS
+(International Space Station):
+· CDRA continuously removes six person-equivalent
+
+   of CO2, when operating with both CO2 removal beds
+   (dual beds functioning).
+· Minimum ISS CO2 removal rate is based on the
+   equation for human equivalent unit (HEU) with the
+   CO2 partial pressure ranging from 2.0 to 3.9 mmHg.
+· The CDRA houses a four-bed molecular sieve
+   (4BMS) that utilize zeolite crystals composed of
+   silicon, aluminum, and oxygen to remove excess
+   carbon dioxide exhaled by the crew.
+
+Process:
+· Air enters CDRA, it passes through 1st bed where
+
+   water is removed via desiccant portion of Bed 1.
+· The Dry air is then routed to the zeolite portion of
+
+   Bed 2 for CO2 removal.
+· The Scrubbed air flows over the previously
+
+   saturated desiccant portion of Bed 2 absorbing
+   previously removed moisture and returning it to
+   cabin.
+· Simultaneously, the isolated Adsorbent portion of
+   Bed 1 is exposed to space vacuum and heated,
+   causing the adsorbed CO2 to be released and vented
+   to space.
+· When the adsorbent portion of Bed 2 becomes
+   saturated the valves are reconfigured and the beds
+   switch roles allowing the saturated Bed 2 to replace
+   Bed 1 and vent CO2 into space.
+
+Advantages/Disadvantages:
+· Pros ­ Closed loop (does not require consumables
+
+   other than power); conserves water while removing
+   CO2.
+· Cons ­ Significant volume, replacement parts, and
+   maintenance required. Risk of zeolite dust
+   potentially affecting seals and mechanical
+   parts/function.
+
+NASA Office of the Chief Health & Medical Officer (OCHMO)                           11/10/2022  7
+This Technical Brief is derived from NASA-STD-3001 and is for reference only.           Rev B
+It does not supersede or waive existing Agency, Program, or Contract requirements.
+            NASA-STD-3001 Technical Brief                                            Carbon Dioxide (CO2)
+            OCHMO-TB-004
+                                                                                       Vozdukh
+Application                                                                         LiOH cartridge
+
+Existing Technology
+Vozdukh Russian CO2 Removal System:
+· Primary Russian segment CO2 removal system aboard ISS
+
+   (located in Service Module).
+· Has two desiccant beds and three adsorbent beds.
+· Cabin air is drawn into Vozdukh, passed through the desiccant
+
+   beds, moisture is removed, and CO2 is absorbed.
+· As one bed becomes saturated, second bed is placed in line.
+
+   The saturated bed is heated, and captured CO2 is released to
+   space.
+· If necessary, two beds can be used simultaneously and a third
+   bed acts in CO2 regeneration mode.
+· ISS utilizes both Vozdukh and CDRA in CO2 removal capacity.
+
+Lithium Hydroxide (LiOH):
+· Primary CO2 removal system aboard Apollo and the Space
+
+   Shuttle, and currently used as backup CO2 removal system on
+   ISS (CDRA is primary CO2 removal system on ISS).
+· Currently used as one option for CO2 removal during space
+   walks (regenerative Metal Oxide ­ METOX is the other method.)
+· The removal of carbon dioxide is accomplished by a chemical
+   reaction using lithium hydroxide (LiOH) adsorbent. This method
+   relies on the exothermic reaction of lithium hydroxide with
+   carbon dioxide gas to create more innocuous compound
+   lithium carbonate (Li2CO3) solid, and water (H2O).
+· LiOH material arranged in air-permeable canisters such that
+   cabin air flowing through canisters facilitates removal of CO2.
+Advantages/Disadvantages:
+· Pros ­ Simple and effective; highly reliable.
+· Cons ­ Canisters are not regenerated so may only be used once
+   (mass, stowage volume).
+
+     CO2+LiOH
+
+CO2        =
+     Li2CO3+H2O
+
+                                                                    Lithium Hydroxide cartridge exchange
+
+     CO2 and LiOH Chemical Reaction
+
+NASA Office of the Chief Health & Medical Officer (OCHMO)                           11/10/2022            8
+This Technical Brief is derived from NASA-STD-3001 and is for reference only.           Rev B
+It does not supersede or waive existing Agency, Program, or Contract requirements.
+NASA-STD-3001 Technical Brief                                                       Carbon Dioxide (CO2)
+OCHMO-TB-004
+
+Application
+
+Emerging Technology
+Thermal Amine Scrubber (TAS):
+CO2 removal system based on thermally regenerated solid amine adsorbent. TAS cycles between one
+adsorbing bed and one desorbing bed to remove CO2 and regenerate bed simultaneously. Desorbing bed
+is isolated from the process air and exposed to vacuum during thermal regeneration.
+· Water locker has passive water save desiccant canister and can recover 90% of incoming humidity in
+
+   process air stream, secondary desiccant wheel increases humidity recovery to 97%.
+· CO2 locker receives dry air and splits flow between 2 CO2 removal beds.
+· CO2 is removed from one bed containing solid amine while the other bed is regenerated.
+· During regeneration cycle the non-adsorbing bed is exposed to vacuum to purge CO2.
+· 96% of ullage air from adsorbing bed is evacuated using scroll compressor; removal rate of CO2 is 3.7
+
+   kg/day at 2 mmHg partial pressure.
+
+                                                                      Thermal Amine Scrubber
+
+Carbon Dioxide & Moisture Removal Amine Swing-bed (CAMRAS):
+
+· Pair of interleaved-layer beds filled with SA9T, a sorbent system,
+
+of highly porous plastic beads coated with an amine. SA9T is an
+
+   effective CO2 sorbent and has an affinity for water vapor.
+· A linear multi ball valve rotates 270 degrees back and forth to
+
+   control flow of air and vacuum to adsorbing and desorbing beds.                  Amine based filter beads
+· Air flows into the Amine Swing bed, a regenerable desiccant
+
+wheel dries and heats the air; air is later re-cooled by noncondensing heat exchangers.
+
+· Scrubbed air comes out of the CAMRAS and flows back into the double locker; flows through a blower,
+
+through an electric heater, and through the opposite side of the desiccant wheel for cooling and
+
+rehydration.
+
+· Air is returned to cabin through another filter and long hose that routes return air away from supply air
+
+inlet to prevent short circuiting of process air.
+
+· CAMRAS sorbent beds are regenerated by exposure to space vacuum via direct connection to the ISS
+
+vacuum system.
+
+NASA Office of the Chief Health & Medical Officer (OCHMO)                           11/10/2022                9
+This Technical Brief is derived from NASA-STD-3001 and is for reference only.           Rev B
+It does not supersede or waive existing Agency, Program, or Contract requirements.
+            NASA-STD-3001 Technical Brief                                   Carbon Dioxide (CO2)
+            OCHMO-TB-004
+                                                              Portable Life Support System PLSS
+Application
+
+Existing Technology
+Extravehicular Mobility Unit (EMU) CO2 Removal:
+· When astronauts go on a Spacewalk/EVA
+
+    (extravehicular activity), they build up CO2 levels from
+    breathing into a small closed space.
+· The spacesuit has a backpack system aboard called the
+    Portable Life Support System (PLSS), which controls the
+    environment of the spacesuit.
+· One of the key functions of the PLSS is to remove and
+    control CO2 delivered to the crewmember.
+    CO2 washout is a method in which CO2 levels are
+    controlled within the spacesuit helmet to limit the
+    amount inhaled by a crewmember.
+· The PLSS utilizes LiOH or METOX cartridges to absorb
+    and eventually disperse the excess CO2.
+· The lithium hydroxide cells are not regenerable and are
+    exchanged after each EVA.
+· The METOX cells are regenerable. They contain CO2
+    absorbent material. After each EVA they are placed into
+    a vehicle oven that heats off the CO2 from adsorbent
+    beds and vents it to the vehicle.
+· The CDRA then absorbs the CO2 from the vehicle and
+    vents into space.
+· The spacesuit helmet also has an emergency purge
+    valve to vent CO2 in emergency situations. This can
+    adversely affect the O2/CO2 balance.
+
+                                                              Portable Life Support System PLSS
+
+EMU Helmet Assembly
+· Consists of: Transparent shell, Neck Ring, Vent
+
+   Pad, Purge Valve and adjustable Valsalva
+   Device.
+· The Vent assembly diffuses incoming gas over
+   the astronaut's face.
+· Under the EMU helmet, astronauts wear the
+   communications carrier assembly, A.K.A.
+   Snoopy Cap.
+
+NASA Office of the Chief Health & Medical Officer (OCHMO)                           11/10/2022   10
+This Technical Brief is derived from NASA-STD-3001 and is for reference only.           Rev B
+It does not supersede or waive existing Agency, Program, or Contract requirements.
+NASA-STD-3001 Technical Brief                                                       Carbon Dioxide (CO2)
+OCHMO-TB-004
+
+Application
+
+CO2 Washout System
+· Carbon Dioxide washout describes the process of removing CO2 in an enclosed space. For the purpose
+
+   of this brief, we are discussing CO2 washout in a spacesuit and space helmet.
+· CO2 is a significant concern as the consequence of inadequate CO2 removal can result in hypercapnia
+
+   and related symptoms ranging from headache and fatigue to impaired cognitive function and death.
+
+· CO2 removal in a space helmet is challenging as it is difficult to ensure the quantity of CO2 that is
+   removed from the suit and not forming pockets in any area of the suit or helmet. It is also important to
+
+   ensure when CO2 is purged, it does not disrupt the critical breathable oxygen balance.
+· Fresh air outlet from the PLSS is located at the rear base of the helmet. Air flow is directed from the
+
+   back of the crewmember's head over their head and face into the suit where it exits the suit and flows
+
+   into the PLSS for filtration. This provides a continuous airflow, so the exhaled CO2 is entrained with the
+   fresh air loop from the PLSS. This mixed air then flows down into the suit to where it exits the suit and
+
+   flows back into the PLSS.
+
+· Exhaled air including CO2 is flowed through an adsorbent charcoal bed and contamination control
+   cartridges composed or either LiOH or METOX. This removes CO2, trace gases, and odors. The LiOH
+   cartridges are stored on the vehicle and replaced on the ground, the METOX cartridges can be
+
+   regenerated on orbit. Either of these are installed in the PLSS prior to EVA.
+
+· To address the life support challenges, especially when considering future, longer space missions, NASA
+
+   is developing an advanced portable life support system (APLSS) spacesuit for exploration. The
+
+   ventilation
+
+   loop of the APLSS is designed to assist with CO2 washout using
+   a regenerable rapid cycle amine (RCA) removal system,
+
+   efficient fan and heat exchange systems, and trace
+
+   contaminant control (TCC) unit placed inside the suit hatch
+
+   that allows for easy filter exchange.
+
+· NASA has also developed a new system called the Integrated
+
+   Ventilation Test System (IVTS) designed to study CO2 washout.
+· The IVTS has a ventilation test loop as found in APLSS and
+
+   suited manikin test apparatus (SMTA). The purpose is to
+
+   supplement human testing, optimize CO2 removal efficiently,
+   validate CO2 washout, evaluate spacesuit nitrogen efficiencies,
+   and optimize the rapid cycle amine (RCA) performance for
+
+   scrubbing CO2.
+
+                     Integrated                                                     11/10/2022  11
+              Ventilation Test                                                          Rev B
+
+                         System
+
+NASA Office of the Chief Health & Medical Officer (OCHMO)
+This Technical Brief is derived from NASA-STD-3001 and is for reference only.
+It does not supersede or waive existing Agency, Program, or Contract requirements.
+NASA-STD-3001 Technical Brief                                                       Carbon Dioxide (CO2)
+OCHMO-TB-004
+
+Mishaps                                                       Damaged Apollo 13 Service Module
+                                                                     Apollo 13 safe landing!
+Apollo 13 ­ April 11-17, 1970
+· Apollo 13 began their mission to land on and discover
+
+     new information about the moon on April 11, 1970.
+· Two days into their mission, a stir of the Service
+
+     Module (SM) oxygen tank resulted in an electrical
+     short causing the tank to explode, leaving the crew
+     without adequate life support.
+· The Lunar Module (LM), originally supplied for 2 of
+     the crew to use for 2 days on the lunar surface,
+     became a lifeboat supporting 3 crew for 4 days due to
+     the SM's inability to power the CM.
+· CO2 levels quickly rose (14.9 mmHg) and it became
+     apparent the LM did not have enough LiOH cylinders
+     to support the crew for 4 days.
+· Ground support identified that the CM had usable
+     remaining LiOH cartridges, but they were not the
+     same type/shape as the LM filters.
+· The astronauts were instructed to use plastic bags,
+     duct tape, and a suit hose to modify the filters,
+     enabling them to absorb CO2 and support the 3-
+     person crew. The CO2 levels dropped to 1 mmHg.
+· The crew rationed supplies and water and used the
+     minimum amount of power possible, allowing them
+     to survive in the cold, dark LM for 4 days during their
+     return to Earth.
+· The objective of visiting the moon was aborted, but
+     with significant ground support planning, the crew
+     was able to transfer back to the CM and safely land.
+
+Apollo 13 re-designed CO2 filter             Relevant Technical Requirements
+                                              NASA-STD-3001 Volume 2 Rev C
+                                  [V2 6004] The system shall limit the average 1-hour
+                                  CO2 partial pressure (ppCO2) in the habitable volume
+                                  to no more than 3 mmHg.
+                                  [V2 9001] Hardware and equipment performing
+                                  similar functions shall have commonality of crew
+                                  interfaces.
+                                  [V2 10012] Procedures for performing similar tasks
+                                  shall be consistent.
+
+NASA Office of the Chief Health & Medical Officer (OCHMO)                           11/10/2022  12
+This Technical Brief is derived from NASA-STD-3001 and is for reference only.           Rev B
+It does not supersede or waive existing Agency, Program, or Contract requirements.
+NASA-STD-3001 Technical Brief                                                       Carbon Dioxide (CO2)
+OCHMO-TB-004
+
+Mishaps
+
+Soyuz 23 ­ October 14, 1976
+· The Soyuz 23 had an automatic docking system malfunction during the final approach to Salyut 5 due
+
+   to an electronics failure.
+· Cosmonauts had less than two days of battery power remaining and missed the landing opportunity for
+
+   the day, so they powered down systems to conserve power.
+· A blizzard was active in the landing zone forcing a lake rather than land landing.
+· The descent module lowered in the dark on a single parachute which rocked as it entered the high
+
+   winds of the landing area.
+· They splashed down into the freezing water of Lake Tengiz, making recovery efforts extremely difficult.
+· The cosmonauts stayed in the capsule with systems shut off to save power.
+· As the capsule floated, the pressure equalization valve above the waterline provided air.
+· The salt water from the lake caused the secondary chutes to deploy by shorting out the sensors, the
+
+   parachute filled with water and dragged the capsule below the surface.
+· The ventilation had to be closed to prevent water entering the vehicle.
+· Finally, a helicopter, which could not lift the capsule due to water weight, was able to drag Soyuz 23 to
+
+   the lake edge.
+· The crew was found alive but incapacitated due to high CO2 levels inside the capsule.
+
+                                    Relevant Technical Requirements
+                                     NASA-STD-3001 Volume 2 Rev C
+[V2 6004] The system shall limit the average 1-hour CO2 partial pressure (ppCO2) in the
+habitable volume to no more than 3 mmHg.
+[V2 6006] The system shall maintain the pressure to which the crew is exposed to between
+26.2 kPa < pressure  103 kPa (3.8 psia < pressure  14.9 psia) for indefinite human exposure
+without measurable impairments to health or performance.
+
+NASA Office of the Chief Health & Medical Officer (OCHMO)                           11/10/2022  13
+This Technical Brief is derived from NASA-STD-3001 and is for reference only.           Rev B
+It does not supersede or waive existing Agency, Program, or Contract requirements.
+NASA-STD-3001 Technical Brief                                                       Carbon Dioxide (CO2)
+OCHMO-TB-004
+
+Back-Up
+
+NASA Office of the Chief Health & Medical Officer (OCHMO)                           11/10/2022  14
+This Technical Brief is derived from NASA-STD-3001 and is for reference only.           Rev B
+It does not supersede or waive existing Agency, Program, or Contract requirements.
+            NASA-STD-3001 Technical Brief                                           Carbon Dioxide (CO2)
+            OCHMO-TB-004
+
+Major Changes Between Revisions
+
+Rev A  Rev B
+· Updated to new template format.
+· Added additional information on Standard background and
+
+   application.
+
+Original  Rev A
+· Updated information to be consistent with NASA-STD-3001
+
+   Volume 1 Rev B and Volume 2 Rev C.
+
+NASA Office of the Chief Health & Medical Officer (OCHMO)                           11/10/2022  15
+This Technical Brief is derived from NASA-STD-3001 and is for reference only.           Rev B
+It does not supersede or waive existing Agency, Program, or Contract requirements.
+NASA-STD-3001 Technical Brief                                                       Carbon Dioxide (CO2)
+OCHMO-TB-004
+
+Referenced Technical Requirements
+
+NASA-STD-3001 Volume 1 Revision B
+[V1 3003] In-Mission Preventive Health Care All programs shall provide training, in-mission capabilities,
+and resources to monitor physiological and psychosocial well-being and enable delivery of in-mission
+preventive health care, based on epidemiological evidence-based probabilistic risk assessment (PRA) that
+takes into account the needs and limitations of each specific design reference mission (DRM), and
+parameters such as mission duration, expected return time to Earth, mission route and destination,
+expected radiation profile, concept of operations, and more. The term "in-mission" covers all phases of
+the mission, from launch, through landing on a planetary body and all surface activities entailed, up to
+landing back on Earth. In-mission preventive care includes, but is not limited to: (see NASA-STD-3001,
+Volume 1 Rev B for full standard).
+[V1 3004] In-Mission Medical Care All programs shall provide training, in-mission medical capabilities,
+and resources to diagnose and treat potential medical conditions based on epidemiological evidence-
+based PRA, clinical practice guidelines and expertise, historical review, mission parameters, and vehicle-
+derived limitations. These analyses should consider the needs and limitations of each specific DRM and
+vehicles. The term "in-mission" covers all phases of the mission, from launch, through landing on a
+planetary body and all surface activities entailed, up to landing back on Earth. In-mission capabilities
+(including hardware and software), resources (including consumables), and training to enable in-mission
+medical care, are to include, but are not limited to: see NASA-STD-3001, Volume 1 Rev B for full standard).
+[V1 5002] Astronaut Training Beginning with the astronaut candidate year, general medical training,
+including first aid, cardiopulmonary resuscitation (CPR), altitude physiological training, carbon dioxide
+exposure training, familiarization with medical issues, procedures of space flight, psychological training,
+and supervised physical conditioning training shall be provided to the astronaut corps.
+[V1 5009] Physiological Exposure Mission Training Physiological training designed to assist crewmembers
+with pre-mission familiarization to in-flight exposures (i.e., carbon dioxide [CO2] exposure training, hypoxia
+training/instruction, centrifuge, and high-performance aircraft microgravity adaptation training) in
+preparation for space flight shall be provided.
+
+NASA-STD-3001 Volume 2 Revision C
+
+[V2 4015] Aerobic Capacity The system shall be operable by crewmembers with the aerobic capacity as
+defined in NASA-STD-3001, Volume 1.
+[V2 6001] Trend Analysis of Environmental Data The system shall provide environmental monitoring data
+in formats compatible with performing temporal trend analyses.
+[V2 6004] Nominal Vehicle/Habitat Carbon Dioxide Levels The system shall limit the average one-hour
+CO2 partial pressure (ppCO2) in the habitable volume to no more than 3 mmHg.
+[V2 6006] Total Pressure Tolerance Range for Indefinite Crew Exposure The system shall maintain the
+pressure to which the crew is exposed to between 26.2 kPa < pressure  103 kPa (3.8 psia < pressure 
+14.9 psia) for indefinite human exposure without measurable impairments to health or performance.
+
+[V2 7041] Environmental Control The system environmental control shall accommodate the increased O2
+consumption and additional output of heat, CO2, perspiration droplets, odor, and particulates generated
+by the crew in an exercise area.
+
+NASA Office of the Chief Health & Medical Officer (OCHMO)                           11/10/2022  16
+This Technical Brief is derived from NASA-STD-3001 and is for reference only.           Rev B
+It does not supersede or waive existing Agency, Program, or Contract requirements.
+NASA-STD-3001 Technical Brief                                                       Carbon Dioxide (CO2)
+OCHMO-TB-004
+
+Referenced Technical Requirements
+
+[V2 6020] Atmospheric Data Recording For each isolatable, habitable compartment, the system shall
+
+automatically record pressure, humidity, temperature, ppO2, and ppCO2 data continuously.
+[V2 6021] Atmospheric Data Displaying The system shall display real-time values for pressure, humidity,
+
+temperature, ppO2, and ppCO2 data to the crew locally and remotely.
+[V2 6022] Atmospheric Monitoring and Alerting Parameters The system shall alert the crew locally and
+
+remotely when atmospheric parameters, including atmospheric pressure, humidity, temperature, ppO2,
+and ppCO2 are outside safe limits.
+[V2 6107] Nominal Vehicle/Habitat Atmospheric Ventilation The system shall maintain a ventilation
+
+rate within the internal atmosphere that is sufficient to provide circulation that prevents CO2 and
+thermal pockets from forming, except during suited operations, toxic cabin events, or when the crew is
+
+not inhabiting the vehicle.
+
+[V2 6108] Off-Nominal Vehicle/Habitat Atmospheric Ventilation The system shall control for ppO2,
+ppCO2, and relative humidity during off-nominal operations, such as temporary maintenance activities in
+areas not in the normal habitable volume.
+
+[V2 11034] Suited Atmospheric Data Recording Systems shall automatically record suit pressure, ppO2,
+and ppCO2.
+[V2 11035] Suited Atmospheric Data Displaying Suits shall display suit pressure, ppO2, and ppCO2 data
+to the suited crewmember.
+
+[V2 11036] Suited Atmospheric Monitoring and Alerting Suits shall monitor suit pressure, ppO2, and
+ppCO2 and alert the crewmember when they are outside safe limits.
+[V2 11037] EVA Suited Metabolic Rate Measurement The system shall measure or calculate metabolic
+
+rates of suited EVA crewmembers.
+
+[V2 11038] EVA Suited Metabolic Rate Display The system shall display metabolic data of suited EVA
+
+crewmembers to the crew.
+
+[V2 11039] Nominal Spacesuit Carbon Dioxide Levels The spacesuit shall limit the inspired CO2 partial
+pressure (PICO2) in accordance with Table 35, Spacesuit Inspired Partial Pressure of CO2 (PICO2) Limits.
+
+NASA Office of the Chief Health & Medical Officer (OCHMO)                           11/10/2022            17
+This Technical Brief is derived from NASA-STD-3001 and is for reference only.           Rev B
+It does not supersede or waive existing Agency, Program, or Contract requirements.
+NASA-STD-3001 Technical Brief                                                       Carbon Dioxide (CO2)
+OCHMO-TB-004
+
+Reference List
+
+1. NASA-STD-3001 Volume 2, Revision B. (2009).
+    https://www.NASA.gov/sites/default/files/atoms/files/NASA-std-3001_vol_2_rev_b.pdf
+
+2. Law J, Watkins S, Alexander D. (2010). In-Flight Carbon Dioxide Exposures and Related Symptoms:
+    Association, Susceptibility, and Operational Implications. NASA Scientific and Technical Information
+    (STI) Program Office. NASA Internal Document NASA/TP­2010­ 216126.
+
+3. Lee AG, Mader TH, Gibson CR, Tarver W, Rabiei P, Riascos RF, Galdamez LA, Brunstetter T. (2020).
+    Spaceflight associated neuro-ocular syndrome (SANS) and the neuro-ophthalmologic effects of
+    microgravity: a review and an update. NPJ Microgravity, 6(7): 3771.
+
+4. Evidence Report: Risk of Spaceflight Associated Neuro-ocular Syndrome (SANS). (2017). Human
+    Research Program ­ Human Health Countermeasures Element. NASA Internal Document.
+
+5. Basner M, Nasrini J, Hermosillo E, McGuire S, Dinges DF, Moore TM...& Bershad EM. (1985). Effects of -
+    12° head-down tilt with and without elevated levels of CO 2 on cognitive performance: the SPACECOT
+    study. Journal of Applied Physiology, 124(3): 750-760.
+
+6. Scully RR, Basner M, Nasrini J, Lam CW, Hermosillo E, Gur RC...& Ryder VE. (2019). Effects of acute
+    exposures to carbon dioxide on decision making and cognition in astronaut-like subjects. NPJ
+    Microgravity, 5(127).
+
+7. Rodeheffer CD, Chabal S, Clarke JM, Fothergill DM. (2018). Acute Exposure to Low-to-Moderate
+    Carbon Dioxide Levels and Submariner Decision Making. Aerospace Medicine and Human
+    Performance, 89(6): 520-525.
+
+8. Demontis GC, Germani MM, Caiani EG, Barravecchia I, Passino C, Angeloni D. (2017). Human
+    Pathophysiological Adaptations to the Space Environment. Frontiers in Physiology, 8: 547.
+
+9. James JT. Chapter 7: Carbon Dioxide. In: Spacecraft Maximum Allowable Concentrations for Selected
+    Airborne Contaminants. Volume 5 (2008), National Research Council of the National Academies.
+
+10. Astronaut Health and Performance. https://www.NASA.gov/centers/johnson/pdf/584739main_Wings-
+    ch5d-pgs370-407.pdf
+
+11. Law J, Van Baalen M, Foy M, Mason SS, Mendez C, Wear ML, Meyers VE, Alexander D. (2014).
+    Relationship between carbon dioxide levels and reported headaches on the International Space
+    Station. Journal of Occupational and Environmental Medicine, 56(5): 477-483.
+
+12. Widmaier EP, Hershel R, Strang KT. (2016). Vander's Human Physiology: The Mechanisms of Body
+    Function (14th ed.). New York: McGraw Hill. ISBN 9781259294099.
+
+13. Chullen,C, Conger,B Korona,A, Kanne,B Mcmillin,S, Paul,T, Norcross,J, Alonso,J, Swickrath,M, Utilizing a
+    Suited Manikin Test Apparatus and spacesuit Ventilation Loop to Evaluate Carbon Dioxide Washout.
+    JSC-CN-33276, Report Paper International Conference on Environmental Systems. July 12,2015
+
+14. NASA Extravehicular Mobility Unit (EMU) LSS/SSA Data Book. September 2017 UTC Aerospace
+    Systems.
+
+NASA Office of the Chief Health & Medical Officer (OCHMO)                           11/10/2022  18
+This Technical Brief is derived from NASA-STD-3001 and is for reference only.           Rev B
+It does not supersede or waive existing Agency, Program, or Contract requirements.
+
