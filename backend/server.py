@@ -12,6 +12,7 @@ AI notu: Claude (Anthropic) yardımıyla yazılmıştır.
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 import os
@@ -27,6 +28,7 @@ import httpx
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
+from starlette.concurrency import run_in_threadpool
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -76,7 +78,7 @@ CLINICAL THRESHOLDS USED BY THE RULE ENGINE (same numbers as the app; cite these
 
 SYSTEM_BLOCKS = [
     {"type": "text", "text": BASE_RULES},
-    {"type": "text", "text": "KNOWLEDGE BASE (sourced research notes, Turkish):\n\n" + KB, "cache_control": {"type": "ephemeral"}},
+    {"type": "text", "text": "KNOWLEDGE BASE (sourced research notes, Turkish):\n\n" + KB, "cache_control": {"type": "ephemeral", "ttl": "1h"}},
 ]
 
 ASSESS_TOOL = {
@@ -120,7 +122,27 @@ NO_UPDATE_TOOL = {
     "input_schema": {"type": "object", "properties": {"reply": {"type": "string", "description": "Spoken answer, max 2 sentences, in the requested language."}}, "required": ["reply"]},
 }
 
+VEGA_TOOLS = [UPDATE_TOOL, NO_UPDATE_TOOL]  # güncelleme yolu (zorunlu seçim); soru yolu yalnızca UPDATE_TOOL
+
 app = FastAPI(title="Astronaut Health Monitor proxy")
+
+
+def _warm_cache_loop():
+    """Prompt önbelleğini (araçlar + kurallar + bilgi tabanı) açılışta ve her 50 dk'da ısıtır → ilk VEGA sorusu da ~1 sn."""
+    import threading
+
+    def run():
+        while True:
+            for model, tools in ((MODEL_VEGA, [UPDATE_TOOL]), (MODEL_VEGA, VEGA_TOOLS), (MODEL_ASSESS, [ASSESS_TOOL])):
+                try:
+                    r = client.messages.create(model=model, max_tokens=1, system=SYSTEM_BLOCKS, tools=tools,
+                                               extra_body={"thinking": {"type": "disabled"}, "output_config": {"effort": "low"}} if model == MODEL_VEGA else {"output_config": {"effort": "low"}},
+                                               messages=[{"role": "user", "content": "ping"}])
+                    account(model, r.usage)
+                except Exception as e:
+                    print("[warm]", model, str(e)[:120])
+            time.sleep(50 * 60)
+    threading.Thread(target=run, daemon=True).start()
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
 _hits: dict[str, deque] = defaultdict(deque)
@@ -148,6 +170,8 @@ def account(model: str, usage) -> None:
     inp = (usage.input_tokens or 0) + (getattr(usage, "cache_creation_input_tokens", 0) or 0) * 1.25 \
         + (getattr(usage, "cache_read_input_tokens", 0) or 0) * 0.1
     _spend["usd"] += (inp * pin + (usage.output_tokens or 0) * pout) / 1e6
+    print(f"[usage] {model} in={usage.input_tokens} cache_w={getattr(usage, 'cache_creation_input_tokens', 0)} "
+          f"cache_r={getattr(usage, 'cache_read_input_tokens', 0)} out={usage.output_tokens} day=${_spend['usd']:.3f}", flush=True)
 
 
 @app.get("/api/health")
@@ -162,7 +186,7 @@ async def assess(req: Request):
     lang = body.get("lang", "tr")
     snapshot = json.dumps(body.get("snapshot", {}), ensure_ascii=False)
     t0 = time.time()
-    msg = client.messages.create(
+    msg = await run_in_threadpool(client.messages.create,
         model=MODEL_ASSESS,
         max_tokens=2000,
         system=SYSTEM_BLOCKS,
@@ -221,7 +245,7 @@ async def vision(req: Request):
             "This is an ultrasound or medical image captured by an astronaut. Give neutral visual observations only "
             "(image quality, which structures are visible if obvious). Do NOT diagnose. Say it should be reviewed by the CMO/flight surgeon.")
     t0 = time.time()
-    msg = client.messages.create(
+    msg = await run_in_threadpool(client.messages.create,
         model=MODEL_ASSESS, max_tokens=2000, system=SYSTEM_BLOCKS, tools=[VISION_TOOL], tool_choice={"type": "auto"},
         extra_body={"output_config": {"effort": "low"}},
         messages=[{"role": "user", "content": [
@@ -266,7 +290,7 @@ async def voicelog(req: Request):
     if len(transcript.split()) < 3:
         raise HTTPException(400, "transcript too short")
     t0 = time.time()
-    msg = client.messages.create(
+    msg = await run_in_threadpool(client.messages.create,
         model=MODEL_ASSESS, max_tokens=2000, system=SYSTEM_BLOCKS, tools=[VOICE_TOOL], tool_choice={"type": "auto"},
         extra_body={"output_config": {"effort": "low"}},
         messages=[{"role": "user", "content":
@@ -292,8 +316,7 @@ async def vega(req: Request):
     history = body.get("history", [])[-8:]
     voice_rules = ("\nYou are VEGA, the spoken voice of this assistant. Your reply is read aloud by text-to-speech: "
                    "max 2 short sentences, no lists, no markdown, no symbols, numbers with units spoken naturally."
-                   "\nIf the astronaut explicitly asks to update/enter/set a value, call update_reading and in the SAME reply say one short "
-                   "sentence confirming what was recorded and how the rule-engine thresholds classify it (the snapshot still shows the OLD value; never mention the old value or the snapshot). "
+                   "\nIf the astronaut explicitly asks to update/enter/set a value, call update_reading and say nothing else (the screen confirms it). "
                    "If the value or unit is unclear, ask instead of calling the tool.")
     messages = [m for m in history if m.get("role") in ("user", "assistant") and m.get("content")]
     user_text = f"Language: {lang}\nLive snapshot: {snapshot}\n\nAstronaut says: {body.get('text', '')}"
@@ -313,28 +336,17 @@ async def vega(req: Request):
     intent = bool(re.search(r"güncelle|kaydet|ayarla|değiştir|olarak gir|\byap\b|\bgir\b|\bset\b|update|record|change|\blog\b",
                             str(body.get("text", "")).lower()))
 
-    def confirm(uses):  # kayıttan sonra yalnızca sözlü onay (araçsız ikinci tur) → iç düşünce/İngilizce anlatım konuşulmaz
-        follow = messages + [{"role": "assistant", "content": [{"type": "tool_use", "id": b.id, "name": b.name, "input": b.input} for b in uses]},
-                             {"role": "user", "content": [{"type": "tool_result", "tool_use_id": b.id, "content": f"recorded. Now speak the confirmation in language={lang}."} for b in uses]}]
-        with client.messages.stream(model=MODEL_VEGA, max_tokens=200, extra_body=XB, system=SYS, messages=follow,
-                                    tools=[UPDATE_TOOL], tool_choice={"type": "none"}) as s2:
-            for txt in s2.text_stream:
-                yield f"data: {json.dumps({'t': txt}, ensure_ascii=False)}\n\n"
-            account(MODEL_VEGA, s2.get_final_message().usage)
-
     def gen():
         try:
             if intent:  # güncelleme komutu: önce kayıt (akışsız), sonra temiz sözlü onay
                 # Araç seçimi zorunlu: ya update_reading ya no_update → "kaydettim" deyip kaydetmeme durumu olamaz
                 first = client.messages.create(model=MODEL_VEGA, max_tokens=400, extra_body=XB, system=SYS, messages=messages,
-                                               tools=[UPDATE_TOOL, NO_UPDATE_TOOL], tool_choice={"type": "any"})
+                                               tools=VEGA_TOOLS, tool_choice={"type": "any"})
                 account(MODEL_VEGA, first.usage)
                 uses = [b for b in first.content if b.type == "tool_use" and b.name == "update_reading"]
                 for b in uses:
                     yield f"data: {json.dumps({'action': b.input}, ensure_ascii=False)}\n\n"
-                if uses:
-                    yield from confirm(uses)
-                else:
+                if not uses:
                     nu = [b for b in first.content if b.type == "tool_use" and b.name == "no_update"]
                     txt = nu[0].input.get("reply", "") if nu else "".join(b.text for b in first.content if b.type == "text")
                     yield f"data: {json.dumps({'t': txt}, ensure_ascii=False)}\n\n"
@@ -342,17 +354,26 @@ async def vega(req: Request):
                 return
             with client.messages.stream(model=MODEL_VEGA, max_tokens=400, extra_body={"thinking": {"type": "disabled"}, "output_config": {"effort": "low"}},  # ölçüldü: TTFT ~1,1 sn; düşünme açıkken Haiku tüm bütçeyi düşünmeye harcıyordu
                                         system=SYSTEM_BLOCKS + [{"type": "text", "text": voice_rules}], messages=messages,
-                                        tools=[UPDATE_TOOL], tool_choice={"type": "auto"}) as s:
+                                        tools=[UPDATE_TOOL], tool_choice={"type": "auto"}) as s:  # soru yolu: no_update VERİLMEZ (model metni araca koyup akışı bozuyordu)
+                head, flushed = "", False  # model bazen araç adını metne yazıyor ("no_update: ...") → baştan temizle
                 for txt in s.text_stream:
+                    if not flushed:
+                        head += txt
+                        if len(head) < 24:
+                            continue
+                        txt, flushed = re.sub(r"^\s*(no_update|update_reading)\s*[:：-]?\s*", "", head), True
                     yield f"data: {json.dumps({'t': txt}, ensure_ascii=False)}\n\n"
+                if not flushed and head:
+                    yield f"data: {json.dumps({'t': re.sub(r'^\s*(no_update|update_reading)\s*[:：-]?\s*', '', head)}, ensure_ascii=False)}\n\n"
                 final = s.get_final_message()
                 account(MODEL_VEGA, final.usage)
                 spoke = any(b.type == "text" and b.text.strip() for b in final.content)
                 uses = [b for b in final.content if b.type == "tool_use" and b.name == "update_reading"]
                 for b in uses:  # değer güncelleme komutları → istemci aralık kontrolüyle uygular, kural motoru değerlendirir
                     yield f"data: {json.dumps({'action': b.input}, ensure_ascii=False)}\n\n"
-            if uses and not spoke:  # model yalnızca aracı çağırdıysa: kısa sözlü onay için ikinci tur (araçsız)
-                yield from confirm(uses)
+                for b in final.content:  # akış yolunda model no_update seçtiyse cevabı oradadır
+                    if b.type == "tool_use" and b.name == "no_update" and not spoke:
+                        yield f"data: {json.dumps({'t': b.input.get('reply', '')}, ensure_ascii=False)}\n\n"
             yield "data: [DONE]\n\n"
         except Exception as e:  # akış içinde hata → istemciye bildir
             yield f"data: {json.dumps({'error': str(e)[:200]})}\n\n"
@@ -373,8 +394,10 @@ GEMINI_KEY = GEMINI_KEYS[0] if GEMINI_KEYS else ""
 GEMINI_VOICE = os.environ.get("GEMINI_VOICE", "Achird")
 TTS_MODELS = [m.strip() for m in os.environ.get("GEMINI_TTS_MODEL", "gemini-3.8-flash-tts,gemini-3.8-flash-lite-tts,gemini-2.5-flash-preview-tts").split(",") if m.strip()]
 TTS_STYLE = {"calm": "warm, calm and friendly, natural conversational pace",
-             "urgent": "gentle, caring and a little concerned"}
+             # Acil durum: panik değil; sakin, güven veren, net ve biraz yavaş (yönlendiren uçuş kontrolörü gibi)
+             "urgent": "calm, steady and reassuring, clear and slightly slower, like a composed flight controller guiding someone through a problem"}
 _tts_cool: dict[str, float] = {}
+_tts_cache: dict = {}  # (metin, dil, acil) → ses; en fazla 200
 
 
 def _pcm_to_wav(pcm: bytes, rate: int) -> bytes:
@@ -477,6 +500,10 @@ async def tts(req: Request):
         raise HTTPException(400, "empty")
     lang = "en" if body.get("lang") == "en" else "tr"
     urgent = body.get("style") == "urgent"
+    ck = (text, lang, urgent)
+    if ck in _tts_cache:
+        buf, model, mt = _tts_cache[ck]
+        return Response(buf, media_type=mt, headers={"Cache-Control": "no-store", "X-TTS-Model": model + " (cache)"})
     buf, model = await _gemini(text, TTS_STYLE["urgent" if urgent else "calm"])
     mt = "audio/wav"
     if not buf:
@@ -484,4 +511,88 @@ async def tts(req: Request):
         mt = "audio/mpeg"
     if not buf:
         raise HTTPException(429, "tts quota")
+    _tts_cache[ck] = (buf, model, mt)
+    while len(_tts_cache) > 200:
+        _tts_cache.pop(next(iter(_tts_cache)))
     return Response(buf, media_type=mt, headers={"Cache-Control": "no-store", "X-TTS-Model": model})
+
+
+# ---- Akışlı Gemini sesi: ilk ses parçası ~4 sn'de çalmaya başlar (tam dosyayı beklemez). Ham PCM 24 kHz 16-bit LE mono. ----
+# Disk önbelleği: aynı cümle (ör. alarm anonsları) bir kez üretildikten sonra anında ve kota harcamadan çalar.
+TTS_CACHE_DIR = ROOT / "backend" / "tts_cache"
+TTS_CACHE_DIR.mkdir(exist_ok=True)
+
+
+@app.post("/api/tts_stream")
+async def tts_stream(req: Request):
+    from fastapi.responses import Response
+    if not GEMINI_KEYS:
+        raise HTTPException(503, "GEMINI_API_KEYS not set")
+    guard(req)
+    body = await req.json()
+    text = str(body.get("text", "")).strip()[:1500]
+    if not text:
+        raise HTTPException(400, "empty")
+    style = TTS_STYLE["urgent" if body.get("style") == "urgent" else "calm"]
+    path = TTS_CACHE_DIR / (hashlib.sha1(f"{GEMINI_VOICE}|{style}|{text}".encode("utf-8")).hexdigest() + ".pcm")
+    if path.exists():
+        return Response(path.read_bytes(), media_type="application/octet-stream", headers={"X-TTS-Model": "cache"})
+    hc = httpx.AsyncClient(timeout=60)
+    up, tag = None, ""
+    for ki, key in enumerate(GEMINI_KEYS):
+        for model in TTS_MODELS:
+            tag = f"{ki}:{model}"
+            if _tts_cool.get(tag, 0) > time.time():
+                continue
+            legacy = model.startswith("gemini-2.")
+            content = {"type": "text", "text": f"Say in a {style} tone: {text}"} if legacy else \
+                      {"type": "text", "text": text, "annotations": [{"type": "speech_metadata", "style": style}]}
+            payload = {"model": model, "input": [{"type": "user_input", "content": [content]}], "stream": True,
+                       "response_format": {"type": "audio"}, "generation_config": {"speech_config": [{"voice": GEMINI_VOICE}]}}
+            try:
+                r = await hc.send(hc.build_request("POST", "https://generativelanguage.googleapis.com/v1beta/interactions",
+                                                   json=payload, headers={"x-goog-api-key": key}), stream=True)
+            except Exception:
+                continue
+            if r.status_code == 200:
+                up = r
+                break
+            err = (await r.aread()).decode("utf-8", "ignore")
+            await r.aclose()
+            if r.status_code in (404, 429):
+                _tts_cool[tag] = time.time() + (86400 if r.status_code == 404 else _retry_s(err))
+                print(f"[tts] key#{ki} {model} {r.status_code} -> skip")
+            elif r.status_code in (400, 401, 403):
+                for m in TTS_MODELS:
+                    _tts_cool[f"{ki}:{m}"] = time.time() + 3600
+                break
+        if up:
+            break
+    if not up:
+        await hc.aclose()
+        raise HTTPException(429, "tts quota")
+
+    async def gen():
+        buf = bytearray()
+        try:
+            async for line in up.aiter_lines():
+                if not line.startswith("data:"):
+                    continue
+                try:
+                    d = json.loads(line[5:].strip())
+                except Exception:
+                    continue
+                delta = d.get("delta") or {}
+                if delta.get("data") and str(delta.get("mime_type", "audio")).startswith("audio"):
+                    pcm = base64.b64decode(delta["data"])
+                    buf += pcm
+                    yield pcm
+            if len(buf) > 4800:
+                path.write_bytes(bytes(buf))
+        finally:
+            await up.aclose()
+            await hc.aclose()
+    return StreamingResponse(gen(), media_type="application/octet-stream", headers={"X-TTS-Model": f"gemini:{tag} stream"})
+
+
+_warm_cache_loop()

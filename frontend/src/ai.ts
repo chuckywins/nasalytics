@@ -5,7 +5,7 @@ import { useEffect, useRef } from 'react';
 import { INDICATORS, INDICATOR_ORDER } from './engine/indicators';
 import { ENVS, ENV_LABEL, equivUSvH, cumulativeMSv, boneLossPct } from './engine/environment';
 import type { Escalation } from './engine/types';
-import { useApp, evalLatest, activeAlerts, type AiAssessment } from './store';
+import { useApp, evalLatest, stableStatus, type AiAssessment } from './store';
 import { t } from './i18n';
 import { useCheckin, doneToday, dayKey } from './checkin';
 import { useFatigue } from './fatigue';
@@ -59,7 +59,7 @@ export function useAiAssessment() {
   const lang = useApp((s) => s.lang);
   const activity = useApp((s) => s.activity);
   const env = useApp((s) => s.env);
-  const sig = activeAlerts(readings).map((a) => `${a.id}:${a.status}`).join('|') + `#${lang}#${activity}#${env}`;
+  const sig = INDICATOR_ORDER.map((id) => [id, stableStatus(readings, id)] as const).filter(([, s]) => s !== 'ok' && s !== 'unknown').map(([id, s]) => `${id}:${s}`).join('|') + `#${lang}#${activity}#${env}`;
   const ctrl = useRef<AbortController | null>(null);
   useEffect(() => {
     const st = useApp.getState();

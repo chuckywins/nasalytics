@@ -1,14 +1,14 @@
 // AI bileşenleri: AI değerlendirme kartı, kritik alarm bandı, oturum kapısı, aktivite seçici, VEGA bas-konuş.
 // AI notu: Claude (Anthropic) yardımıyla yazılmıştır.
 import { useEffect, useRef, useState } from 'react';
-import { INDICATORS } from '../engine/indicators';
+import { INDICATORS, INDICATOR_ORDER } from '../engine/indicators';
 import { adviceFor } from '../engine/guidance';
 import type { Activity, Escalation, IndicatorId } from '../engine/types';
-import { useApp, activeAlerts } from '../store';
+import { useApp, activeAlerts, stableStatus, evalLatest } from '../store';
 import { askVega, maxEsc } from '../ai';
 import { grabCameraFrame } from './FatigueCam';
 import { useFatigue } from '../fatigue';
-import { startAlarm, stopAlarm, speak, stopSpeaking, unlockAudio, speakSentence, stopVoice, beginReply } from '../audio';
+import { startAlarm, stopAlarm, unlockAudio, speakSentence, stopVoice, beginReply, prewarmVoice } from '../audio';
 import { t } from '../i18n';
 
 /* ---------------- AI değerlendirme kartı ---------------- */
@@ -60,12 +60,24 @@ export function SessionGate() {
 }
 
 /* ---------------- Kritik alarm: ses + konuşma + onay ---------------- */
+/** Alarm anonsu: değer içermez (ekranda) → metin sabit, sesi disk önbelleğinden anında çalar */
+const alarmPhrase = (id: IndicatorId, lang: 'tr' | 'en') => `${t('alarm.critical', lang)}. ${t(`ind.${id}`, lang)}. ${adviceFor(id, 'critical').action[lang].split('.')[0]}.`;
+let prewarmed = '';
+
 export function AlarmBanner() {
   const { readings, acked, ack, lang, sessionStarted } = useApp();
-  const crit = activeAlerts(readings).filter((a) => a.status === 'critical');
+  // Mandallı alarm: son 30 sn'de kritik okuma varsa alarm sürer (eşikte salınan değer alarmı aç-kapa yapmaz, tekrar konuşmaz)
+  const crit = INDICATOR_ORDER.filter((id) => stableStatus(readings, id) === 'critical')
+    .map((id) => ({ id, ...evalLatest(readings, id), labelKey: evalLatest(readings, id).status === 'critical' ? evalLatest(readings, id).labelKey : 'alarm.recent' }));
   const unacked = crit.filter((a) => !acked.includes(a.id));
   const key = unacked.map((a) => a.id).join(',');
   const spokenFor = useRef('');
+  // Oturum başında tüm alarm anonslarının sesini önceden üret (bir kez; sonrası disk önbelleği)
+  useEffect(() => {
+    if (!sessionStarted || prewarmed === lang) return;
+    prewarmed = lang;
+    void prewarmVoice(INDICATOR_ORDER.map((id) => alarmPhrase(id, lang)), lang, 'urgent');
+  }, [sessionStarted, lang]);
   useEffect(() => {
     if (!sessionStarted) return;
     if (unacked.length > 0) {
@@ -73,7 +85,8 @@ export function AlarmBanner() {
       if (spokenFor.current !== key) {
         spokenFor.current = key;
         const a = unacked[0];
-        speak(`${t('alarm.critical', lang)}. ${t(`ind.${a.id}`, lang)} ${a.reading.value.toFixed(INDICATORS[a.id].decimals)}. ${adviceFor(a.id, a.status).action[lang].split('.')[0]}.`, lang, { interrupt: true });
+        beginReply();
+        speakSentence(alarmPhrase(a.id, lang), lang, 'urgent');
       }
     } else { stopAlarm(); spokenFor.current = ''; }
   }, [key, sessionStarted, lang]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -92,7 +105,7 @@ export function AlarmBanner() {
         {unacked.slice(0, 3).map((a) => <span key={a.id}>{t(`ind.${a.id}`, lang)}: <b className="num">{a.reading.value.toFixed(INDICATORS[a.id].decimals)} {INDICATORS[a.id].unit}</b> · {t(a.labelKey, lang)}</span>)}
         {unacked.length > 3 && <span className="muted">+{unacked.length - 3} {t('alarm.more', lang)}</span>}
       </div>
-      <button className="ack" onClick={() => { ack(unacked.map((a) => a.id) as IndicatorId[]); stopAlarm(); stopSpeaking(); }}>{t('alarm.ack', lang)}</button>
+      <button className="ack" onClick={() => { ack(unacked.map((a) => a.id) as IndicatorId[]); stopAlarm(); stopVoice(); }}>{t('alarm.ack', lang)}</button>
     </div>
   );
 }
@@ -151,8 +164,9 @@ export function Vega() {
         done.push(`${t(`ind.${id}`, lang)} ${a.value.toFixed(d.decimals)} ${d.unit}`);
         setApplied([...done]);
       });
-      if (!c.signal.aborted) speakSentence(full, lang, done.length ? 'urgent' : 'calm'); // tek istek: tüm cevap aynı sesle
-      hist.current = [...hist.current, { role: 'user' as const, content: q }, { role: 'assistant' as const, content: full }].slice(-8);
+      if (!c.signal.aborted && full.trim()) speakSentence(full, lang);
+      // Değer kaydedildiyse VEGA konuşmaz (analizi AI değerlendirme kartı yapar); geçmişe kısa not düşülür
+      hist.current = [...hist.current, { role: 'user' as const, content: q }, { role: 'assistant' as const, content: full || `[recorded: ${done.join(', ')}]` }].slice(-8);
     } catch (e) {
       if ((e as Error).name !== 'AbortError') setErr(t('ai.offline', lang));
     } finally { setBusy(false); }

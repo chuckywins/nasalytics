@@ -236,6 +236,7 @@ const D = {
   'rem.text': { tr: 'Bugünkü rutininde {n} görev bekliyor. Düzenli ölçüm, değişimleri erken fark etmeni sağlar.', en: '{n} tasks are waiting in today\'s routine. Regular measurement helps you spot changes early.' },
   'rem.snooze': { tr: '5 dk sonra hatırlat', en: 'Remind me in 5 min' },
   'rem.startFirst': { tr: 'İLKİNİ BAŞLAT', en: 'START FIRST' },
+  'alarm.recent': { tr: 'son 30 sn içinde kritik', en: 'critical within last 30 s' },
   'vega.recorded': { tr: 'Kaydedildi', en: 'Recorded' },
   'vega.byVoice': { tr: 'sesli giriş', en: 'voice entry' },
   'vega.badValue': { tr: 'Değer fizyolojik aralığın dışında; kaydedilmedi.', en: 'Value outside the physiological range; not recorded.' },

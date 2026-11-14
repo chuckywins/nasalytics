@@ -55,7 +55,7 @@ let ttsOff = false;
 let current: AudioBufferSourceNode | null = null;
 let gen = 0;
 let chain: Promise<void> = Promise.resolve();
-export function stopVoice() { gen++; chain = Promise.resolve(); try { current?.stop(); } catch { /* yok */ } current = null; stopSpeaking(); }
+export function stopVoice() { gen++; chain = Promise.resolve(); try { current?.stop(); } catch { /* yok */ } current = null; live.forEach((x) => { try { x.stop(); } catch { /* yok */ } }); live = []; stopSpeaking(); }
 /** Yeni cevap başlıyor: önceki konuşmayı kes */
 export function beginReply() { stopVoice(); return gen; }
 async function fetchVoice(text: string, lang: 'tr' | 'en', style: string): Promise<AudioBuffer | null> {
@@ -82,15 +82,71 @@ function browserSay(text: string, lang: 'tr' | 'en') {
     } catch { res(); }
   });
 }
-/** Bir cümleyi sıraya ekle (ses isteği hemen başlar, çalma sırayla) */
+interface VoiceStream { pcm: Float32Array[]; done: boolean; buffer: AudioBuffer | null; notify: (() => void) | null; }
+const API_BASE = import.meta.env.VITE_API_BASE ?? '';
+let live: AudioBufferSourceNode[] = [];
+/** Sesi HEMEN istemeye başlar: önce akışlı Gemini (ham PCM), olmazsa /api/tts (Azure vb.), o da olmazsa boş (tarayıcı sesi) */
+function openVoice(text: string, lang: 'tr' | 'en', style: string): VoiceStream {
+  const vs: VoiceStream = { pcm: [], done: false, buffer: null, notify: null };
+  const ping = () => { const n = vs.notify; vs.notify = null; n?.(); };
+  (async () => {
+    try {
+      if (ttsOff || !ctx) return;
+      const r = await fetch(`${API_BASE}/api/tts_stream`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text, lang, style }) });
+      if (r.ok && r.body) {
+        const rd = r.body.getReader();
+        let carry: Uint8Array | null = null;
+        for (;;) {
+          const { value, done } = await rd.read();
+          if (done) break;
+          let bytes = value;
+          if (carry) { const m = new Uint8Array(carry.length + bytes.length); m.set(carry); m.set(bytes, carry.length); bytes = m; carry = null; }
+          const even = bytes.length & ~1;
+          if (even < bytes.length) carry = bytes.slice(even);
+          const dv = new DataView(bytes.buffer, bytes.byteOffset, even);
+          const f = new Float32Array(even / 2);
+          for (let k = 0; k < f.length; k++) f[k] = dv.getInt16(k * 2, true) / 32768;
+          if (f.length) { vs.pcm.push(f); ping(); }
+        }
+      } else {
+        const b = await fetchVoice(text, lang, style); // yedek: tam dosya (Azure / Gemini)
+        if (b) vs.buffer = b;
+      }
+    } catch { /* tarayıcı sesine düşülür */ } finally { vs.done = true; ping(); }
+  })();
+  return vs;
+}
+async function playVoice(vs: VoiceStream, my: number, text: string, lang: 'tr' | 'en') {
+  let i = 0, at = 0;
+  for (;;) {
+    if (my !== gen) return;
+    if (i < vs.pcm.length) {
+      const f = vs.pcm[i++];
+      const b = ctx!.createBuffer(1, f.length, 24000); b.copyToChannel(f as Float32Array<ArrayBuffer>, 0);
+      const src = ctx!.createBufferSource(); src.buffer = b; src.connect(ctx!.destination);
+      at = Math.max(at, ctx!.currentTime + 0.12); src.start(at); at += b.duration; live.push(src);
+      continue;
+    }
+    if (vs.done) break;
+    await new Promise<void>((res) => { vs.notify = res; });
+  }
+  if (my !== gen) return;
+  if (i === 0) { if (vs.buffer) await play(vs.buffer); else await browserSay(text, lang); return; }
+  const remain = at - ctx!.currentTime;
+  if (remain > 0) await new Promise((r) => setTimeout(r, remain * 1000));
+  live = [];
+}
+/** Bir cümleyi/cevabı sıraya ekle: ses isteği HEMEN başlar (akışlı), çalma sırayla */
 export function speakSentence(text: string, lang: 'tr' | 'en', style: 'calm' | 'urgent' = 'calm') {
   const clean = text.replace(/[*_#`>]/g, '').trim();
   if (!clean) return;
   const my = gen;
-  const audio = fetchVoice(clean, lang, style);
-  chain = chain.then(async () => {
-    const buf = await audio;
-    if (my !== gen) return;
-    if (buf) await play(buf); else await browserSay(clean, lang);
-  });
+  const vs = openVoice(clean, lang, style);
+  chain = chain.then(() => playVoice(vs, my, clean, lang));
+}
+/** Önbelleği ısıt (alarm anonsları): sesi üretip disk önbelleğine yazdırır, çalmaz */
+export async function prewarmVoice(texts: string[], lang: 'tr' | 'en', style: 'calm' | 'urgent' = 'urgent') {
+  for (const text of texts) {
+    try { const r = await fetch(`${API_BASE}/api/tts_stream`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text, lang, style }) }); if (r.status === 503) return; await r.arrayBuffer(); } catch { return; }
+  }
 }

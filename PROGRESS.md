@@ -57,3 +57,13 @@ Her adım buraya kısa notla eklenir (en yeni en altta).
 - Model bazen "kaydettim" deyip aracı çağırmıyordu → güncelleme niyetli mesajlarda araç seçimi zorunlu (update_reading | no_update); onay ayrı turda, iç anlatım konuşulmaz.
 - Uçtan uca tarayıcı testi (Playwright, headless Chrome): nabız 150 → taşikardi alarmı; açlık şekeri 50 → ciddi hipoglisemi; tansiyon 145/95 → evre 2; uyku 5 sa → kısa uyku; "kaydetme sadece sor" → kayıt yok.
 - TTS sırası: Gemini (GEMINI_API_KEYS, anahtar × model döngüsü, kota dolanı atlanır) → Azure → tarayıcı. Cevabın tamamı tek istekte; ton metinleri: sakin/endişeli.
+
+## 2026-11-14 20:52 — Ses gecikmesi + sakin acil ton + sessiz güncelleme + Gemini alarm sesi
+- Acil durum tonu: "sakin, istikrarlı, güven veren, net ve biraz yavaş" (endişeli değil).
+- Değer güncellemede VEGA konuşmaz/yazmaz; ✓ satırı + kural motoru alarmı + AI değerlendirme kartı yeterli.
+- Kök neden bulundu: /api/assess (Sonnet, ~10 sn) async uçta senkron çağrı → olay döngüsünü kilitliyordu; VEGA ve ses akışı bekliyordu. run_in_threadpool ile düzeltildi.
+- Akışlı Gemini TTS (/api/tts_stream, ham PCM 24 kHz) + Web Audio zamanlayıcı; disk önbelleği (backend/tts_cache, gitignore).
+- Alarm anonsu Gemini sesiyle; değer içermez (ekranda) → metin sabit, oturum başında önceden üretilir, önbellekten anında çalar.
+- Mandallı alarm: son 30 sn'de kritik varsa alarm sürer; eşikte salınan değer alarmı/AI isteğini tekrar tetiklemez (stableStatus).
+- Prompt önbelleği 1 saat TTL + açılışta/50 dk'da ısıtma.
+- Ölçüm (headless Chrome, uçtan uca): VEGA metni ~1,4 sn; ses başlangıcı 13,3 sn → 4,7 sn; alarm sesi önbellekten ~0 sn ek gecikme.

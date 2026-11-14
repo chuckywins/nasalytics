@@ -127,6 +127,15 @@ export function regionStatuses(readings: Record<IndicatorId, Reading[]>): Partia
   return out;
 }
 
+/** Kararlı durum: akış göstergelerinde son 30 sn'nin EN KÖTÜ durumu (eşik çevresindeki gürültü titremesini önler).
+ *  AI değerlendirme tetikleyicisi bunu kullanır → eşikte salınan değer her birkaç saniyede yeni AI isteği doğurmaz. */
+export function stableStatus(readings: Record<IndicatorId, Reading[]>, id: IndicatorId): Status {
+  const d = INDICATORS[id];
+  if (d.mode !== 'stream') return evalLatest(readings, id).status;
+  const since = Date.now() - 30_000, act = useApp.getState().activity;
+  return readings[id].filter((r) => r.t >= since).reduce<Status>((w, r) => worst(w, d.evaluate(r.value, { glucose: r.ctx, activity: act }).status), evalLatest(readings, id).status);
+}
+
 /** Aktif uyarılar, en ciddiden en hafife (diastolik, sistolikle aynı KB kartında gösterilir) */
 export function activeAlerts(readings: Record<IndicatorId, Reading[]>) {
   return INDICATOR_ORDER
