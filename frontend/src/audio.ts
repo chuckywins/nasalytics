@@ -47,3 +47,28 @@ export function speak(text: string, lang: 'tr' | 'en', opts: { interrupt?: boole
   } catch { /* konuşma sentezi yok */ }
 }
 export const stopSpeaking = () => { try { speechSynthesis.cancel(); } catch { /* yok */ } };
+
+// ---- VEGA'nın gerçekçi sesi: sunucu /api/tts (Google Gemini TTS). Başarısızsa tarayıcı sesi. ----
+// Cevabın tamamı TEK istekle seslendirilir (ses cevabın ortasında değişmez, kota korunur).
+// Alarm anonsları her zaman tarayıcı sesiyle anında okunur (çevrimdışı da çalışmalı).
+let ttsOff = false;
+export const geminiVoice = () => !ttsOff && !!ctx;
+let current: AudioBufferSourceNode | null = null;
+let gen = 0;
+export function stopVoice() { gen++; try { current?.stop(); } catch { /* yok */ } current = null; stopSpeaking(); }
+export async function speakReply(text: string, lang: 'tr' | 'en', style: 'calm' | 'urgent' = 'calm') {
+  const my = ++gen;
+  const clean = text.replace(/[*_#`>]/g, '').trim();
+  if (!clean) return;
+  const fallback = () => { if (my !== gen) return; clean.split(/(?<=[.!?;])\s+/).forEach((x) => x && speak(x, lang)); };
+  if (ttsOff || !ctx) return fallback();
+  try {
+    const r = await fetch(`${import.meta.env.VITE_API_BASE ?? ''}/api/tts`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: clean, style }) });
+    if (r.status === 503) ttsOff = true;
+    if (!r.ok) return fallback();
+    const buf = await ctx.decodeAudioData(await r.arrayBuffer());
+    if (my !== gen) return;
+    const src = ctx.createBufferSource(); src.buffer = buf; src.connect(ctx.destination);
+    current = src; src.start();
+  } catch { fallback(); }
+}

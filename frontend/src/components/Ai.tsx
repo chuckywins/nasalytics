@@ -8,7 +8,7 @@ import { useApp, activeAlerts } from '../store';
 import { askVega, maxEsc } from '../ai';
 import { grabCameraFrame } from './FatigueCam';
 import { useFatigue } from '../fatigue';
-import { startAlarm, stopAlarm, speak, stopSpeaking, unlockAudio } from '../audio';
+import { startAlarm, stopAlarm, speak, stopSpeaking, unlockAudio, speakReply, stopVoice, geminiVoice } from '../audio';
 import { t } from '../i18n';
 
 /* ---------------- AI değerlendirme kartı ---------------- */
@@ -124,6 +124,7 @@ export function Vega() {
   const [err, setErr] = useState('');
   const [withCam, setWithCam] = useState(false);
   const [sentFrame, setSentFrame] = useState(false);
+  const [applied, setApplied] = useState<string[]>([]);
   const camOn = useFatigue((s) => s.enabled);
   const hist = useRef<Msg[]>([]);
   const rec = useRef<SR>(null);
@@ -134,13 +135,24 @@ export function Vega() {
 
   const send = async (q: string) => {
     if (!q.trim()) return;
-    abort.current?.abort(); stopSpeaking();
+    abort.current?.abort(); stopVoice();
     const c = new AbortController(); abort.current = c;
-    setBusy(true); setReply(''); setErr('');
+    setBusy(true); setReply(''); setErr(''); setApplied([]);
     try {
       const frame = withCam && camOn ? grabCameraFrame() : null;
       setSentFrame(!!frame);
-      const full = await askVega(q, hist.current, setReply, (s) => speak(s, lang), c.signal, frame);
+      const real = geminiVoice();
+      const done: string[] = [];
+      const full = await askVega(q, hist.current, setReply, (s) => { if (!real) speak(s, lang); }, c.signal, frame, (a) => {
+        // Sesli komutla değer girişi: kimlik ve fizyolojik aralık burada doğrulanır, kural motoru hemen değerlendirir
+        const id = a.indicator as IndicatorId;
+        const d = INDICATORS[id];
+        if (!d || typeof a.value !== 'number' || a.value < d.sim.min || a.value > d.sim.max) { setErr(t('vega.badValue', lang)); return; }
+        useApp.getState().addReading(id, a.value, id === 'glucose' ? a.glucose_context : undefined, 'USER_INPUT');
+        done.push(`${t(`ind.${id}`, lang)} ${a.value.toFixed(d.decimals)} ${d.unit}`);
+        setApplied([...done]);
+      });
+      if (real && !c.signal.aborted) void speakReply(full, lang, done.length ? 'urgent' : 'calm');
       hist.current = [...hist.current, { role: 'user' as const, content: q }, { role: 'assistant' as const, content: full }].slice(-8);
     } catch (e) {
       if ((e as Error).name !== 'AbortError') setErr(t('ai.offline', lang));
@@ -149,7 +161,7 @@ export function Vega() {
 
   const start = () => {
     if (!SRClass) { setErr(t('vega.noSpeech', lang)); return; }
-    stopSpeaking();
+    stopVoice();
     const r = new SRClass();
     r.lang = lang === 'tr' ? 'tr-TR' : 'en-US'; r.interimResults = true; r.continuous = true;
     finalText.current = '';
@@ -184,6 +196,7 @@ export function Vega() {
         {listening || interim ? <p className="j-user">“{interim || '…'}”</p> : null}
         {busy && !reply && <p className="muted">{t('ai.thinking', lang)}</p>}
         {reply && <p className="j-reply"><span className="ai-tag">✦ AI{sentFrame ? ' · ◉' : ''}</span> {reply}</p>}
+        {applied.length > 0 && <p className="j-applied">✓ {t('vega.recorded', lang)}: {applied.join(' · ')} <span className="muted">({t('vega.byVoice', lang)})</span></p>}
         {err && <p className="j-err">{err}</p>}
         {!listening && !interim && !reply && !busy && !err && <p className="muted">{t('vega.hint', lang)}</p>}
       </div>

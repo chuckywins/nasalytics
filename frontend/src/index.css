@@ -216,6 +216,7 @@ a { color: var(--accent); }
 .j-reply { color: var(--ink); }
 .j-err { color: #f0883e; }
 .vega input { width: 100%; }
+.j-applied { color: var(--accent); font-size: 12px; margin: 2px 0 0; }
 .camshare { font-size: 12px; padding: 4px 8px; white-space: nowrap; }
 .camshare.on { border-color: var(--accent); background: var(--accent); color: var(--bg); }
 .camshare:disabled { opacity: .4; }

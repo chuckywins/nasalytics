@@ -82,7 +82,8 @@ export function useAiAssessment() {
 }
 
 /** VEGA: SSE akışı; her cümle tamamlandıkça onSentence çağrılır (hemen seslendirme için). */
-export async function askVega(text: string, history: { role: 'user' | 'assistant'; content: string }[], onDelta: (full: string) => void, onSentence: (s: string) => void, signal?: AbortSignal, image?: string | null) {
+export interface VegaAction { indicator: string; value: number; glucose_context?: 'fasting' | 'postprandial'; }
+export async function askVega(text: string, history: { role: 'user' | 'assistant'; content: string }[], onDelta: (full: string) => void, onSentence: (s: string) => void, signal?: AbortSignal, image?: string | null, onAction?: (a: VegaAction) => void) {
   const { lang } = useApp.getState();
   const r = await fetch(`${API}/api/vega`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lang, text, history, snapshot: buildSnapshot(), image: image ?? undefined }), signal });
   if (!r.ok || !r.body) throw new Error(`HTTP ${r.status}`);
@@ -101,6 +102,7 @@ export async function askVega(text: string, history: { role: 'user' | 'assistant
       if (data === '[DONE]') continue;
       const d = JSON.parse(data);
       if (d.error) throw new Error(d.error);
+      if (d.action) { onAction?.(d.action as VegaAction); continue; }
       full += d.t; pending += d.t; onDelta(full);
       // Cümle sınırı: . ! ? ; ve ardından boşluk
       const m = pending.match(/^([\s\S]*?[.!?;])\s+/);
