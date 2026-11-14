@@ -4,6 +4,8 @@ import { useEffect, useMemo } from 'react';
 import Body3D, { type Callout } from './components/Body3D';
 import { TopBar, VitalsPanel, EcgStrip, EntryForm } from './components/Hud';
 import { AssessmentPanel, RegionPanel, CabinPanel, MissionPanel, TrendChart } from './components/Panels';
+import { SessionGate, AlarmBanner, Jarvis } from './components/Ai';
+import { useAiAssessment } from './ai';
 import { useApp, regionStatuses, evalLatest } from './store';
 import { worst } from './engine/indicators';
 import { t } from './i18n';
@@ -17,12 +19,14 @@ export default function App() {
   useEffect(() => {
     const q = new URLSearchParams(location.search);
     if (q.get('lang') === 'en') useApp.getState().setLang('en');
+    if (q.has('test')) useApp.getState().startSession();
     if (q.get('test') !== 'worst') return;
     const add = useApp.getState().addReading;
     add('systolic', 182); add('diastolic', 121); add('heartRate', 159); add('spo2', 86); add('respRate', 28);
     add('bodyTemp', 39.7); add('glucose', 127, 'fasting'); add('sleepHours', 4.0); add('mood', 1); add('cabinCO2', 5.2);
   }, []);
   const statuses = useMemo(() => regionStatuses(readings), [readings]);
+  useAiAssessment();
 
   const callouts: Callout[] = useMemo(() => {
     const e = (id: Parameters<typeof evalLatest>[1]) => evalLatest(readings, id);
@@ -49,10 +53,13 @@ export default function App() {
           ))}
         </div>
         <Body3D statuses={statuses} selected={selectedRegion} onSelect={selectRegion} layers={layers} callouts={callouts} />
+        <AlarmBanner />
         <div className="model-credit">3D: BodyParts3D/Z-Anatomy · CC BY-SA</div>
+        <Jarvis />
       </main>
       <aside className="col-right"><AssessmentPanel /><RegionPanel /></aside>
       <footer className="row-bottom"><CabinPanel /><MissionPanel /><TrendChart /></footer>
+      <SessionGate />
     </div>
   );
 }

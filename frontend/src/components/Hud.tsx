@@ -6,6 +6,7 @@ import type { GlucoseCtx, IndicatorId, Provenance, Status } from '../engine/type
 import { ENVS, ENV_LABEL, ENV_ORDER, equivUSvH, cumulativeMSv, type EnvId } from '../engine/environment';
 import { useApp, evalLatest, latest } from '../store';
 import { t } from '../i18n';
+import { ActivitySelect } from './Ai';
 
 export const STATUS_COLOR: Record<Status, string> = {
   ok: '#3fb950', watch: '#d4a72c', warn: '#f0883e', critical: '#f85149', unknown: '#6e7681',
@@ -52,6 +53,7 @@ export function TopBar() {
           {ENV_ORDER.map((id) => <option key={id} value={id}>{ENV_LABEL[id][lang]}</option>)}
         </select>
       </label>
+      <ActivitySelect />
       <div className="tb-item"><span>{t('ui.day', lang)}</span><b className="num">{missionDay}</b></div>
       <div className="tb-item"><span>{t('ui.delay', lang)} ({t('ui.oneWay', lang)})</span><b className="num">{d0 === d1 ? fmtDelay(d0) : `${fmtDelay(d0)}–${fmtDelay(d1)}`}</b></div>
       <div className="tb-item"><span>{t('ui.doseRate', lang)}</span>

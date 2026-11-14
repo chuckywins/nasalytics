@@ -1,10 +1,11 @@
 // Gösterge tanımları ve deterministik eşik motoru.
 // Kural: LLM burada hiçbir karar vermez; tüm durum renkleri bu dosyadaki kaynaklı eşiklerden gelir.
 // AI notu: Claude (Anthropic) yardımıyla yazılmıştır. Eşik kaynakları SOURCES.md'de listelidir.
-import type { IndicatorDef, IndicatorId, Status, GlucoseCtx } from './types';
+import type { IndicatorDef, IndicatorId, Status, EvalOpts } from './types';
 
 const S = {
   ahaBP: { label: 'AHA: Understanding Blood Pressure Readings', url: 'https://www.heart.org/en/health-topics/high-blood-pressure/understanding-blood-pressure-readings' },
+  ahaTarget: { label: 'AHA: Target heart rates (50–85% of max ≈ 220−age)', url: 'https://www.heart.org/en/healthy-living/fitness/fitness-basics/target-heart-rates' },
   ahaHR: { label: 'AHA: All About Heart Rate', url: 'https://www.heart.org/en/health-topics/high-blood-pressure/the-facts-about-high-blood-pressure/all-about-heart-rate-pulse' },
   adaGlu: { label: 'ADA: Diagnosis (fasting glucose)', url: 'https://diabetes.org/about-diabetes/diagnosis' },
   adaHypo: { label: 'ADA: Hypoglycemia', url: 'https://diabetes.org/living-with-diabetes/treatment-care/hypoglycemia' },
@@ -27,9 +28,13 @@ const bands = (list: [number, Status, string][]) => (v: number) => {
 export const INDICATORS: Record<IndicatorId, IndicatorDef> = {
   heartRate: {
     id: 'heartRate', mode: 'stream', unit: 'bpm', regions: ['heart'], decimals: 0,
-    evaluate: bands([[40, 'critical', 'band.bradySevere'], [50, 'warn', 'band.brady'], [60, 'watch', 'band.lowNormal'],
-      [100, 'ok', 'band.normal'], [130, 'watch', 'band.tachy'], [150, 'warn', 'band.tachyHigh'], [Infinity, 'critical', 'band.tachySevere']]),
-    thresholdProvenance: 'CLINICAL_GUIDELINE', sources: [S.ahaHR, S.nasaCardio],
+    // Dinlenme: AHA 60–100. Egzersiz/EVA: AHA hedef nabız %50–85 × maks. (≈220−yaş; 40 yaş ≈ 180) → ~170'e kadar beklenen.
+    evaluate: (v: number, o?: EvalOpts) => (o?.activity && o.activity !== 'rest'
+      ? bands([[40, 'critical', 'band.bradySevere'], [50, 'warn', 'band.brady'], [170, 'ok', 'band.exerciseOk'],
+          [185, 'watch', 'band.exerciseHigh'], [200, 'warn', 'band.tachyHigh'], [Infinity, 'critical', 'band.tachySevere']])(v)
+      : bands([[40, 'critical', 'band.bradySevere'], [50, 'warn', 'band.brady'], [60, 'watch', 'band.lowNormal'],
+          [100, 'ok', 'band.normal'], [130, 'watch', 'band.tachy'], [150, 'warn', 'band.tachyHigh'], [Infinity, 'critical', 'band.tachySevere']])(v)),
+    thresholdProvenance: 'CLINICAL_GUIDELINE', sources: [S.ahaHR, S.ahaTarget, S.nasaCardio],
     sim: { base: 68, noise: 3, min: 30, max: 220 },
   },
   systolic: {
@@ -54,9 +59,11 @@ export const INDICATORS: Record<IndicatorId, IndicatorDef> = {
   },
   respRate: {
     id: 'respRate', mode: 'stream', unit: '/min', regions: ['lungs'], decimals: 0,
-    evaluate: bands([[8, 'critical', 'band.bradypnea'], [12, 'watch', 'band.lowNormal'], [21, 'ok', 'band.normal'], [25, 'watch', 'band.tachypnea'], [Infinity, 'warn', 'band.tachypneaHigh']]),
+    evaluate: (v: number, o?: EvalOpts) => (o?.activity && o.activity !== 'rest'
+      ? bands([[8, 'critical', 'band.bradypnea'], [40, 'ok', 'band.exerciseOk'], [50, 'watch', 'band.tachypnea'], [Infinity, 'warn', 'band.tachypneaHigh']])(v)
+      : bands([[8, 'critical', 'band.bradypnea'], [12, 'watch', 'band.lowNormal'], [21, 'ok', 'band.normal'], [25, 'watch', 'band.tachypnea'], [Infinity, 'warn', 'band.tachypneaHigh']])(v)),
     thresholdProvenance: 'CLINICAL_GUIDELINE', sources: [],
-    sim: { base: 14, noise: 1, min: 4, max: 50 },
+    sim: { base: 14, noise: 1, min: 4, max: 60 },
   },
   bodyTemp: {
     id: 'bodyTemp', mode: 'spot', unit: '°C', regions: [], decimals: 1,
@@ -69,7 +76,7 @@ export const INDICATORS: Record<IndicatorId, IndicatorDef> = {
     id: 'glucose', mode: 'spot', unit: 'mg/dL', regions: ['metabolic'], decimals: 0,
     // Açlık: ADA 70–99 normal, 100–125 prediyabet, ≥126 diyabet aralığı. Tokluk (2 sa): <140 normal, 140–199 yüksek, ≥200 diyabet aralığı.
     // Hipoglisemi her iki bağlamda: <70 seviye 1, <54 seviye 2 (ADA).
-    evaluate: (v: number, ctx?: GlucoseCtx) => (ctx === 'postprandial'
+    evaluate: (v: number, o?: EvalOpts) => (o?.glucose === 'postprandial'
       ? bands([[54, 'critical', 'band.hypoSevere'], [70, 'warn', 'band.hypo'], [140, 'ok', 'band.normalPost'],
           [200, 'watch', 'band.highPost'], [250, 'warn', 'band.hyper'], [Infinity, 'critical', 'band.hyperSevere']])(v)
       : bands([[54, 'critical', 'band.hypoSevere'], [70, 'warn', 'band.hypo'], [100, 'ok', 'band.normalFasting'],

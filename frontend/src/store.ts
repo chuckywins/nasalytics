@@ -3,12 +3,14 @@
 // spot göstergeler (KB, şeker, ısı, uyku, ruh hâli) astronotun ölçümüdür: KALICIDIR, simülatör üzerine yazmaz.
 // AI notu: Claude (Anthropic) yardımıyla yazılmıştır.
 import { create } from 'zustand';
-import type { GlucoseCtx, IndicatorId, Reading, Region, Status } from './engine/types';
+import type { Activity, Escalation, GlucoseCtx, IndicatorId, Reading, Region, Status } from './engine/types';
 import { INDICATORS, INDICATOR_ORDER, worst, statusRank } from './engine/indicators';
 import type { EnvId } from './engine/environment';
 import type { Lang } from './i18n';
 
 const HISTORY = 300;
+export interface AiAssessment { headline: string; assessment: string; actions: string[]; escalate?: Escalation; cues?: string[]; confidence?: string; }
+export interface AiState { status: 'idle' | 'loading' | 'ok' | 'error'; data?: AiAssessment; at?: number; latencyMs?: number; model?: string; error?: string; signature?: string; }
 export type Layer = 'organs' | 'skeleton' | 'muscle';
 
 interface State {
@@ -22,6 +24,16 @@ interface State {
   cabin: { o2Pct: number; pressurePsia: number };
   selectedRegion: Region | null;
   selectedIndicator: IndicatorId;
+  activity: Activity;
+  /** Ses/konuşma izni için kullanıcı etkileşimi gerekir (tarayıcı otomatik ses çalmayı engeller) */
+  sessionStarted: boolean;
+  /** Onaylanmış kritik uyarılar (gösterge kimliği); yeni kritik giriş alarmı yeniden çalar */
+  acked: IndicatorId[];
+  ai: AiState;
+  setAi: (a: Partial<AiState>) => void;
+  setActivity: (a: Activity) => void;
+  startSession: () => void;
+  ack: (ids: IndicatorId[]) => void;
   setLang: (l: Lang) => void;
   setEnv: (e: EnvId) => void;
   setMissionDay: (d: number) => void;
@@ -60,6 +72,14 @@ export const useApp = create<State>((set) => ({
   cabin: { o2Pct: 21.0, pressurePsia: 14.7 },
   selectedRegion: null,
   selectedIndicator: 'heartRate',
+  activity: 'rest',
+  sessionStarted: false,
+  acked: [],
+  ai: { status: 'idle' },
+  setAi: (a) => set((s) => ({ ai: { ...s.ai, ...a } })),
+  setActivity: (activity) => set({ activity }),
+  startSession: () => set({ sessionStarted: true }),
+  ack: (ids) => set((s) => ({ acked: Array.from(new Set([...s.acked, ...ids])) })),
   setLang: (lang) => set({ lang }),
   setEnv: (env) => set({ env }),
   setMissionDay: (missionDay) => set({ missionDay }),
@@ -94,7 +114,7 @@ export const latest = (r: Reading[]) => r[r.length - 1];
 
 export function evalLatest(readings: Record<IndicatorId, Reading[]>, id: IndicatorId) {
   const r = latest(readings[id]);
-  return { reading: r, ...INDICATORS[id].evaluate(r.value, r.ctx) };
+  return { reading: r, ...INDICATORS[id].evaluate(r.value, { glucose: r.ctx, activity: useApp.getState().activity }) };
 }
 
 /** Bölge durumu = o bölgeye bağlı göstergelerin en kötüsü */

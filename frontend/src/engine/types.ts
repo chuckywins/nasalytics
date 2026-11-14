@@ -21,6 +21,9 @@ export interface SourceRef { label: string; url: string; }
 
 /** Kan şekeri bağlamı: açlık veya tokluk (yemekten ~2 saat sonra) eşikleri farklıdır */
 export type GlucoseCtx = 'fasting' | 'postprandial';
+/** Aktivite: nabız ve solunum eşiklerini kaydırır (egzersiz/EVA'da yüksek nabız beklenir) */
+export type Activity = 'rest' | 'exercise' | 'eva';
+export interface EvalOpts { glucose?: GlucoseCtx; activity?: Activity; }
 
 export interface IndicatorDef {
   id: IndicatorId;
@@ -28,7 +31,7 @@ export interface IndicatorDef {
   /** stream = giyilebilir sensörden sürekli akış (simüle); spot = astronotun aralıklı ölçümü (kalıcı) */
   mode: 'stream' | 'spot';
   regions: Region[];
-  evaluate: (v: number, ctx?: GlucoseCtx) => { status: Status; labelKey: string };
+  evaluate: (v: number, opts?: EvalOpts) => { status: Status; labelKey: string };
   thresholdProvenance: Provenance;
   sources: SourceRef[];
   decimals: number;

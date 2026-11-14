@@ -14,6 +14,27 @@
 
 **Açık noktalar:** sunum süresi ve formatı ile gerçek teslim saati Sivas organizasyonuna sorulacak. Proje adındaki "NASA" kelimesine izin olup olmadığı belirsiz; gerekirse nötr bir ad seçilecek.
 
+## Kullanıcı istekleri: backlog (2026-11-14 ~16:00, unutulmayacak)
+1. **rPPG:** kameradan yüzdeki renk değişiminden nabız ölçümü (temassız)
+2. **Ses analizi + duygu durumu:** günlük sesli görev kaydı → ses titremesi, konuşma hızı, kelime seçimi → depresyon, izolasyon, stres, bilişsel yorgunluk işaretleri
+3. **AI her yerde:** sağlık değerlendirmesini de yapay zekâ yapsın; anlık ekran uyarısı + **sesli tehlike alarmı**. API bütçesi sorun değil (~500$).
+4. **Görüntü işleme:** anlık duygu durumu analizi, jest/mimik kontrolü
+5. **Klinik kılavuz linkleri sorunu:** kötü durumdaki astronot linke tıklayıp okuyamaz → uygulama içinde **özet + ne yapılacağı** gösterilmeli; link yalnızca ek kaynak olmalı
+6. **Her alanın yanında info (i) ikonu:** üzerine gelince "bu değer nereden, hangi cihazla, nasıl ölçülüyor" (ör. nabız → Bio-Monitor tişört EKG'si; kan şekeri → parmak ucu glukometre) gerçek bilgiyle
+7. **Senaryolar** (sonraki aşama): taşikardi riskinde sistemin tepkisi vb.
+8. Proje başlığına ve yarışmanın isteğine sadık kalmak
+
+### Fable kararı (5. danışma): AI her yerde, tek koşulla
+Her AI çıktısı neyi hesapladığını adlandırır (kamera nabzı, konuşma hızı, göz kırpma). Çıkarılan durumlar (yorgunluk, düşük ruh hâli) **teşhis değil, astronotun onaylayacağı ipucu** olarak sunulur.
+- **Kurallar** alarmı anında ve internetsiz verir. **Claude** üstüne değerlendirmeyi yazar. Eskalasyon = max(kural, AI): **AI uyarı yükseltebilir, asla kapatamaz.**
+- **Sıra:** (1) proxy + AI değerlendirme (durum değişiminde, debounce, "AI" etiketi) → (2) Web Audio alarm + "oturumu başlat" tıklaması + onay butonu → (3) JARVIS bas-konuş → (4) info popover'ları + link yerine ≤3 adım → (5) kamera: ölçüm cihazı fotoğrafı (Sonnet okur, astronot onaylar), ardından rPPG → (6) sesli günlük → (7) senaryolar. (5) ve (6) seri sayaçlı **"günlük check-in"** olarak paketlenir (rutin + oyunlaştırma).
+- **Kesilen:** yüz ifadesinden duygu analizi (bilimsel olarak tartışmalı). Kalırsa yalnız göz kırpma hızı / göz kapanması (yorgunluk ipucu). Yerine **reaksiyon süresi testi** (NASA'nın 10 dk uyanıklık öz testine dayanır).
+- **rPPG:** yüz oval rehberi, ROI ortalama yeşil kanal, 40–180 bpm bant geçiren filtre, 10–15 sn spektral tepe. Sinyal zayıfsa sayı yerine "zayıf sinyal". Alarmlara GİRMEZ. 2 takım üyesinde saatle kıyaslanıp hata raporlanır.
+- **Sesli günlük:** konuşma hızı + duraklama oranı hesaplanır; Claude kanıtı transkriptten alıntılar. "Titreme" ancak hesaplanırsa gösterilir.
+- **Tuzak:** nabız ≥150 her zaman "kritik" → egzersiz/EVA'da yanlış alarm. **Aktivite durumu** (dinlenme / egzersiz / EVA) nabız ve solunum bantlarını kaydırır. Taşikardi senaryosu tam olarak bu.
+- **Popover içerikleri** yalnızca eldeki kaynaklardan: uzayda nasıl ölçülür / prototip nasıl alır / neden önemli. Bio-Monitor deri ısısı ölçer, çekirdek ısı değil (ateş için kaynak gösterilmez). Glukoz ölçümü için kaynak: CSA Bio-Analyzer sayfası.
+- **Kamera/mikrofon:** veri yalnızca açık "yakala" eyleminde cihazdan çıkar, ekranda yazılır. Kamera reddedilse de her şey çalışmalı.
+
 ## Omurga: jürinin 12 maddesi (eksiksiz karşılanacak)
 1. Astronotun **kendi sağlığını değerlendirdiği görsel araç** + tedavi ve iyileştirme rehberliği
 2. Girdi: klavye, fare, **kamera** (ör. glukometre ekranı fotoğrafı, **ultrason görüntüsü**)

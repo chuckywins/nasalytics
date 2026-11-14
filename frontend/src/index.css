@@ -45,7 +45,7 @@ a { color: var(--accent); }
 .panel-b { padding: 8px 10px; min-height: 0; flex: 1; display: flex; flex-direction: column; gap: 6px; overflow: hidden; }
 
 /* ---- Üst bar ---- */
-.topbar { display: flex; align-items: center; gap: 18px; border-bottom: 1px solid var(--line); padding: 0 4px; min-width: 0; }
+.topbar { display: flex; align-items: center; gap: 14px; border-bottom: 1px solid var(--line); padding: 0 4px; min-width: 0; }
 .brand { display: flex; align-items: center; gap: 8px; min-width: 0; }
 .brand .logo { font-size: 24px; color: var(--accent); }
 .brand b { display: block; font-size: 15px; letter-spacing: .1em; white-space: nowrap; }
@@ -169,6 +169,54 @@ a { color: var(--accent); }
 
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 
+/* ---- AI kartı ---- */
+.aicard { border: 1px solid var(--accent-dim); background: linear-gradient(180deg, #0b1a24, #0a1219); border-radius: 3px; padding: 7px 9px; display: flex; flex-direction: column; gap: 4px; }
+.ai-h { display: flex; gap: 8px; align-items: center; font-size: 12px; }
+.ai-h .esc { margin-left: auto; }
+.ai-tag { color: var(--accent); font-size: 12px; letter-spacing: .04em; white-space: nowrap; }
+.ai-busy { color: var(--ink-2); font-size: 12px; animation: pulse 1.2s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: .45; } }
+.ai-head { margin: 0; font-weight: 600; font-size: 14px; }
+.ai-body { margin: 0; font-size: 13px; line-height: 1.45; color: var(--ink); }
+.ai-actions { margin: 2px 0 0; padding-left: 20px; font-size: 13px; line-height: 1.4; }
+.ai-actions li { margin-bottom: 2px; }
+.ai-cues { margin: 0; font-size: 12px; color: var(--ink-2); }
+.ai-foot { margin: 0; font-size: 12px; color: var(--ink-3); }
+
+/* ---- Oturum kapısı ---- */
+.gate { position: fixed; inset: 0; z-index: 50; background: rgba(3,6,10,.88); display: grid; place-items: center; }
+.gate-box { width: min(520px, 92vw); text-align: center; border: 1px solid var(--line-2); background: var(--panel); padding: 28px; border-radius: 6px; display: flex; flex-direction: column; gap: 12px; align-items: center; }
+.gate-box h2 { margin: 0; letter-spacing: .12em; }
+.gate-box p { margin: 0; color: var(--ink-2); line-height: 1.5; }
+.logo-big { font-size: 48px; color: var(--accent); }
+.primary.big { font-size: 16px; padding: 10px 28px; letter-spacing: .12em; }
+.small { font-size: 12px; }
+
+/* ---- Kritik alarm bandı ---- */
+.alarm { position: absolute; top: 14px; left: 50%; transform: translateX(-50%); z-index: 6; display: flex; align-items: center; gap: 12px; padding: 8px 12px; border: 2px solid var(--crit, #f85149); background: rgba(40,8,10,.94); border-radius: 4px; max-width: 70%; }
+.alarm-icon { color: #f85149; font-size: 22px; animation: pulse 1s ease-in-out infinite; }
+.alarm-txt { display: flex; flex-direction: column; gap: 1px; font-size: 13px; }
+.alarm-txt > b { color: #f85149; letter-spacing: .1em; }
+.ack { border-color: #f85149; color: #fff; background: #5a1418; font-weight: 700; letter-spacing: .08em; }
+
+/* ---- Aktivite seçici ---- */
+.seg.small { display: flex; gap: 2px; }
+.seg.small button { padding: 1px 7px; font-size: 12px; }
+
+/* ---- JARVIS ---- */
+.jarvis { position: absolute; left: 14px; right: 14px; bottom: 36px; z-index: 4; display: grid; grid-template-columns: auto 1fr 200px; gap: 10px; align-items: center; background: rgba(6,12,20,.86); border: 1px solid var(--line-2); border-radius: 4px; padding: 6px 8px; }
+.ptt { display: flex; align-items: center; gap: 8px; font-weight: 700; letter-spacing: .12em; border-color: var(--accent); color: var(--accent); padding: 8px 14px; user-select: none; touch-action: none; }
+.ptt.on { background: var(--accent); color: var(--bg); }
+.ptt-dot { width: 9px; height: 9px; border-radius: 50%; background: currentColor; }
+.ptt.on .ptt-dot { animation: pulse .8s ease-in-out infinite; }
+.j-text { min-width: 0; font-size: 13px; line-height: 1.35; max-height: 54px; overflow: hidden; }
+.j-text p { margin: 0; }
+.j-user { color: var(--ink-2); font-style: italic; }
+.j-reply { color: var(--ink); }
+.j-err { color: #f0883e; }
+.jarvis input { width: 100%; }
+.model-credit { bottom: 10px; }
+
 /* Kısa ekran (≈1536×700, %125 ölçek): satırlar tek satıra iner; durum etiketi glif + üzerine gelince başlık olarak kalır */
 @media (max-height: 860px) {
   .vrow { grid-template-rows: auto; padding: 2px 8px; }
@@ -185,3 +233,11 @@ a { color: var(--accent); }
   .entry .seg { grid-column: 1 / -1; grid-row: 2; }
   .panel-b { padding: 6px 8px; }
 }
+
+/* Dar üst bar: uyarı metni ve alt başlık gizlenir (uyarı oturum kapısında ve sağ panelde zaten var) */
+@media (max-width: 1750px) {
+  .disc { display: none; }
+  .brand small { display: none; }
+  .brand b { font-size: 14px; letter-spacing: .06em; }
+}
+@media (max-width: 1450px) { .role { display: none; } }

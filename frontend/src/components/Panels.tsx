@@ -9,6 +9,7 @@ import type { IndicatorId, Status } from '../engine/types';
 import { useApp, activeAlerts, evalLatest, latest } from '../store';
 import { t } from '../i18n';
 import { Panel, ProvTag, StatusChip, STATUS_COLOR, STATUS_GLYPH } from './Hud';
+import { AiCard } from './Ai';
 
 // Uyarı görünürlüğü animasyona BAĞLI DEĞİL: yalnızca konum kayar, opaklık her zaman 1 (animasyon çalışmasa da okunur).
 const fade = { initial: { y: 8 }, animate: { y: 0 }, transition: { duration: 0.2 } };
@@ -20,6 +21,7 @@ export function AssessmentPanel() {
   const overall: Status = alerts[0]?.status ?? 'ok';
   return (
     <Panel title={t('ui.assessment', lang)} right={<StatusChip s={overall} label={`${alerts.length}`} />} className="assess">
+      <AiCard />
       <div className="alerts" role="status" aria-live="polite">
         <AnimatePresence initial={false}>
           {alerts.length === 0 && <motion.p key="ok" {...fade} className="nominal">● {t('ui.allNominal', lang)}</motion.p>}
@@ -133,7 +135,7 @@ const RANGE: Record<IndicatorId, [number, number]> = {
   bodyTemp: [34, 41], glucose: [40, 260], sleepHours: [0, 10], mood: [1, 5], cabinCO2: [0, 8],
 };
 export function TrendChart() {
-  const { readings, selectedIndicator: id, lang } = useApp();
+  const { readings, selectedIndicator: id, lang, activity } = useApp();
   const d = INDICATORS[id];
   const data = readings[id];
   const [lo0, hi0] = RANGE[id];
@@ -149,19 +151,19 @@ export function TrendChart() {
   const N = 120;
   for (let i = 0; i < N; i++) {
     const v0 = lo + ((hi - lo) * i) / N, v1 = lo + ((hi - lo) * (i + 1)) / N;
-    const s = d.evaluate((v0 + v1) / 2, ctx).status;
+    const s = d.evaluate((v0 + v1) / 2, { glucose: ctx, activity }).status;
     const lastB = bands[bands.length - 1];
     if (lastB && lastB.s === s) lastB.to = v1; else bands.push({ from: v0, to: v1, s });
   }
   const path = data.map((r, i) => `${i ? 'L' : 'M'}${x(r.t).toFixed(1)},${y(r.value).toFixed(1)}`).join('');
   const last = latest(data);
-  const ev = d.evaluate(last.value, last.ctx);
+  const ev = d.evaluate(last.value, { glucose: last.ctx, activity });
   return (
     <Panel title={`${t('ui.trend', lang)} · ${t(`ind.${id}`, lang)}`} right={<span className="num">{lo}–{hi} {d.unit}</span>} className="trend">
       <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" role="img" aria-label={t(`ind.${id}`, lang)}>
         {bands.map((b, i) => b.s !== 'ok' && <rect key={i} x={0} width={W} y={y(b.to)} height={Math.max(0, y(b.from) - y(b.to))} fill={STATUS_COLOR[b.s]} opacity={0.08} />)}
         {data.length > 1 ? <path d={path} fill="none" stroke="#c9d6e3" strokeWidth={1.6} vectorEffect="non-scaling-stroke" /> : null}
-        {data.map((r, i) => r.provenance === 'USER_INPUT' || data.length === 1 ? <circle key={i} cx={x(r.t)} cy={y(r.value)} r={4} fill="none" stroke={STATUS_COLOR[d.evaluate(r.value, r.ctx).status]} strokeWidth={2} vectorEffect="non-scaling-stroke" /> : null)}
+        {data.map((r, i) => r.provenance === 'USER_INPUT' || data.length === 1 ? <circle key={i} cx={x(r.t)} cy={y(r.value)} r={4} fill="none" stroke={STATUS_COLOR[d.evaluate(r.value, { glucose: r.ctx, activity }).status]} strokeWidth={2} vectorEffect="non-scaling-stroke" /> : null)}
       </svg>
       <div className="src"><StatusChip s={ev.status} label={t(ev.labelKey, lang)} /><span>{t('ui.threshold', lang)}:</span><ProvTag p={d.thresholdProvenance} />
         {d.sources.slice(0, 2).map((s) => <a key={s.url} href={s.url} target="_blank" rel="noreferrer">{s.label}</a>)}

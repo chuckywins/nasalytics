@@ -1,0 +1,96 @@
+// AI istemci katmanı: anlık durum özeti (snapshot), AI değerlendirme tetikleyicisi, JARVIS akışı.
+// Kural: AI uyarıyı YÜKSELTEBİLİR, asla kapatamaz (eskalasyon = max(kural, AI)). Proxy yoksa kural kartları kalır.
+// AI notu: Claude (Anthropic) yardımıyla yazılmıştır.
+import { useEffect, useRef } from 'react';
+import { INDICATORS, INDICATOR_ORDER } from './engine/indicators';
+import { ENVS, ENV_LABEL, equivUSvH, cumulativeMSv, boneLossPct } from './engine/environment';
+import type { Escalation } from './engine/types';
+import { useApp, evalLatest, activeAlerts, type AiAssessment } from './store';
+import { t } from './i18n';
+
+const API = import.meta.env.VITE_API_BASE ?? '';
+
+/** Model için kompakt, kökenli anlık durum. Kişisel veri yok. */
+export function buildSnapshot() {
+  const s = useApp.getState();
+  const e = ENVS[s.env];
+  const now = Date.now();
+  return {
+    environment: ENV_LABEL[s.env].en, gravity_g: e.gravity_g, missionDay: s.missionDay, activity: s.activity,
+    commDelayOneWaySec: e.commDelayOneWaySec,
+    radiation: { absorbedUGyH: e.absorbedUGyH, equivalentUSvH: equivUSvH(e).value, cumulativeMSvEstimate: cumulativeMSv(e, s.missionDay), careerLimitMSv: 600 },
+    boneLossPctEstimate: boneLossPct(e, s.missionDay),
+    cabin: { o2Pct: +s.cabin.o2Pct.toFixed(1), pressurePsia: +s.cabin.pressurePsia.toFixed(2) },
+    indicators: INDICATOR_ORDER.map((id) => {
+      const ev = evalLatest(s.readings, id);
+      const d = INDICATORS[id];
+      const hist = s.readings[id].slice(-60).map((r) => r.value);
+      return {
+        id, value: +ev.reading.value.toFixed(d.decimals), unit: d.unit, status: ev.status, label: t(ev.labelKey, 'en'),
+        provenance: ev.reading.provenance, minutesAgo: Math.round((now - ev.reading.t) / 60000), glucoseContext: ev.reading.ctx,
+        recentMin: +Math.min(...hist).toFixed(d.decimals), recentMax: +Math.max(...hist).toFixed(d.decimals),
+      };
+    }),
+  };
+}
+
+const RANK: Record<Escalation, number> = { self: 0, crew: 1, ground: 2 };
+export const maxEsc = (a?: Escalation, b?: Escalation): Escalation => (RANK[a ?? 'self'] >= RANK[b ?? 'self'] ? a ?? 'self' : b ?? 'self');
+
+/** Uyarı imzası değiştiğinde (gösterge+durum kümesi) AI değerlendirmesi ister; 1,5 sn debounce, uçuşta istek iptali. */
+export function useAiAssessment() {
+  const readings = useApp((s) => s.readings);
+  const lang = useApp((s) => s.lang);
+  const activity = useApp((s) => s.activity);
+  const env = useApp((s) => s.env);
+  const sig = activeAlerts(readings).map((a) => `${a.id}:${a.status}`).join('|') + `#${lang}#${activity}#${env}`;
+  const ctrl = useRef<AbortController | null>(null);
+  useEffect(() => {
+    const st = useApp.getState();
+    if (st.ai.signature === sig) return;
+    const h = setTimeout(async () => {
+      ctrl.current?.abort();
+      const c = new AbortController(); ctrl.current = c;
+      st.setAi({ status: 'loading', signature: sig });
+      try {
+        const r = await fetch(`${API}/api/assess`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lang, snapshot: buildSnapshot() }), signal: c.signal });
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        const j = await r.json();
+        useApp.getState().setAi({ status: 'ok', data: j.assessment as AiAssessment, at: Date.now(), latencyMs: j.latencyMs, model: j.model });
+      } catch (e) {
+        if ((e as Error).name !== 'AbortError') useApp.getState().setAi({ status: 'error', error: String(e) });
+      }
+    }, 1500);
+    return () => clearTimeout(h);
+  }, [sig, lang]);
+}
+
+/** JARVIS: SSE akışı; her cümle tamamlandıkça onSentence çağrılır (hemen seslendirme için). */
+export async function askJarvis(text: string, history: { role: 'user' | 'assistant'; content: string }[], onDelta: (full: string) => void, onSentence: (s: string) => void, signal?: AbortSignal) {
+  const { lang } = useApp.getState();
+  const r = await fetch(`${API}/api/jarvis`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lang, text, history, snapshot: buildSnapshot() }), signal });
+  if (!r.ok || !r.body) throw new Error(`HTTP ${r.status}`);
+  const reader = r.body.getReader();
+  const dec = new TextDecoder();
+  let buf = '', full = '', pending = '';
+  for (;;) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    buf += dec.decode(value, { stream: true });
+    let i;
+    while ((i = buf.indexOf('\n\n')) >= 0) {
+      const line = buf.slice(0, i).trim(); buf = buf.slice(i + 2);
+      if (!line.startsWith('data: ')) continue;
+      const data = line.slice(6);
+      if (data === '[DONE]') continue;
+      const d = JSON.parse(data);
+      if (d.error) throw new Error(d.error);
+      full += d.t; pending += d.t; onDelta(full);
+      // Cümle sınırı: . ! ? ; ve ardından boşluk
+      const m = pending.match(/^([\s\S]*?[.!?;])\s+/);
+      if (m) { onSentence(m[1].trim()); pending = pending.slice(m[0].length); }
+    }
+  }
+  if (pending.trim()) onSentence(pending.trim());
+  return full;
+}
