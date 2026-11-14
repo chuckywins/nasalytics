@@ -94,3 +94,10 @@ Her adım buraya kısa notla eklenir (en yeni en altta).
 - Gemini kota bulgusu: kota dolunca HTTP 200 içinde "event: error" (günde 10 istek/model/anahtar, ücretsiz katman; sıfırlanma ~11:00 TR). Akış artık ilk ses parçasını görmeden yanıt vermez; hata → sıradaki anahtar. Sıra: en iyi model tüm anahtarlarda önce.
 - Gerçek ses yolu testi (oturum açık, ?test yok): taşikardi 8 akış başlatıldı, tarayıcı sesine düşüş yok; Mars anlatımı sıralı. Önbellek: 83 dosya (tr+en alarm + anlatım).
 - Lab.tsx'te tırnak hatası Vite'ı 500'e düşürdü (tsc yakalamadı) → doğrulamaya esbuild ayrıştırma eklendi.
+
+## 2026-11-14 22:50 — CMO / yer kontrol müdahale paneli (Fable ile tasarım)
+- Kullanıcı isteği: tüm metrikleri okuyup müdahale önerisi (ilaç/doz dahil). Fable kararı: deterministik, kaynaklı protokol kütüphanesi; AI yalnızca KİMLİK seçer/sıralar + gerekçe; doz asla modelden geçmez; sunucu AI metninde ilaç adı/doz kalıbı görürse metni siler.
+- 6 kart (engine/protocols.ts): göğüs ağrısı, şok, solunum güçlüğü, DCS bakımı (JSC-48031 Rev K, 2008, sayfa sayfa doğrulandı), hipoglisemi (ADA/CDC), hipertansif kriz (AHA). İlaç satırları kaynaktan birebir İngilizce ("Dose: 1 tab" = 2008 kit birimi).
+- Vitaller teşhis koymaz: kartlar "ADAY · CMO doğrular"; kontrol listesinin kendi belirti listesi işaretlenmeden ilaç/sıvı adımı görünmez. "*" ilaçlar kilitli: uçuş cerrahı onayı (yer kontrol "Onayla"; onay gidiş-dönüş = 2 × tek yön gecikme sonra ulaşır; yerel durum, aktarılmaz).
+- Şok: 0 g'de kontrol listesi hasta sabitleme; kısmi yerçekiminde AHA sırtüstü (2a) / ayak kaldırma (2b) — uygulama VARSAYIM etiketli. VEGA ve research_notes'a protokol eklenmedi (VEGA doz söylemesin).
+- Test (Playwright, 2 tarayıcı): C-02'de nabız 151 + şeker 50 + KB 190/125 → CMO panelinde 3 aday kart, AI özeti ve kart gerekçeleri Türkçe, ilaç adı yok; belirti işaretlenince aspirin satırı + WARNING 6-3 göründü.

@@ -122,6 +122,23 @@ NO_UPDATE_TOOL = {
     "input_schema": {"type": "object", "properties": {"reply": {"type": "string", "description": "Spoken answer, max 2 sentences, in the requested language."}}, "required": ["reply"]},
 }
 
+# ---- Müdahale sıralaması (CMO / yer kontrol): AI yalnız kütüphane KİMLİKLERİNİ sıralar; doz/ilaç asla modelden geçmez ----
+IV_TOOL = {
+    "name": "rank_interventions",
+    "description": "Rank which protocol cards from the given library apply to this astronaut, most urgent first, with one short reason each.",
+    "input_schema": {"type": "object", "properties": {
+        "ranked": {"type": "array", "maxItems": 6, "items": {"type": "object", "properties": {
+            "id": {"type": "string"}, "why": {"type": "string", "description": "One short sentence: which readings support this card and what the CMO should confirm. No drug names, no doses."}},
+            "required": ["id", "why"]}},
+        "summary": {"type": "string", "description": "Max 2 sentences: overall situation and the single most important next action. No drug names, no doses."},
+        "escalate": {"type": "string", "enum": ["self", "crew", "ground"]}},
+        "required": ["ranked", "summary", "escalate"]},
+}
+DRUG_WORDS = ["aspirin", "proventil", "albuterol", "saline", "serum fizyolojik", "epinephrine", "adrenalin", "epi pen", "benadryl", "valium",
+              "diazepam", "ambien", "restoril", "diamox", "glucagon", "glukagon", "insulin", "insülin", "nitroglycerin", "atropine"]
+DOSE_RE = re.compile(r"\b\d+(?:[.,]\d+)?\s?(?:mg|mcg|µg|ml|mL|tab|tablet|puff|ampul)\b(?!\s?/)", re.I)  # "50 mg/dL" doz değildir
+
+
 VEGA_TOOLS = [UPDATE_TOOL, NO_UPDATE_TOOL]  # güncelleme yolu (zorunlu seçim); soru yolu yalnızca UPDATE_TOOL
 
 app = FastAPI(title="Astronaut Health Monitor proxy")
@@ -305,6 +322,38 @@ async def voicelog(req: Request):
     if out is None:
         raise HTTPException(502, "no voice analysis")
     return {"result": out, "model": MODEL_ASSESS, "latencyMs": int((time.time() - t0) * 1000)}
+
+
+@app.post("/api/interventions")
+async def interventions(req: Request):
+    guard(req)
+    body = await req.json()
+    lang = body.get("lang", "tr")
+    lib = body.get("library", [])
+    ids = {x.get("id") for x in lib}
+    cands = [c for c in body.get("candidates", []) if c in ids]
+    t0 = time.time()
+    rules = ("You support a Crew Medical Officer (CMO) and a ground flight surgeon. A deterministic engine already proposed CANDIDATE "
+             "protocol cards from a fixed, sourced library (Space Shuttle Medical Checklist JSC-48031 and AHA/ADA guidance). "
+             "Your job: rank the candidates (you may add another library id only if the snapshot clearly supports it), explain each in one "
+             "sentence citing the readings, and say what the CMO must confirm (signs/symptoms) before acting. Vital signs alone never prove "
+             "a diagnosis. NEVER name a drug or dose: the screen shows verbatim steps from the source. Answer in language: " + lang)
+    msg = await run_in_threadpool(client.messages.create,
+        model=MODEL_ASSESS, max_tokens=1500, system=SYSTEM_BLOCKS + [{"type": "text", "text": rules}], tools=[IV_TOOL], tool_choice={"type": "auto"},
+        extra_body={"output_config": {"effort": "low"}},
+        messages=[{"role": "user", "content": f"Library: {json.dumps(lib)}\nCandidates: {json.dumps(cands)}\nRole viewing: {body.get('role')}\n"
+                                                f"Snapshot: {json.dumps(body.get('snapshot', {}), ensure_ascii=False)}\nCall rank_interventions."}])
+    account(MODEL_ASSESS, msg.usage)
+    out = next((b.input for b in msg.content if b.type == "tool_use"), None)
+    if not out:
+        raise HTTPException(502, "no ranking")
+    clean = lambda txt: "" if (any(w in str(txt).lower() for w in DRUG_WORDS) or DOSE_RE.search(str(txt))) else str(txt)[:300]
+    ranked = [{"id": r.get("id"), "why": clean(r.get("why", ""))} for r in out.get("ranked", []) if r.get("id") in ids]
+    for c in cands:  # deterministik adaylar asla düşmez
+        if c not in [r["id"] for r in ranked]:
+            ranked.append({"id": c, "why": ""})
+    return {"result": {"ranked": ranked, "summary": clean(out.get("summary", "")), "escalate": out.get("escalate")},
+            "latencyMs": int((time.time() - t0) * 1000), "model": MODEL_ASSESS}
 
 
 @app.post("/api/vega")

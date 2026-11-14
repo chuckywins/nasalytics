@@ -380,3 +380,21 @@ a { color: var(--accent); }
 .cc-f { display: flex; justify-content: space-between; align-items: center; }
 .role-sel { display: flex; gap: 4px; }
 .role-sel select { font-size: 12px; }
+
+/* Müdahale paneli */
+.cv-body { display: grid; grid-template-columns: 1fr minmax(380px, 460px); gap: 12px; align-items: start; min-height: 0; }
+.crew-card { cursor: pointer; }
+.crew-card.sel { outline: 2px solid var(--accent); }
+.intv { border: 1px solid var(--line-2, #2a3a4a); border-radius: 8px; background: var(--panel); padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; max-height: calc(100vh - 120px); overflow: auto; font-size: 13px; }
+.intv-h { display: flex; flex-direction: column; gap: 2px; letter-spacing: .04em; }
+.intv-ai { border-left: 2px solid var(--accent); padding-left: 8px; }
+.intv-card { border: 1px solid var(--line, #22303d); border-radius: 6px; padding: 8px 10px; display: flex; flex-direction: column; gap: 4px; }
+.intv-ch { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.intv-conf { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; }
+.intv-drug { margin-top: 3px; padding: 4px 6px; border: 1px dashed #5b6b7c; border-radius: 4px; }
+.intv-drug.locked { border-color: #e3a33a; }
+.intv-drug code { font-size: 12px; }
+.intv-lock { color: #e3a33a; font-size: 12px; margin-top: 2px; }
+.intv-warn { color: #ffb4a8; margin-top: 2px; }
+.intv-appr { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.intv-src { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
