@@ -245,6 +245,8 @@ const D = {
   'scen.lowLat': { tr: '· düşük enlem / SAA', en: '· low latitude / SAA' },
   'scen.baseline': { tr: 'taban', en: 'baseline' },
   'scen.log': { tr: 'log ölçek', en: 'log scale' },
+  'tab.lab': { tr: 'Lab (I4)', en: 'Lab (I4)' },
+  'tab.labTitle': { tr: 'Inspiration4 kan değerleri', en: 'Inspiration4 blood panel' },
   'tab.scen': { tr: 'Senaryolar', en: 'Scenarios' },
   'suit.title': { tr: 'Kıyafet (EVA)', en: 'Suit (EVA)' },
   'suit.pressure': { tr: 'Kıyafet basıncı', en: 'Suit pressure' },

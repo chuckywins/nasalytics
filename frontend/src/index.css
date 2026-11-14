@@ -346,3 +346,17 @@ a { color: var(--accent); }
 .scen-item.on { border-color: var(--accent); }
 .scen-t { font-weight: 600; font-size: 12px; }
 .small { font-size: 12px; }
+
+/* Inspiration4 laboratuvar paneli */
+.lab { display: flex; flex-direction: column; gap: 4px; overflow: auto; min-height: 0; }
+.lab-note { margin: 0; line-height: 1.35; }
+.lab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px; }
+.lab-card { border: 1px solid var(--line, #22303d); border-radius: 6px; padding: 4px 6px; font-size: 12px; }
+.lab-h, .lab-f { display: flex; justify-content: space-between; gap: 4px; }
+.lab-spark { width: 100%; height: 44px; display: block; }
+.lab-card .small { margin: 2px 0 0; }
+.lab-top { display: flex; align-items: center; gap: 6px; }
+.lab-exp { margin-left: auto; font-size: 12px; padding: 2px 8px; }
+.lab-modal { width: min(1100px, 94vw); max-height: 88vh; overflow: auto; }
+.lab-grid.big { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+.lab-grid.big .lab-spark { height: 70px; }

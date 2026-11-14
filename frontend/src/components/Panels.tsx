@@ -15,6 +15,7 @@ import { useFatigue } from '../fatigue';
 import { useState } from 'react';
 import { InfoTip, SourceTags, toSteps } from './Info';
 import { ScenarioList, ExtraAlertCards } from './Scenario';
+import { LabPanel } from './Lab';
 import { useScenario, suitCO2Status } from '../scenario';
 
 // Uyarı görünürlüğü animasyona BAĞLI DEĞİL: yalnızca konum kayar, opaklık her zaman 1 (animasyon çalışmasa da okunur).
@@ -132,13 +133,14 @@ export function MissionPanel() {
   const cum = cumulativeMSv(e, day);
   const bone = boneLossPct(e, day);
   const h = equivUSvH(e);
-  const [tab, setTab] = useState<'routine' | 'mission' | 'scen'>('routine');
+  const [tab, setTab] = useState<'routine' | 'mission' | 'scen' | 'lab'>('routine');
   const tabs = (
     <div className="tabs" role="tablist">
-      {(['routine', 'scen', 'mission'] as const).map((k) => <button key={k} role="tab" aria-selected={tab === k} className={tab === k ? 'on' : ''} onClick={() => setTab(k)}>{t(`tab.${k}`, lang)}</button>)}
+      {(['routine', 'scen', 'lab', 'mission'] as const).map((k) => <button key={k} role="tab" aria-selected={tab === k} className={tab === k ? 'on' : ''} onClick={() => setTab(k)}>{t(`tab.${k}`, lang)}</button>)}
     </div>
   );
   if (tab === 'routine') return <Panel title={t('tab.routine', lang)} right={tabs} className="mission"><RoutinePanel /></Panel>;
+  if (tab === 'lab') return <Panel title={t('tab.labTitle', lang)} right={tabs} className="mission"><LabPanel /></Panel>;
   if (tab === 'scen') return <Panel title={t('tab.scen', lang)} right={tabs} className="mission"><ScenarioList /></Panel>;
   return (
     <Panel title={t('ui.timeline', lang)} right={tabs} className="mission">
