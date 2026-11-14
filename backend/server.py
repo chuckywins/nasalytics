@@ -25,7 +25,7 @@ import base64
 import struct
 from xml.sax.saxutils import escape as xml_escape
 import httpx
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from starlette.concurrency import run_in_threadpool
@@ -593,6 +593,42 @@ async def tts_stream(req: Request):
             await up.aclose()
             await hc.aclose()
     return StreamingResponse(gen(), media_type="application/octet-stream", headers={"X-TTS-Model": f"gemini:{tag} stream"})
+
+
+
+# ---- Canlı telemetri aktarımı: astronot laptopları anlık durumu yollar; mürettebat (CMO) ve yer kontrol ekranları dinler ----
+# Gecikme SUNUCUDA uygulanmaz: her paket gönderim zamanıyla damgalanır, yer kontrol ekranı "şimdi − gecikme" anını gösterir.
+_crew_last: dict[str, dict] = {}
+_viewers: set = set()
+
+
+@app.websocket("/ws/telemetry")
+async def telemetry(ws: WebSocket):
+    await ws.accept()
+    role = ws.query_params.get("role", "astronaut")
+    if role != "astronaut":
+        _viewers.add(ws)
+        for pkt in list(_crew_last.values()):
+            await ws.send_json(pkt)
+    try:
+        while True:
+            msg = await ws.receive_json()
+            if role != "astronaut":
+                continue
+            crew = re.sub(r"[^A-Za-z0-9-]", "", str(msg.get("crewId", "C-01")))[:8] or "C-01"
+            pkt = {"crewId": crew, "t": msg.get("t") or time.time() * 1000, "snap": msg.get("snap"), "ui": msg.get("ui")}
+            if len(json.dumps(pkt)) > 60_000:
+                continue
+            _crew_last[crew] = pkt
+            for v in list(_viewers):
+                try:
+                    await v.send_json(pkt)
+                except Exception:
+                    _viewers.discard(v)
+    except WebSocketDisconnect:
+        pass
+    finally:
+        _viewers.discard(ws)
 
 
 _warm_cache_loop()

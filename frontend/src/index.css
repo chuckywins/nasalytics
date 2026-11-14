@@ -360,3 +360,23 @@ a { color: var(--accent); }
 .lab-modal { width: min(1100px, 94vw); max-height: 88vh; overflow: auto; }
 .lab-grid.big { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
 .lab-grid.big .lab-spark { height: 70px; }
+
+/* Mürettebat (CMO) ve yer kontrol görünümleri */
+.app.viewer { display: flex; flex-direction: column; height: 100vh; }
+.crew-view { flex: 1; min-height: 0; overflow: auto; padding: 10px 14px; display: flex; flex-direction: column; gap: 10px; }
+.cv-h { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; letter-spacing: .06em; }
+.cv-conn { font-size: 12px; color: var(--ink-2); }
+.cv-conn.on { color: var(--accent); }
+.cv-comp { margin-left: auto; display: flex; gap: 6px; align-items: center; }
+.cv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 10px; }
+.crew-card { border: 1px solid var(--line-2, #2a3a4a); border-radius: 8px; background: var(--panel); padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; font-size: 13px; }
+.cc-h { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.cc-h b { font-size: 16px; }
+.cc-wait { font-size: 14px; margin: 8px 0 0; }
+.cc-alarm { background: rgba(255,80,80,.12); color: #ff6b6b; padding: 4px 8px; border-radius: 4px; font-weight: 600; }
+.cc-grid { display: grid; grid-template-columns: auto 1fr auto 1fr; gap: 2px 10px; }
+.cc-grid .cc-l { color: var(--ink-2); font-size: 12px; }
+.cc-spark { width: 100%; height: 28px; }
+.cc-f { display: flex; justify-content: space-between; align-items: center; }
+.role-sel { display: flex; gap: 4px; }
+.role-sel select { font-size: 12px; }

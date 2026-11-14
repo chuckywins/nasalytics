@@ -76,3 +76,10 @@ Her adım buraya kısa notla eklenir (en yeni en altta).
 - 1) Taşikardi: dinlenmede 151 → kritik alarm + AI; aynı nabız egzersizde → alarm yok; dinlenmeye dönüş. 2a) ISS Eylül 2017 gerçek TEPC tekrarı (×6000), SAA ve yüksek enlem ayrımı, DONKI X8.2 + SEP olayları, pencere dozu vs 250 mSv. 2b) Mars Mayıs 2024 gerçek MSL-RAD tekrarı (×9000), ≈67× (taban 4,11 medyan), DONKI CME, Dünya gecikmesi 3–22 dk (environments.json). 3a) EVA kıyafet CO₂ (TB-004 belirti aralıkları; V2 [11039] Tablo 35 okunmadı, açıkça yazılır). 3b) EVA DCS: belirti bildirimiyle tetiklenir (TB-037), ilaç yok.
 - Üst bar doz hızı tekrar sırasında tekrar değerini gösterir (çelişki yok). Önbellek isabeti hız sınırına sayılmaz; otomatik testler (?test) ses kotası harcamaz.
 - Playwright testleri (1536×700): 5 senaryo tr/en karışık çalıştı, sayfa hatası yok.
+
+## 2026-11-14 22:02 — Inspiration4 lab paneli + üç görünüm (astronot / CMO / yer kontrol)
+- Lab (I4) sekmesi: OSD-569/575 gerçek CBC/CMP, 4 mürettebat × 7 zaman noktası; yalnız veri seti referans aralığı (canlı değerlendirici/durum rengi yok), "n=4 mürettebat ortalaması, kişisel taban değil", "uçuş içi örnek yok". R+45 glukoz (3 kişide <65) açıklanmadan, yorumsuz gösterilir. Büyüt penceresi.
+- Görünümler: üst barda Görünüm seçici (Astronot / Mürettebat CMO / Yer kontrol) + astronot kimliği (C-01..C-04). Astronot cihazı her 2 sn telemetri yayınlar (/ws/telemetry, FastAPI WebSocket aktarıcı). CMO gecikmesiz; yer kontrol paketi "gönderim + tek yön gecikme" anında gösterir (environments.json), henüz ulaşmamışsa geri sayım ("Sinyal yolda"). ÷60 sıkıştırma isteğe bağlı ve ekranda yazılı.
+- Tek cihazda da çalışır (yerel tampon). Çoklu laptop: backend --host 0.0.0.0, Vite host:true; ekip aynı ağda http://<ana-bilgisayar-IP>:5180 açar.
+- Test (Playwright, 3 eşzamanlı tarayıcı): C-02 Mars senaryosu → yer kontrolde "Sinyal yolda 2 dk 57 sn", sıkıştırmada kritik radyasyon alarmı + senaryo anlatımı; CMO gecikmesiz. Astronot görünümü regresyon temiz.
+- Not: Vite izleyicisi python ile yazılan dosyaları zaman zaman kaçırıyor → değişiklikten sonra curl ile sunulan modülü doğrula, gerekirse touch.

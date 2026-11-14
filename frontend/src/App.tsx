@@ -8,6 +8,10 @@ import { SessionGate, AlarmBanner, Vega } from './components/Ai';
 import { RoutineReminder, CheckinModals } from './components/Checkin';
 import { FatigueCam } from './components/FatigueCam';
 import { ScenarioBanner } from './components/Scenario';
+import { CrewView } from './components/CrewView';
+import { useTelemetry, startTelemetry } from './telemetry';
+
+let telStarted = false;
 import { useAiAssessment } from './ai';
 import { useApp, regionStatuses, evalLatest } from './store';
 import { worst } from './engine/indicators';
@@ -28,6 +32,8 @@ export default function App() {
     add('systolic', 182); add('diastolic', 121); add('heartRate', 159); add('spo2', 86); add('respRate', 28);
     add('bodyTemp', 39.7); add('glucose', 127, 'fasting'); add('sleepHours', 4.0); add('mood', 1); add('cabinCO2', 5.2);
   }, []);
+  useEffect(() => { if (!telStarted) { telStarted = true; startTelemetry(); } }, []);
+  const role = useTelemetry((s) => s.role);
   const statuses = useMemo(() => regionStatuses(readings), [readings]);
   useAiAssessment();
 
@@ -43,6 +49,14 @@ export default function App() {
     ];
   }, [readings, lang]);
 
+  if (role !== 'astronaut') return (
+    <div className="app viewer">
+      <TopBar />
+      <CrewView />
+      <AlarmBanner />
+      <SessionGate />
+    </div>
+  );
   return (
     <div className="app">
       <TopBar />

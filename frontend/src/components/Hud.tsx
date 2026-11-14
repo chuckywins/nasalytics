@@ -4,6 +4,8 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { INDICATORS, VITAL_ROWS, worst, type VitalRow } from '../engine/indicators';
 import type { GlucoseCtx, IndicatorId, Provenance, Status } from '../engine/types';
 import { useScenario } from '../scenario';
+import { RoleSelect } from './RoleSelect';
+import { useTelemetry } from '../telemetry';
 import { ENVS, ENV_LABEL, ENV_ORDER, equivUSvH, cumulativeMSv, type EnvId } from '../engine/environment';
 import { useApp, evalLatest, latest } from '../store';
 import { t } from '../i18n';
@@ -42,6 +44,7 @@ const ago = (ms: number, lang: 'tr' | 'en') => {
 /* ---------------- Üst bar ---------------- */
 export function TopBar() {
   const { lang, setLang, env, setEnv, missionDay } = useApp();
+  const role = useTelemetry((s) => s.role);
   const e = ENVS[env];
   const h = equivUSvH(e);
   const cum = cumulativeMSv(e, missionDay);
@@ -53,6 +56,7 @@ export function TopBar() {
   return (
     <header className="topbar">
       <div className="brand"><span className="logo">◎</span><div><b>{t('app.title', lang)}</b><small>{t('app.subtitle', lang)}</small></div></div>
+      {role === 'astronaut' && <>
       <label className="tb-item"><span>{t('ui.env', lang)}</span>
         <select value={env} onChange={(ev) => setEnv(ev.target.value as EnvId)}>
           {ENV_ORDER.map((id) => <option key={id} value={id}>{ENV_LABEL[id][lang]}</option>)}
@@ -70,8 +74,9 @@ export function TopBar() {
         <b className="num">{cum != null ? `≈${cum.toFixed(0)} mSv` : t('ui.noData', lang)}</b>
         {cum != null && <ProvTag p={h.basis === 'measured' ? 'PROJECTION' : 'PUBLISHED'} />}
       </div>
+      </>}
       <div className="tb-spacer" />
-      <span className="role">{t('ui.role', lang)} · C-01</span>
+      <RoleSelect />
       <span className="disc">{t('app.disclaimer', lang)}</span>
       <button className="lang" onClick={() => setLang(lang === 'tr' ? 'en' : 'tr')}>{lang === 'tr' ? 'EN' : 'TR'}</button>
     </header>
