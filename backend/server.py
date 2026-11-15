@@ -12,6 +12,7 @@ AI notu: Claude (Anthropic) yardımıyla yazılmıştır.
 """
 from __future__ import annotations
 
+import asyncio
 import concurrent.futures
 import hashlib
 import json
@@ -27,7 +28,6 @@ import struct
 from xml.sax.saxutils import escape as xml_escape
 import httpx
 from fastapi import FastAPI, HTTPException, Request, WebSocket, WebSocketDisconnect
-from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from starlette.concurrency import run_in_threadpool
 
@@ -45,7 +45,7 @@ def load_env() -> None:
 
 
 load_env()
-client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
+client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"), timeout=60.0, max_retries=1)
 
 MODEL_ASSESS = os.environ.get("MODEL_ASSESS", "claude-sonnet-5-5")
 MODEL_VEGA = os.environ.get("MODEL_VEGA", "claude-haiku-5-5")
@@ -179,7 +179,7 @@ def _detect_symptom(text: str):
 
 VEGA_TOOLS = [UPDATE_TOOL, NO_UPDATE_TOOL]  # güncelleme yolu (zorunlu seçim); soru yolu yalnızca UPDATE_TOOL
 
-app = FastAPI(title="Astronaut Health Monitor proxy")
+app = FastAPI(title="Astronaut Health Monitor proxy", docs_url=None, redoc_url=None, openapi_url=None)  # /docs ve /openapi.json dışarı açılmaz
 _sym_pool = concurrent.futures.ThreadPoolExecutor(max_workers=4)
 
 
@@ -199,17 +199,122 @@ def _warm_cache_loop():
                     print("[warm]", model, str(e)[:120])
             time.sleep(50 * 60)
     threading.Thread(target=run, daemon=True).start()
-app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+
+# ---- Güvenlik katmanı ----
+# Arayüz ve API aynı kökenden sunulur → CORS başlığı verilmez (başka siteler tarayıcı üzerinden API'yi kullanamaz).
+# Köken denetimi: tarayıcıdan gelen POST ve WebSocket isteklerinde Origin başlığı bizim adresimiz olmalı.
+ALLOWED_HOSTS = {h.strip().lower() for h in os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1,asicservices.com,www.asicservices.com").split(",") if h.strip()}
+MAX_JSON = 200_000        # olağan istek gövdesi (bayt)
+MAX_JSON_IMAGE = 4_200_000  # tek kare görüntü içeren istek
+IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp"}
+LANGS = {"tr", "en"}
+
+
+def _host_of(value: str) -> str:
+    v = (value or "").strip().lower()
+    if "://" in v:
+        v = v.split("://", 1)[1]
+    v = v.split("/", 1)[0]
+    if v.startswith("["):  # IPv6
+        return v.split("]", 1)[0] + "]"
+    return v.split(":", 1)[0]
+
+
+def origin_ok(headers) -> bool:
+    """Origin yoksa (curl, sunucu betikleri) geçer: hız sınırı ve bütçe yine uygulanır. Varsa bizim adresimiz olmalı."""
+    origin = headers.get("origin")
+    if not origin or origin == "null":
+        return origin != "null"
+    oh = _host_of(origin)
+    return oh in ALLOWED_HOSTS or oh == _host_of(headers.get("host", "")) or oh == _host_of(headers.get("x-forwarded-host", ""))
+
+
+def client_ip(headers, peer: str) -> str:
+    """Gerçek istemci adresi. Uvicorn --proxy-headers ile peer zaten doğrudur. Değilse (peer = yerel vekil) X-Forwarded-For'un
+    SON girdisi alınır: onu bizim vekilimiz ekler, öncekileri istemci uydurabilir (ilk girdiyi kullanmak hız sınırını deldiriyordu)."""
+    if peer not in ("127.0.0.1", "::1", "localhost", "?"):
+        return peer
+    fwd = headers.get("x-forwarded-for", "")
+    last = fwd.split(",")[-1].strip() if fwd else ""
+    return last[:64] if last else peer
+
+
+async def read_json(req: Request, limit: int = MAX_JSON) -> dict:
+    """Boyut sınırlı JSON gövdesi. Sınırsız gövde hem belleği hem (modele iletildiği için) günlük bütçeyi tüketebiliyordu."""
+    try:
+        if int(req.headers.get("content-length") or 0) > limit:
+            raise HTTPException(413, "body too large")
+    except ValueError:
+        raise HTTPException(400, "bad content-length")
+    buf = bytearray()
+    async for chunk in req.stream():
+        buf += chunk
+        if len(buf) > limit:
+            raise HTTPException(413, "body too large")
+    try:
+        body = json.loads(bytes(buf) or b"{}")
+    except (ValueError, UnicodeDecodeError):
+        raise HTTPException(400, "bad json")
+    if not isinstance(body, dict):
+        raise HTTPException(400, "bad json")
+    return body
+
+
+def lang_of(body: dict) -> str:
+    v = body.get("lang")
+    return v if v in LANGS else "tr"  # serbest metin dil alanı sistem istemine giriyordu
+
+
+def bounded_json(value, limit: int, what: str) -> str:
+    txt = json.dumps(value, ensure_ascii=False)
+    if len(txt) > limit:
+        raise HTTPException(413, f"{what} too large")
+    return txt
+
+
+def split_image(img: str):
+    """data:image/...;base64,XXXX → (media_type, base64). Tür beyaz listede olmalı."""
+    try:
+        media, b64 = img[5:].split(";base64,", 1)
+    except ValueError:
+        raise HTTPException(400, "bad image")
+    if media not in IMAGE_TYPES or not b64:
+        raise HTTPException(400, "bad image")
+    return media, b64
+
+
+CSP = ("default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; "
+       "media-src 'self' blob: data:; font-src 'self' data:; connect-src 'self' ws: wss: blob: data:; worker-src 'self' blob:; "
+       "object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'")
+
+
+@app.middleware("http")
+async def security_layer(request: Request, call_next):
+    from fastapi.responses import JSONResponse
+    if request.method not in ("GET", "HEAD", "OPTIONS") and not origin_ok(request.headers):
+        return JSONResponse({"detail": "origin not allowed"}, status_code=403)
+    resp = await call_next(request)
+    h = resp.headers
+    h.setdefault("X-Content-Type-Options", "nosniff")
+    h.setdefault("X-Frame-Options", "DENY")
+    h.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+    h.setdefault("Permissions-Policy", "camera=(self), microphone=(self), geolocation=(), payment=(), usb=()")
+    h.setdefault("Content-Security-Policy", CSP)
+    if request.url.path.startswith("/api/"):
+        h.setdefault("Cache-Control", "no-store")
+    return resp
+
 
 _hits: dict[str, deque] = defaultdict(deque)
 _spend = {"day": time.strftime("%Y-%m-%d"), "usd": 0.0}
 
 
 def guard(req: Request) -> None:
-    # Ters vekil (nginx/Caddy) arkasında tüm istekler 127.0.0.1 görünür → ilk X-Forwarded-For adresi kullanılır
-    fwd = req.headers.get("x-forwarded-for", "")
-    ip = fwd.split(",")[0].strip() if fwd else (req.client.host if req.client else "?")
+    ip = client_ip(req.headers, req.client.host if req.client else "?")
     now = time.time()
+    if len(_hits) > 5000:  # çok sayıda farklı adres → eski/boş kayıtları at (bellek şişmesin)
+        for k in [k for k, v in _hits.items() if not v or now - v[-1] > 60]:
+            _hits.pop(k, None)
     q = _hits[ip]
     while q and now - q[0] > 60:
         q.popleft()
@@ -261,7 +366,10 @@ def _donki_fetch():
                 else:
                     kps = [k.get("kpIndex") for k in (e.get("allKpIndex") or []) if k.get("kpIndex") is not None]
                     t0, detail = e.get("startTime"), (f"Kp {max(kps):g}" if kps else None)
-                events.append({"type": typ, "time": t0, "detail": detail, "link": e.get("link")})
+                link = e.get("link")
+                if not (isinstance(link, str) and re.match(r"https://([a-z0-9-]+\.)*nasa\.gov/", link)):
+                    link = None  # arayüzde href olur: yalnız nasa.gov https adresleri
+                events.append({"type": typ, "time": str(t0)[:32] if t0 else None, "detail": str(detail)[:24] if detail else None, "link": link})
     if len(failed) == len(_DONKI_TYPES):
         raise RuntimeError("all DONKI types failed")
     events.sort(key=lambda x: x.get("time") or "", reverse=True)
@@ -284,15 +392,15 @@ async def spaceweather():
 
 @app.get("/api/health")
 def health():
-    return {"ok": True, "models": {"assess": MODEL_ASSESS, "vega": MODEL_VEGA}, "spentTodayUsd": round(_spend["usd"], 4), "budgetUsd": DAILY_BUDGET_USD}
+    return {"ok": True, "models": {"assess": MODEL_ASSESS, "vega": MODEL_VEGA}}
 
 
 @app.post("/api/assess")
 async def assess(req: Request):
     guard(req)
-    body = await req.json()
-    lang = body.get("lang", "tr")
-    snapshot = json.dumps(body.get("snapshot", {}), ensure_ascii=False)
+    body = await read_json(req)
+    lang = lang_of(body)
+    snapshot = bounded_json(body.get("snapshot", {}), 60_000, "snapshot")
     t0 = time.time()
     msg = await run_in_threadpool(client.messages.create,
         model=MODEL_ASSESS,
@@ -340,13 +448,15 @@ VISION_TOOL = {
 async def vision(req: Request):
     """Kamera görüntüsü: ölçüm cihazı ekranından değer okuma veya ultrason görüntüsü için tarafsız gözlem.
     Görüntü yalnızca kullanıcı 'Yakala' dediğinde gönderilir; saklanmaz."""
+    if os.environ.get("ENABLE_VISION") != "1":  # arayüzden kaldırıldı; açık uç nokta gereksiz saldırı yüzeyi ve maliyetti
+        raise HTTPException(404, "not found")
     guard(req)
-    body = await req.json()
-    lang, mode = body.get("lang", "tr"), body.get("mode", "device")
+    body = await read_json(req, MAX_JSON_IMAGE)
+    lang, mode = lang_of(body), ("device" if body.get("mode") == "device" else "ultrasound")
     img = body.get("image", "")
-    if not img.startswith("data:image/") or len(img) > 6_000_000:
+    if not isinstance(img, str) or not img.startswith("data:image/"):
         raise HTTPException(400, "bad image")
-    media, b64 = img[5:].split(";base64,", 1)
+    media, b64 = split_image(img)
     task = ("Read the medical device display. Extract only numbers you can clearly see; never guess digits. "
             "Blood pressure monitors usually show systolic, diastolic and pulse. If unreadable, set legible=false."
             if mode == "device" else
@@ -391,10 +501,10 @@ VOICE_TOOL = {
 async def voicelog(req: Request):
     """Günlük sesli kayıt: transkript + hesaplanmış ses ölçüleri → davranışsal sağlık İPUÇLARI (teşhis değil)."""
     guard(req)
-    body = await req.json()
-    lang = body.get("lang", "tr")
+    body = await read_json(req)
+    lang = lang_of(body)
     transcript = str(body.get("transcript", ""))[:4000]
-    metrics = json.dumps(body.get("metrics", {}), ensure_ascii=False)
+    metrics = bounded_json(body.get("metrics", {}), 4_000, "metrics")
     if len(transcript.split()) < 3:
         raise HTTPException(400, "transcript too short")
     t0 = time.time()
@@ -418,11 +528,23 @@ async def voicelog(req: Request):
 @app.post("/api/interventions")
 async def interventions(req: Request):
     guard(req)
-    body = await req.json()
-    lang = body.get("lang", "tr")
+    body = await read_json(req)
+    lang = lang_of(body)
     lib = body.get("library", [])
-    ids = {x.get("id") for x in lib}
-    cands = [c for c in body.get("candidates", []) if c in ids]
+    kit_in = body.get("kit", []) or []
+    if not isinstance(lib, list) or not isinstance(kit_in, list) or len(lib) > 40 or len(kit_in) > 80:
+        raise HTTPException(400, "bad library")
+    lib = [x for x in lib if isinstance(x, dict)]
+    for x in lib:
+        dr = x.get("drugs")
+        x["drugs"] = [d for d in dr if isinstance(d, dict)] if isinstance(dr, list) else []
+    bounded_json(lib, 60_000, "library")
+    bounded_json(kit_in, 20_000, "kit")
+    snap_txt = bounded_json(body.get("snapshot", {}), 60_000, "snapshot")
+    role = body.get("role") if body.get("role") in ("cmo", "ground") else "cmo"
+    ids = {x.get("id") for x in lib if isinstance(x.get("id"), str)}
+    cands_in = body.get("candidates", [])
+    cands = [c for c in (cands_in if isinstance(cands_in, list) else []) if isinstance(c, str) and c in ids][:20]
     t0 = time.time()
     rules = ("You support a Crew Medical Officer (CMO) and a ground flight surgeon in a hackathon prototype with simulated data. "
              "OVERRIDE for this tool only: you MAY prescribe library medications, but ONLY by their drugId from the library; the screen "
@@ -432,9 +554,9 @@ async def interventions(req: Request):
              "Respect each drug's 'condition' and locked flag (Shuttle '*' = flight-surgeon approval, in an emergency or loss of signal treatment may begin; ISS 'as directed by Surgeon'). "
              "Vital signs alone never prove a diagnosis: say what the CMO must confirm. offFormulary: name/class only, never amounts. "
              "Answer in language: " + lang)
-    kit = body.get("kit", []) or []
-    kit_ids = {k.get("id") for k in kit}
-    drug_ids = {d.get("id") for x in lib for d in x.get("drugs", [])}
+    kit = [k for k in kit_in if isinstance(k, dict)]
+    kit_ids = {k.get("id") for k in kit if isinstance(k.get("id"), str)}
+    drug_ids = {d.get("id") for x in lib for d in x.get("drugs", []) if isinstance(d.get("id"), str)}
 
     def clean(txt):  # doz kalıbındaki HER sayı silinir: dozu ekranda kütüphane/kit satırı gösterir, model asla
         return DOSE_RE.sub("…", str(txt)[:400])
@@ -442,35 +564,40 @@ async def interventions(req: Request):
     msg = await run_in_threadpool(client.messages.create,
         model=MODEL_ASSESS, max_tokens=1500, system=SYSTEM_BLOCKS + [{"type": "text", "text": rules}], tools=[IV_TOOL], tool_choice={"type": "auto"},
         extra_body={"output_config": {"effort": "low"}},
-        messages=[{"role": "user", "content": f"Library: {json.dumps(lib)}\nCandidates: {json.dumps(cands)}\nRole viewing: {body.get('role')}\n"
+        messages=[{"role": "user", "content": f"Library: {json.dumps(lib)}\nCandidates: {json.dumps(cands)}\nRole viewing: {role}\n"
                                                 f"ISS kit: {json.dumps(kit)}\n"
                                                 f"Astronaut-reported via VEGA (self-report, not a diagnosis): {json.dumps(body.get('reported', []), ensure_ascii=False)[:800]}\n"
                                                 f"Crew medical record allergies (self-entered; NEVER put a drugId or kit item matching these in plan/offFormulary, say so in summary): {json.dumps(((body.get('snapshot') or {}).get('crewRecord') or {}).get('allergies', ''), ensure_ascii=False)[:200]}\n"
-                                                f"CMO-typed symptoms: {str(body.get('symptoms', ''))[:400]}\nCMO-confirmed signs: {json.dumps(body.get('confirmedSigns', []))}\n"
-                                                f"Snapshot: {json.dumps(body.get('snapshot', {}), ensure_ascii=False)}\nCall rank_interventions."}])
+                                                f"CMO-typed symptoms: {str(body.get('symptoms', ''))[:400]}\nCMO-confirmed signs: {json.dumps(body.get('confirmedSigns', []), ensure_ascii=False)[:800]}\n"
+                                                f"Snapshot: {snap_txt}\nCall rank_interventions."}])
     account(MODEL_ASSESS, msg.usage)
     out = next((b.input for b in msg.content if b.type == "tool_use"), None)
     if not out:
         raise HTTPException(502, "no ranking")
-    ranked = [{"id": r.get("id"), "why": clean(r.get("why", ""))} for r in out.get("ranked", []) if r.get("id") in ids]
+    def rows(key):  # model çıktısı da doğrulanır: liste ve sözlük değilse yok sayılır
+        v = out.get(key, []) if isinstance(out, dict) else []
+        return [r for r in (v if isinstance(v, list) else []) if isinstance(r, dict)]
+    ranked = [{"id": r.get("id"), "why": clean(r.get("why", ""))} for r in rows("ranked") if isinstance(r.get("id"), str) and r.get("id") in ids]
     for c in cands:  # deterministik adaylar asla düşmez
         if c not in [r["id"] for r in ranked]:
             ranked.append({"id": c, "why": ""})
     plan = [{"drugId": it.get("drugId") if it.get("drugId") in drug_ids else None,
              "protocol": it.get("protocol") if it.get("protocol") in ids else None, "why": clean(it.get("why", ""))}
-            for it in out.get("plan", []) if it.get("drugId") in drug_ids or it.get("protocol") in ids]
-    off = [{"kitId": o.get("kitId") if o.get("kitId") in kit_ids else None, "name": clean(o.get("name", ""))[:60], "why": clean(o.get("why", ""))[:200]} for o in out.get("offFormulary", [])][:3]
-    return {"result": {"ranked": ranked, "plan": plan, "offFormulary": off, "summary": clean(out.get("summary", "")), "escalate": out.get("escalate")},
+            for it in rows("plan") if (isinstance(it.get("drugId"), str) and it.get("drugId") in drug_ids) or (isinstance(it.get("protocol"), str) and it.get("protocol") in ids)]
+    off = [{"kitId": o.get("kitId") if o.get("kitId") in kit_ids else None, "name": clean(o.get("name", ""))[:60], "why": clean(o.get("why", ""))[:200]} for o in rows("offFormulary")][:3]
+    return {"result": {"ranked": ranked, "plan": plan, "offFormulary": off, "summary": clean(out.get("summary", "")), "escalate": out.get("escalate") if out.get("escalate") in ("self", "crew", "ground") else None},
             "latencyMs": int((time.time() - t0) * 1000), "model": MODEL_ASSESS}
 
 
 @app.post("/api/vega")
 async def vega(req: Request):
     guard(req)
-    body = await req.json()
-    lang = body.get("lang", "tr")
-    snapshot = json.dumps(body.get("snapshot", {}), ensure_ascii=False)
-    history = body.get("history", [])[-8:]
+    body = await read_json(req, MAX_JSON_IMAGE)
+    lang = lang_of(body)
+    snapshot = bounded_json(body.get("snapshot", {}), 60_000, "snapshot")
+    said = str(body.get("text", ""))[:1000]
+    hist_in = body.get("history", [])
+    history = (hist_in if isinstance(hist_in, list) else [])[-8:]
     voice_rules = ("\nYou are VEGA, the spoken voice of this assistant. Your reply is read aloud by text-to-speech: "
                    "max 2 short sentences, no lists, no markdown, no symbols, numbers with units spoken naturally."
                    "\nIf the astronaut explicitly asks to update/enter/set a value, call update_reading and say nothing else (the screen confirms it). "
@@ -482,12 +609,14 @@ async def vega(req: Request):
                    "\nIf the astronaut says they feel unwell or reports a symptom, answer calmly with one short safe step (stop, rest, stay still). "
                    "The system automatically notifies the crew medical officer and the crew of reported symptoms: never tell the astronaut to report it themselves, and never say that you notified anyone (the system confirms it separately)."
                    "If the value or unit is unclear, ask instead of calling the tool.")
-    messages = [m for m in history if m.get("role") in ("user", "assistant") and m.get("content")]
-    user_text = f"Language: {lang}\nLive snapshot: {snapshot}\n\nAstronaut says: {body.get('text', '')}"
+    # Geçmiş istemciden gelir: yalnız düz metin, sınırlı uzunluk (içine görüntü ya da dev metin konup maliyet şişirilemesin)
+    messages = [{"role": m["role"], "content": m["content"][:2000]} for m in history
+                if isinstance(m, dict) and m.get("role") in ("user", "assistant") and isinstance(m.get("content"), str) and m["content"].strip()]
+    user_text = f"Language: {lang}\nLive snapshot: {snapshot}\n\nAstronaut says: {said}"
     img = body.get("image") or ""
-    if img.startswith("data:image/") and len(img) < 3_000_000:
+    if isinstance(img, str) and img.startswith("data:image/") and len(img) < 3_000_000:
         # Astronot açıkça "görüntüyü ekle" dediğinde tek kare. Tarafsız görsel gözlem; teşhis yok.
-        media, b64 = img[5:].split(";base64,", 1)
+        media, b64 = split_image(img)
         user_text += ("\n\nA single camera frame of the astronaut is attached because they explicitly shared it. "
                       "Describe only what is visibly relevant to their question, neutrally; no diagnosis, no identity, no emotion claims.")
         messages.append({"role": "user", "content": [{"type": "image", "source": {"type": "base64", "media_type": media, "data": b64}},
@@ -498,9 +627,9 @@ async def vega(req: Request):
     XB = {"thinking": {"type": "disabled"}, "output_config": {"effort": "low"}}
     SYS = SYSTEM_BLOCKS + [{"type": "text", "text": voice_rules}]
     intent = bool(re.search(r"güncelle|kaydet|ayarla|değiştir|olarak gir|\byap\b|\bgir\b|\bset\b|update|record|change|\blog\b",
-                            str(body.get("text", "")).lower()))
+                            said.lower()))
 
-    sym_future = _sym_pool.submit(_detect_symptom, str(body.get("text", "")))  # akışla PARALEL; ilk ses gecikmesi değişmez
+    sym_future = _sym_pool.submit(_detect_symptom, said)  # akışla PARALEL; ilk ses gecikmesi değişmez
 
     def sym_event():
         try:
@@ -555,8 +684,9 @@ async def vega(req: Request):
             if ev:
                 yield ev
             yield "data: [DONE]\n\n"
-        except Exception as e:  # akış içinde hata → istemciye bildir
-            yield f"data: {json.dumps({'error': str(e)[:200]})}\n\n"
+        except Exception as e:  # akış içinde hata → istemciye yalnız genel mesaj (iç hata metni dışarı sızmasın)
+            print("[vega] error", type(e).__name__, str(e)[:200], flush=True)
+            yield f"data: {json.dumps({'error': 'assistant unavailable'})}\n\n"
 
     return StreamingResponse(gen(), media_type="text/event-stream", headers={"Cache-Control": "no-cache"})
 
@@ -577,7 +707,22 @@ TTS_STYLE = {"calm": "warm, calm and friendly, natural conversational pace",
              # Acil durum: panik değil; sakin, güven veren, net ve biraz yavaş (yönlendiren uçuş kontrolörü gibi)
              "urgent": "calm, steady and reassuring, clear and slightly slower, like a composed flight controller guiding someone through a problem"}
 _tts_cool: dict[str, float] = {}
-_tts_cache: dict = {}  # (metin, dil, acil) → ses; en fazla 200
+_tts_cache: dict = {}  # (metin, dil, acil) → ses; en fazla 200 kayıt ve ~40 MB
+TTS_MEM_MAX = 40_000_000
+TTS_DISK_MAX_FILES, TTS_DISK_MAX_BYTES = 3000, 400_000_000
+
+
+def _prune_tts_dir():
+    """Disk önbelleği sınırı: farklı metinlerle dolduruldukça en eski dosyalar silinir (disk dolmasın)."""
+    try:
+        files = sorted(((f.stat().st_mtime, f.stat().st_size, f) for f in TTS_CACHE_DIR.glob("*.pcm")), key=lambda x: x[0])
+        total = sum(x[1] for x in files)
+        while files and (len(files) > TTS_DISK_MAX_FILES or total > TTS_DISK_MAX_BYTES):
+            _, size, f = files.pop(0)
+            f.unlink(missing_ok=True)
+            total -= size
+    except OSError:
+        pass
 
 
 def _pcm_to_wav(pcm: bytes, rate: int) -> bytes:
@@ -674,7 +819,7 @@ async def tts(req: Request):
     if not (GEMINI_KEYS or AZURE_KEY):
         raise HTTPException(503, "no TTS key")
     guard(req)
-    body = await req.json()
+    body = await read_json(req, 20_000)
     text = str(body.get("text", "")).strip()[:1500]
     if not text:
         raise HTTPException(400, "empty")
@@ -692,7 +837,7 @@ async def tts(req: Request):
     if not buf:
         raise HTTPException(429, "tts quota")
     _tts_cache[ck] = (buf, model, mt)
-    while len(_tts_cache) > 200:
+    while len(_tts_cache) > 200 or sum(len(v[0]) for v in _tts_cache.values()) > TTS_MEM_MAX:
         _tts_cache.pop(next(iter(_tts_cache)))
     return Response(buf, media_type=mt, headers={"Cache-Control": "no-store", "X-TTS-Model": model})
 
@@ -708,7 +853,7 @@ async def tts_stream(req: Request):
     from fastapi.responses import Response
     if not GEMINI_KEYS:
         raise HTTPException(503, "GEMINI_API_KEYS not set")
-    body = await req.json()
+    body = await read_json(req, 20_000)
     text = str(body.get("text", "")).strip()[:1500]
     if not text:
         raise HTTPException(400, "empty")
@@ -794,8 +939,9 @@ async def tts_stream(req: Request):
                 if pcm:
                     buf += pcm
                     yield pcm
-            if len(buf) > 4800:
+            if 4800 < len(buf) < 12_000_000:
                 path.write_bytes(bytes(buf))
+                _prune_tts_dir()
         finally:
             await up.aclose()
             await hc.aclose()
@@ -811,51 +957,110 @@ _astros: set = set()
 _crew_seen: dict[str, float] = {}
 
 
+WS_MAX_CONN = 400          # toplam bağlantı
+WS_MAX_CREW = 24           # aynı anda tutulan farklı mürettebat kimliği (sınırsızken bellek doldurulabiliyordu)
+WS_MAX_FRAME = 70_000      # bayt
+WS_RATE, WS_BURST = 3.0, 12.0  # bağlantı başına ileti/sn (arayüz 2 sn'de bir paket yollar)
+_ROSTER_RE = re.compile(r"^C-\d\d$")
+WS_MAX_PER_IP = 80         # aynı adresten bağlantı (jüri aynı Wi-Fi'den tek adresle gelebilir)
+_ws_ip: dict[str, int] = defaultdict(int)
+NOTICE_CATS = {"chestPain", "breathing", "nausea", "pain", "allergy", "dizzy", "unwell", "other"}
+
+
+async def _ws_send(sock, payload, pool: set):
+    """Yavaş ya da kopmuş alıcı diğerlerini bekletmesin: 2 sn'de gönderilemezse bağlantı listeden atılır."""
+    try:
+        await asyncio.wait_for(sock.send_json(payload), timeout=2)
+    except Exception:
+        pool.discard(sock)
+
+
 @app.websocket("/ws/telemetry")
 async def telemetry(ws: WebSocket):
+    ip = client_ip(ws.headers, ws.client.host if ws.client else "?")
+    if not origin_ok(ws.headers) or len(_viewers) + len(_astros) >= WS_MAX_CONN or _ws_ip[ip] >= WS_MAX_PER_IP:
+        await ws.close(code=1008)
+        return
     await ws.accept()
-    role = ws.query_params.get("role", "astronaut")
+    _ws_ip[ip] += 1
+    role = "astronaut" if ws.query_params.get("role", "astronaut") == "astronaut" else "viewer"
     if role == "astronaut":
         _astros.add(ws)
-    if role != "astronaut":
+    else:
         _viewers.add(ws)
         for k, pkt in list(_crew_last.items()):  # yalnızca son 3 dk içinde veri gönderen cihazlar (kapanmış telefonlar birikmez)
             if time.time() - _crew_seen.get(k, 0) > 180:
                 _crew_last.pop(k, None); _crew_seen.pop(k, None); continue
-            await ws.send_json(pkt)
+            await _ws_send(ws, pkt, _viewers)
+    tokens, last, bound = WS_BURST, time.time(), None
     try:
         while True:
-            msg = await ws.receive_json()
+            raw = await ws.receive_text()
+            now = time.time()
+            tokens = min(WS_BURST, tokens + (now - last) * WS_RATE); last = now
+            if len(raw) > WS_MAX_FRAME or tokens < 1:  # dev kare ya da sel → bağlantı kapatılır
+                await ws.close(code=1009 if len(raw) > WS_MAX_FRAME else 1008)
+                break
+            tokens -= 1
             if role != "astronaut":
                 continue
+            try:
+                msg = json.loads(raw)
+            except ValueError:
+                continue
+            if not isinstance(msg, dict):
+                continue
             if msg.get("type") == "notice":  # mürettebat bildirimi: diğer astronot cihazlarına (CMO bunu paketten görür)
-                n = msg.get("notice") or {}
-                note = {"type": "notice", "notice": {"id": str(n.get("id", ""))[:24], "crewId": re.sub(r"[^A-Za-z0-9-]", "", str(n.get("crewId", "")))[:8],
-                                                     "t": n.get("t"), "category": str(n.get("category", "other"))[:16], "quote": str(n.get("quote", ""))[:200]}}
+                n = msg.get("notice")
+                if not isinstance(n, dict):
+                    continue
+                cat = n.get("category") if n.get("category") in NOTICE_CATS else "other"
+                note = {"type": "notice", "notice": {"id": re.sub(r"[^A-Za-z0-9]", "", str(n.get("id", "")))[:24], "crewId": re.sub(r"[^A-Za-z0-9-]", "", str(n.get("crewId", "")))[:8],
+                                                     "t": n.get("t") if isinstance(n.get("t"), (int, float)) else time.time() * 1000, "category": cat, "quote": str(n.get("quote", ""))[:200]}}
+                if not note["notice"]["id"]:
+                    continue
                 for a in list(_astros):
-                    if a is ws:
-                        continue
-                    try:
-                        await a.send_json(note)
-                    except Exception:
-                        _astros.discard(a)
+                    if a is not ws:
+                        await _ws_send(a, note, _astros)
                 continue
+            snap, ui = msg.get("snap"), msg.get("ui")
+            if not isinstance(snap, dict) or not isinstance(ui, dict) or not isinstance(snap.get("indicators"), list):
+                continue  # biçimsiz paket izleyicilere iletilmez
             crew = re.sub(r"[^A-Za-z0-9-]", "", str(msg.get("crewId", "C-01")))[:8] or "C-01"
-            pkt = {"crewId": crew, "t": msg.get("t") or time.time() * 1000, "snap": msg.get("snap"), "ui": msg.get("ui")}
-            if len(json.dumps(pkt)) > 60_000:
-                continue
+            if bound is None:
+                bound = crew
+            elif crew != bound:
+                # Bir bağlantı tek kimlik taşır: tek bağlantıdan onlarca sahte mürettebat üretilemez.
+                # Kullanıcı arayüzden kimlik değiştirirse eski kaydı bırakıp yenisine geçer.
+                _crew_last.pop(bound, None); _crew_seen.pop(bound, None)
+                bound = crew
+            pkt = {"crewId": crew, "t": msg.get("t") if isinstance(msg.get("t"), (int, float)) else time.time() * 1000, "snap": snap, "ui": ui}
+            if crew not in _crew_last and len(_crew_last) >= WS_MAX_CREW:
+                # Dolu: önce süresi geçenler, sonra en eski kayıt çıkarılır. Kadro kimlikleri (C-01…C-99) kadro dışı
+                # kimlikler yüzünden asla çıkarılmaz → sahte kimliklerle gerçek mürettebat ekrandan düşürülemez.
+                for k in [k for k, seen in _crew_seen.items() if now - seen > 180]:
+                    _crew_last.pop(k, None); _crew_seen.pop(k, None)
+                if len(_crew_last) >= WS_MAX_CREW:
+                    is_roster = bool(_ROSTER_RE.match(crew))
+                    pool = [k for k in _crew_last if is_roster or not _ROSTER_RE.match(k)]
+                    if not pool:
+                        continue
+                    old = min(pool, key=lambda k: _crew_seen.get(k, 0))
+                    _crew_last.pop(old, None); _crew_seen.pop(old, None)
             _crew_last[crew] = pkt
-            _crew_seen[crew] = time.time()
+            _crew_seen[crew] = now
             for v in list(_viewers):
-                try:
-                    await v.send_json(pkt)
-                except Exception:
-                    _viewers.discard(v)
+                await _ws_send(v, pkt, _viewers)
     except WebSocketDisconnect:
         pass
+    except Exception as e:  # beklenmeyen hata bağlantıyı kapatır; diğer bağlantılar etkilenmez
+        print("[ws] error", type(e).__name__, str(e)[:120], flush=True)
     finally:
         _viewers.discard(ws)
         _astros.discard(ws)
+        _ws_ip[ip] -= 1
+        if _ws_ip[ip] <= 0:
+            _ws_ip.pop(ip, None)
 
 
 _warm_cache_loop()

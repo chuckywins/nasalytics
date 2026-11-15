@@ -210,3 +210,21 @@ Her adım buraya kısa notla eklenir (en yeni en altta).
 - Oturum başlatma penceresine "VEGA sesi ve sesli alarmlar yapay zekâ ile üretilmiş sentetik sestir" notu (TR/EN).
 - ADA hipoglisemi makalesi depodan çıkarıldı (telifli; bağlantısı SOURCES.md içinde kalıyor).
 - SOURCES.md başlıkları: "benzer projeler" olarak yeniden adlandırıldı.
+
+## 2026-11-15 14:15 — Güvenlik incelemesi ve sıkılaştırma
+Bulunan ve kapatılan açıklar (ayrıntı ve test: 35 saldırı testi + CSP altında işlev testi geçti):
+- Hız sınırı, uydurma X-Forwarded-For ile deliniyordu (ilk girdi kullanılıyordu) → vekilin eklediği son girdi; hız sözlüğü sınırlı.
+- İstek gövdesi sınırsızdı (bellek ve AI bütçesi tüketilebiliyordu) → 200 KB (görüntülü 4,2 MB), anlık durum 60 KB, kütüphane 60 KB; bozuk JSON 400.
+- CORS herkese açıktı ("*") → kaldırıldı; POST ve WebSocket'te köken (Origin) denetimi (ALLOWED_HOSTS).
+- Serbest metin `lang`/`role` sistem istemine giriyordu → beyaz liste. VEGA geçmişi yalnız düz metin, sınırlı.
+- Görüntü türü denetlenmiyordu, bozuk veri 500 veriyordu → jpeg/png/webp beyaz listesi, 400.
+- /api/vision arayüzde kullanılmıyordu ama açıktı → varsayılan kapalı (ENABLE_VISION=1 ile açılır).
+- /docs, /redoc, /openapi.json dışarı açıktı → kapatıldı. /api/health harcama bilgisini gösteriyordu → kaldırıldı. VEGA akışı iç hata metnini sızdırıyordu → genel mesaj.
+- Güvenlik başlıkları yoktu → CSP, nosniff, X-Frame-Options, Referrer-Policy, Permissions-Policy.
+- TTS önbelleği sınırsızdı (bellek ~800 MB'a, disk sınırsız büyüyebiliyordu) → bellek 40 MB, disk 3000 dosya / 400 MB, en eski silinir.
+- WebSocket: köken denetimi yoktu; kare boyutu, ileti hızı, bağlantı sayısı ve mürettebat kimliği sayısı sınırsızdı; biçimsiz paket izleyicilere iletiliyordu; yavaş alıcı herkesi bekletiyordu → hepsi sınırlandı, bağlantı başına tek kimlik, kadro kimlikleri sahte kimliklerle düşürülemez.
+- Arayüz: gelen paket ve bildirimler biçim denetiminden geçiyor (validate.ts); hata sınırı (ErrorBoundary) eklendi; DONKI bağlantıları yalnız nasa.gov https.
+- Anthropic çağrıları 60 sn zaman aşımı (asılı çağrılar havuzu tüketmesin). Model çıktısı da tür denetiminden geçiyor.
+- Dağıtım: systemd sertleştirme (NoNewPrivileges, PrivateTmp, ProtectSystem, ProtectHome), --ws-max-size, .env 600; update.sh hizmet dosyasını eşitliyor.
+- Temiz çıkanlar: git geçmişinde ve derlemede gizli anahtar yok; arayüzde ham HTML basan kod yok; npm audit 0 açık; dizin dışına çıkma (path traversal) yok.
+- Kalan, bilinçli kabul edilen risk: telemetri kimlik doğrulamasız (jüri telefonları girişsiz bağlanabilsin diye); aynı ağdaki biri sahte mürettebat verisi yollayabilir. Veriler simülasyon olduğu için kabul edildi.

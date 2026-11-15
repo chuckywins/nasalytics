@@ -13,6 +13,7 @@ import type { Escalation, Status } from './engine/types';
 import { setSymptomHook, type SymptomReport } from './symptoms';
 import { useLink } from './link';
 import { sampleBaseline } from './baseline';
+import { validPacket, validNotice } from './validate';
 import { sampleHistory } from './history';
 import { ROSTER_IDS, useRecord } from './crew';
 
@@ -130,12 +131,14 @@ function connect() {
   s.onmessage = (ev) => {
     try {
       const d = JSON.parse(ev.data);
-      if (d?.type === 'notice' && d.notice?.id) { // diğer mürettebat cihazı: kısa bildirim (kendi gönderdiğimiz gelmez)
+      if (d?.type === 'notice') { // diğer mürettebat cihazı: kısa bildirim (kendi gönderdiğimiz gelmez)
+        if (!validNotice(d.notice)) return;
         const n = d.notice as Notice;
         if (n.crewId !== useTelemetry.getState().crewId) useNotices.setState((st) => ({ list: [...st.list.filter((x) => x.id !== n.id), { ...n, t: Date.now() }].slice(-3) }));
         return;
       }
-      const p = d as Packet; if (p?.crewId && p.snap) ingest(p.crewId, { ...p, t: Date.now() });
+      if (!validPacket(d)) return; // biçimsiz ya da kötü niyetli paket ekranı çökertemez
+      const p = d as Packet; ingest(p.crewId, { ...p, t: Date.now() });
     } catch { /* yok */ }
   };
 }

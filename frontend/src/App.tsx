@@ -11,6 +11,7 @@ import { FatigueCam } from './components/FatigueCam';
 import { ScenarioBanner } from './components/Scenario';
 import { CrewView, CrewNotices } from './components/CrewView';
 import { ExerciseModal } from './components/ExercisePlan';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { QuickCheck, RecordModal, LosBanner, RecordButton, LinkToggle } from './components/Extras';
 import { useTelemetry, startTelemetry } from './telemetry';
 
@@ -57,7 +58,7 @@ export default function App() {
   if (role !== 'astronaut') return (
     <div className={`app viewer ${mobile ? 'm-viewer' : ''}`}>
       <TopBar />
-      <CrewView />
+      <ErrorBoundary onReset={() => useTelemetry.setState({ buf: {}, held: {} })}><CrewView /></ErrorBoundary>
       <AlarmBanner />
       <SessionGate />
     </div>

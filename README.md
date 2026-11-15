@@ -88,7 +88,7 @@ To try the three views, open the app in two or three tabs or devices and pick a 
 | `NASA_API_KEY` | Live DONKI space weather | Falls back to NASA's shared `DEMO_KEY` |
 | `AZURE_SPEECH_KEY`, `AZURE_SPEECH_REGION` | Backup voice | Optional |
 
-Keys stay on the server and never reach the browser. The backend has a per-IP rate limit and a daily spending cap (`RATE_PER_MIN`, `DAILY_BUDGET_USD`).
+Keys stay on the server and never reach the browser. The backend has a per-IP rate limit and a daily spending cap (`RATE_PER_MIN`, `DAILY_BUDGET_USD`), request size limits, a same-origin check on POST and WebSocket requests, and a strict Content-Security-Policy. If you host it on your own domain, add the domain to `ALLOWED_HOSTS` (comma-separated) in `.env`.
 
 ### Production build
 

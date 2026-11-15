@@ -230,7 +230,7 @@ export function SpaceWeather() {
         <div className="wx-counts">{counts.map(([k, n]) => <span key={k} className="wx-c"><b className="num">{wx.failed?.includes(k) ? '—' : n}</b> {t(`wx.${k}`, lang)} <span className="muted">({k}{wx.failed?.includes(k) ? `, ${t('wx.failed', lang)}` : ''})</span></span>)}</div>
         {wx.events.length === 0 ? <p className="small muted">{t('wx.none', lang)}</p> : (
           <ul className="wx-list small">{wx.events.slice(0, 8).map((e, i) => (
-            <li key={i}><b>{e.type}</b>{e.detail ? ` ${e.detail}` : ''} · <span className="num">{fmtT(e.time)}</span>{e.link && <> · <a href={e.link} target="_blank" rel="noreferrer">DONKI ↗</a></>}</li>
+            <li key={i}><b>{e.type}</b>{e.detail ? ` ${e.detail}` : ''} · <span className="num">{fmtT(e.time)}</span>{e.link && e.link.startsWith('https://') && <> · <a href={e.link} target="_blank" rel="noreferrer">DONKI ↗</a></>}</li>
           ))}</ul>
         )}
       </>}
