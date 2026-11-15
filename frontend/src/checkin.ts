@@ -18,6 +18,9 @@ interface DayRec { done: TaskId[]; xp: number; }
 interface CheckinState {
   days: Record<string, DayRec>;
   manual: Partial<Record<TaskId, number>>; // elle işaretlenen (egzersiz) – zaman damgası
+  /** Egzersiz modunda işaretlenen hareketler: gün → hareket kimlikleri (son 14 gün) */
+  exMoves: Record<string, string[]>;
+  toggleExMove: (id: string) => void;
   reaction: ReactionResult[];
   voice: VoiceResult[];
   addReaction: (r: ReactionResult) => void;
@@ -29,9 +32,9 @@ interface CheckinState {
 
 export const dayKey = (t = Date.now()) => new Date(t).toISOString().slice(0, 10);
 const LS = 'ahm.checkin.v1';
-const load = (): Pick<CheckinState, 'days' | 'reaction' | 'voice' | 'manual'> => {
-  try { const j = JSON.parse(localStorage.getItem(LS) ?? ''); return { days: j.days ?? {}, reaction: j.reaction ?? [], voice: j.voice ?? [], manual: j.manual ?? {} }; }
-  catch { return { days: {}, reaction: [], voice: [], manual: {} }; }
+const load = (): Pick<CheckinState, 'days' | 'reaction' | 'voice' | 'manual' | 'exMoves'> => {
+  try { const j = JSON.parse(localStorage.getItem(LS) ?? ''); return { days: j.days ?? {}, reaction: j.reaction ?? [], voice: j.voice ?? [], manual: j.manual ?? {}, exMoves: j.exMoves ?? {} }; }
+  catch { return { days: {}, reaction: [], voice: [], manual: {}, exMoves: {} }; }
 };
 
 export const useCheckin = create<CheckinState>((set) => ({
@@ -40,13 +43,19 @@ export const useCheckin = create<CheckinState>((set) => ({
   addVoice: (v) => set((s) => ({ voice: [...s.voice, v].slice(-14) })),
   modal: typeof location !== 'undefined' && location.search.includes('rtSelfTest') ? 'reaction' : null,
   setModal: (modal) => set({ modal }),
+  toggleExMove: (id) => set((s) => {
+    const k = dayKey(); const cur = s.exMoves[k] ?? [];
+    const next = cur.includes(id) ? cur.filter((x) => x !== id) : [...cur, id];
+    const keep = Object.keys(s.exMoves).sort().slice(-13).filter((d) => d !== k);
+    return { exMoves: { ...Object.fromEntries(keep.map((d) => [d, s.exMoves[d]])), [k]: next } };
+  }),
   toggleManual: (t) => set((s) => {
     const m = { ...s.manual };
     if (m[t] && dayKey(m[t]) === dayKey()) delete m[t]; else m[t] = Date.now();
     return { manual: m };
   }),
 }));
-useCheckin.subscribe((s) => { try { localStorage.setItem(LS, JSON.stringify({ days: s.days, reaction: s.reaction, voice: s.voice, manual: s.manual })); } catch { /* özel mod */ } });
+useCheckin.subscribe((s) => { try { localStorage.setItem(LS, JSON.stringify({ days: s.days, reaction: s.reaction, voice: s.voice, manual: s.manual, exMoves: s.exMoves })); } catch { /* özel mod */ } });
 
 /** Bugün tamamlanan görevler: ölçümler ana store'dan, test/kayıtlar check-in store'dan türetilir */
 export function doneToday(): TaskId[] {

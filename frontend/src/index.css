@@ -517,3 +517,13 @@ a { color: var(--accent); }
 .ex-card figcaption { padding: 6px 8px; display: flex; flex-direction: column; gap: 2px; font-size: 12px; }
 .ex-open { font-size: 12px; padding: 2px 8px; margin-left: 4px; }
 @media (max-width: 760px) { .ex-grid { grid-template-columns: 1fr 1fr; } .ex-box { width: 100vw; max-height: 92dvh; } }
+
+.ex-count { color: var(--ink-2); }
+.ex-done { margin: 0 8px 8px; font-size: 12px; padding: 5px 8px; border: 1px solid var(--line-2); border-radius: 4px; background: transparent; color: var(--ink-2); text-align: center; }
+.ex-done.on { border-color: #3fb950; color: #3fb950; background: rgba(63,185,80,.08); }
+@media (max-width: 760px), (max-height: 500px) and (pointer: coarse) {
+  .m-main .fcam { position: relative; left: auto; bottom: auto; width: 100%; flex: none; z-index: 1; }
+  .m-main .fcam.off { width: 100%; }
+  .m-main .fcam-v { aspect-ratio: 4/3; }
+  .m-main .fcam-tg { min-height: 34px; padding: 4px 10px; }
+}

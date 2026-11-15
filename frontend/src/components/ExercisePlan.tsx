@@ -2,6 +2,7 @@
 // AI notu: Claude (Anthropic) yardımıyla yazılmıştır.
 import { create } from 'zustand';
 import { asset } from '../base';
+import { useCheckin, dayKey } from '../checkin';
 import { createPortal } from 'react-dom';
 import { useApp } from '../store';
 import { t } from '../i18n';
@@ -34,6 +35,17 @@ export const useExModal = create<{ open: boolean; tab: 'moves' | 'plan'; show: (
   open: false, tab: 'moves', show: (tab = 'moves') => set({ open: true, tab }), hide: () => set({ open: false }),
 }));
 
+/** Kartın altındaki "bugün yaptım" işareti (cihazda, gün bazında) */
+function ExDone({ id, lang }: { id: string; lang: 'tr' | 'en' }) {
+  const done = useCheckin((s) => (s.exMoves[dayKey()] ?? []).includes(id));
+  const toggle = useCheckin((s) => s.toggleExMove);
+  return (
+    <button className={`ex-done ${done ? 'on' : ''}`} aria-pressed={done} onClick={() => toggle(id)}>
+      {done ? '✓ ' + t('ex.doneToday', lang) : '○ ' + t('ex.markDone', lang)}
+    </button>
+  );
+}
+
 function MoveCard({ a, lang }: { a: ExAnim; lang: 'tr' | 'en' }) {
   return (
     <figure className="ex-card">
@@ -44,8 +56,14 @@ function MoveCard({ a, lang }: { a: ExAnim; lang: 'tr' | 'en' }) {
         <span className="small muted">{a.iss[lang]} · {a.srcs.map((x, i) => <a key={i} href={x.url} target="_blank" rel="noreferrer" className="ex-src">{(x.label.match(/M?TB-0\d\d/)?.[0] ?? 'NASA')} {x.label.split('·')[1]?.trim()} </a>)}</span>
         {a.note && <span className="small muted">{a.note[lang]}</span>}
       </figcaption>
+      <ExDone id={a.id} lang={lang} />
     </figure>
   );
+}
+
+function ExCount({ lang }: { lang: 'tr' | 'en' }) {
+  const n = useCheckin((s) => (s.exMoves[dayKey()] ?? []).filter((id) => EX_ANIM.some((a) => a.id === id)).length);
+  return <div className="small ex-count"><b className="num">{n}/{EX_ANIM.length}</b> {t('ex.countToday', lang)}</div>;
 }
 
 export function ExerciseModal() {
@@ -63,6 +81,7 @@ export function ExerciseModal() {
         {tab === 'moves' ? (
           <>
             <p className="small ex-earth">{t('ex.earthNote', lang)}</p>
+            <ExCount lang={lang} />
             <div className="ex-grid">{EX_ANIM.map((a) => <MoveCard key={a.id} a={a} lang={lang} />)}</div>
             <div className="small"><b>{t('ex.textOnly', lang)}:</b> {EX_TEXT_ONLY.map((x) => x[lang]).join(' · ')}</div>
             <p className="small muted">{EX_NOTE[lang]}</p>

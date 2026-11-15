@@ -82,7 +82,7 @@ export default function App() {
           </div>
           <RegionPanel />
         </>}
-        {mTab === 'ai' && <><AssessmentPanel /><TrendChart /></>}
+        {mTab === 'ai' && <><AssessmentPanel /><FatigueCam /><TrendChart /></>}
         {mTab === 'more' && <MissionPanel />}
       </main>
       <Vega />

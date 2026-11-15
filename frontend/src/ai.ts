@@ -30,6 +30,7 @@ export function buildSnapshot() {
       const vl = c.voice[c.voice.length - 1];
       return {
         tasksDoneToday: doneToday(),
+        exerciseMovesDoneToday: useCheckin.getState().exMoves[dayKey()] ?? [], // astronotun kendi işaretlemesi
         lastReactionTest: rt ? { today: dayKey(rt.at) === dayKey(), medianMs: rt.medianMs, lapses: rt.lapses, falseStarts: rt.falseStarts } : null,
         lastVoiceLog: vl ? { today: dayKey(vl.at) === dayKey(), metrics: vl.metrics, cues: vl.cues.filter((x) => x.level !== 'none').map((x) => `${x.domain}:${x.level}`) } : null,
       };

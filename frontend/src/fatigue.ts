@@ -25,7 +25,8 @@ export interface FatigueState {
 }
 
 export const useFatigue = create<FatigueState>((set) => ({
-  enabled: (() => { try { return localStorage.getItem('ahm.cam') !== 'off'; } catch { return true; } })(),
+  // Telefonda varsayılan KAPALI (açılışta izin istemi çıkmasın); kullanıcı açarsa tercih saklanır
+  enabled: (() => { try { const v = localStorage.getItem('ahm.cam'); if (v) return v !== 'off'; return !window.matchMedia('(pointer: coarse)').matches; } catch { return true; } })(),
   phase: 'off', face: false, blinkPerMin: null, perclos: null, yawns: 0, lastLongClosureAt: null, eyesClosed: false, expression: 'none', status: 'unknown',
   setEnabled: (enabled) => { try { localStorage.setItem('ahm.cam', enabled ? 'on' : 'off'); } catch { /* yok */ } set({ enabled, phase: enabled ? 'loading' : 'off' }); },
 }));

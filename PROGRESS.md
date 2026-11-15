@@ -174,3 +174,8 @@ Her adım buraya kısa notla eklenir (en yeni en altta).
 - Yalnızca NASA belgelerinde adı geçen 10 hareket animasyonlu (squat, deadlift, Romanian deadlift, good morning, topuk kaldırma, bench press, koşu/T2, bisiklet/CEVIS, sıçrama). Animasyonu olmayan NASA hareketleri yalnız yazı (tek bacak/sumo/kısa açılı squat, tek bacak topuk kaldırma, parmak şınavı, sprint). Benzer-ama-farklı hareket konmadı.
 - Ayrı "Egzersiz modu" penceresi (Hareketler / Plan ve hedefler sekmeleri); açılır: üst çubukta Egzersiz seçilince, Günlük rutin → Egzersiz modu, organ panelinde kemik/kas. Her kartta: kemik bölgesi, ISS cihazı, NASA sayfa bağlantısı; üstte "Dünya gösterimi; ISS'te ARED/T2/CEVIS" notu. Yük/set/tekrar yok.
 - Test: masaüstü + 390×844; 10 görüntü yüklendi, HTTP hatası yok.
+
+## 2026-11-15 10:02 — Hareket işaretleme + telefonda yorgunluk kamerası
+- Egzersiz modunda her animasyonlu kartın altında "Yaptım / Bugün yapıldı" düğmesi; gün bazında cihazda saklanır (son 14 gün), üstte "X/9 hareket bugün" sayacı; işaretlenenler AI anlık durumuna da girer (exerciseMovesDoneToday).
+- Telefonda yorgunluk kamerası AI sekmesinde; varsayılan KAPALI (açılışta izin istemi yok), kullanıcı "Aç" deyince başlar ve tercih saklanır. Masaüstü davranışı aynı.
+- Test (390×844, sahte kamera): kamera kapalı başladı, açınca görüntü aktı ve kalibrasyon başladı; 2 hareket işaretlendi, sayfa yenilenince korundu.
