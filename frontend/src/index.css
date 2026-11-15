@@ -586,3 +586,16 @@ li.allergy b { text-decoration: line-through; }
 .hist-tbl th { position: sticky; top: 0; background: var(--panel); }
 .hist-tbl tr.al td { color: #ff6b6b; }
 @media (max-width: 760px) { .prog-cards { grid-template-columns: 1fr 1fr; } .hist-exp { margin-left: 0; } }
+
+/* Üst çubuk: başlık daralınca yanındaki öğelerin altına taşmasın → iki satıra böl */
+@media (min-width: 761px) and (max-width: 2100px) {
+  .topbar .brand { flex: none; }
+  .topbar .brand b { white-space: normal; max-width: 150px; font-size: 13px; line-height: 1.15; letter-spacing: .06em; }
+  .topbar .brand small { display: none; }
+  .topbar { gap: 12px; }
+}
+@media (min-width: 761px) and (max-width: 1750px) {
+  .topbar .role-sel select { max-width: 120px; }
+  .topbar .rec-btn, .topbar .los-btn { padding: 4px 6px; }
+  .topbar { gap: 10px; }
+}

@@ -200,3 +200,6 @@ Her adım buraya kısa notla eklenir (en yeni en altta).
 - Kişisel program yalnız kaynaklı hesap: BMI (CDC), tahmini maks. nabız 220−yaş (AHA), T2 hedef nabız bandı %70–100 HRmax (TB-031 s. 11), ARED hareketleri (TB-031 s. 16) ve bugün işaretlenenler, haftada 6–7 seans (MTB-013 s. 14), ortama göre cihaz. CEVIS hedefi VO₂peak testi olmadığı için hesaplanmadı; kütleden yük hesaplanmaz; yük/set/tekrar ASCR'ye bırakıldı. Program AI anlık durumuna da girer.
 - Geçmiş: 2 sn'de bir satır (24 saate kadar), 15 dk / 1 sa / 6 sa / tümü, her okuma / 1 dk ortalama, nabız çizgisi, tablo (kritik satırlar kırmızı, LOS işaretli), CSV ve JSON indirme (SİMÜLE etiketli).
 - Test: masaüstü ve 390×844; CSV indirildi, sayfa hatası yok, telefonda taşma yok.
+
+## 2026-11-15 13:00 — Üst çubuk düzeltmesi
+- Başlık daralınca "Ortam" seçiminin altına taşıyordu; 2100 px altında başlık iki satıra bölünüyor, 1750 px altında rol/kimlik seçicileri daraltıldı. 1920 ve 1536 genişlikte çakışma ve taşma yok (tasarım hedefi 1536+).
