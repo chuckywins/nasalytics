@@ -340,6 +340,7 @@ def account(model: str, usage) -> None:
 # ---- NASA DONKI uzay havası (canlı; sunucu tarafı, 30 dk önbellek). Yalnız NASA'nın olay türleri ve alanları; yorum yok ----
 _DONKI = {"at": 0.0, "data": None}
 _DONKI_TYPES = ("FLR", "SEP", "CME", "GST")
+_NASA_LINK = re.compile(r"https:" + r"//([a-z0-9-]+\.)*nasa\.gov/")  # yalnız nasa.gov alan adları
 
 
 def _donki_fetch():
@@ -367,7 +368,7 @@ def _donki_fetch():
                     kps = [k.get("kpIndex") for k in (e.get("allKpIndex") or []) if k.get("kpIndex") is not None]
                     t0, detail = e.get("startTime"), (f"Kp {max(kps):g}" if kps else None)
                 link = e.get("link")
-                if not (isinstance(link, str) and re.match(r"https://([a-z0-9-]+\.)*nasa\.gov/", link)):
+                if not (isinstance(link, str) and _NASA_LINK.match(link)):
                     link = None  # arayüzde href olur: yalnız nasa.gov https adresleri
                 events.append({"type": typ, "time": str(t0)[:32] if t0 else None, "detail": str(detail)[:24] if detail else None, "link": link})
     if len(failed) == len(_DONKI_TYPES):
