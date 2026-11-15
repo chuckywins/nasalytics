@@ -41,7 +41,7 @@ function MoveCard({ a, lang }: { a: ExAnim; lang: 'tr' | 'en' }) {
       <figcaption>
         <b>{a.name[lang]}</b>
         <span className="small">→ {a.site[lang]}</span>
-        <span className="small muted">{a.iss[lang]} · <a href={a.src.url} target="_blank" rel="noreferrer">{(a.src.label.match(/M?TB-0\d\d/)?.[0] ?? 'NASA')} {a.src.label.split('·')[1]?.trim()}</a></span>
+        <span className="small muted">{a.iss[lang]} · {a.srcs.map((x, i) => <a key={i} href={x.url} target="_blank" rel="noreferrer" className="ex-src">{(x.label.match(/M?TB-0\d\d/)?.[0] ?? 'NASA')} {x.label.split('·')[1]?.trim()} </a>)}</span>
         {a.note && <span className="small muted">{a.note[lang]}</span>}
       </figcaption>
     </figure>

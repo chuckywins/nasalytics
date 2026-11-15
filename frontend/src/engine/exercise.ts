@@ -20,7 +20,8 @@ export const EX_SESSION: { text: L; src: SourceRef }[] = [
   { text: { tr: 'Aerobik (metabolik): yaklaşık 30 dk, aralıklı ya da sabit tempo', en: 'Aerobic (metabolic): about 30 min, interval or steady state' }, src: TB031(10) },
   { text: { tr: 'Direnç/kuvvet: 30–60 dk yük bindiren antrenman', en: 'Resistive/strength: 30–60 min load-bearing training' }, src: TB031(10) },
   { text: { tr: 'Yoğunluk: bisiklette (CEVIS) %70–100 VO₂peak, koşu bandında (T2) %70–100 maksimum nabız', en: 'Intensity: cycle (CEVIS) 70–100% VO₂peak, treadmill (T2) 70–100% HRmax' }, src: TB031(11) },
-  { text: { tr: 'Sıklık: yatak istirahati ve uçuşta haftada 6–7 seans kemiği korumada etkili bulundu; ISS\'te ortalama ~600 dk/hafta', en: 'Frequency: 6–7 sessions/week maintained bone in bed rest and flight; ISS average ~600 min/week' }, src: MTB013(14) },
+  { text: { tr: 'Sıklık: yatak istirahati ve uçuşta haftada 6–7 seans kemiği korumada etkili bulundu', en: 'Frequency: 6–7 sessions/week maintained bone in bed rest and flight' }, src: MTB013(14) },
+  { text: { tr: 'ISS\'te ortalama ~600 dk/hafta egzersiz (T2, ARED, CEVIS; 2011–2017 görevleri)', en: 'ISS average ~600 min/week (T2, ARED, CEVIS; 2011–2017 missions)' }, src: TB031(12) },
   { text: { tr: 'Önceki gereklilik: iş günü başına 2 saat (süreyi görev tıbbi ekibi belirler)', en: 'Previous requirement: 2 hours per workday (set by the mission medical team)' }, src: MTB013(14) },
 ];
 
@@ -30,9 +31,9 @@ export const EX_MOVES: { name: L; site: L; src: SourceRef; note?: L }[] = [
   { name: { tr: 'Tek bacak, derin ve kısa açılı squat (yüksek, sürekli eksantrik yük)', en: 'Single-leg deep short-arc squat (high sustained eccentric overload)' }, site: { tr: 'Femur boynunun üst-yan kısmı', en: 'Superior lateral femoral neck' }, src: MTB013(14) },
   { name: { tr: 'Deadlift (klasik, Romanian, sumo)', en: 'Deadlift (conventional, Romanian, sumo)' }, site: { tr: 'Bel omurgası; yükü kavrama kuvveti sınırlayabilir', en: 'Lumbar spine; load may be limited by grip strength' }, src: MTB013(14), note: { tr: 'Kaynak cümlede noktalama eksik; anlam bu şekilde okundu.', en: 'Source sentence lacks punctuation; read as stated.' } },
   { name: { tr: 'Barbell good morning', en: 'Barbell good morning' }, site: { tr: 'Bel omurgası', en: 'Lumbar spine' }, src: MTB013(14) },
-  { name: { tr: 'Topuk kaldırma (tek bacak dahil)', en: 'Heel raise (incl. single-leg)' }, site: { tr: 'Baldır (gastro-soleus); tek bacak duruşunda topuk kemiği yoğunluğu arttı (17 haftalık yatak istirahati)', en: 'Calf (gastro-soleus); single-leg stance increased calcaneus BMD (17-week bed rest)' }, src: MTB013(14) },
+  { name: { tr: 'Baldır (gastro-soleus) egzersizi, tek bacak duruşunda', en: 'Gastro-soleus exercise in single-leg stance' }, site: { tr: 'Topuk kemiği (calcaneus) yoğunluğu arttı (17 haftalık yatak istirahati). ISS ARED kategorisi adı: heel raise (TB-031 s. 16)', en: 'Calcaneus BMD increased (17-week bed rest). ISS ARED category name: heel raise (TB-031 p. 16)' }, src: MTB013(14) },
   { name: { tr: 'Kalça abdüktörleri, tek bacak duruşu', en: 'Hip abductors, single-leg stance' }, site: { tr: 'Büyük trokanter (17 haftalık yatak istirahatinde yoğunluk arttı)', en: 'Greater trochanter (BMD increased in 17-week bed rest)' }, src: MTB013(14) },
-  { name: { tr: 'Bench press', en: 'Bench press' }, site: { tr: 'Üst vücut kuvveti (ISS ARED egzersiz kategorisi)', en: 'Upper-body strength (ISS ARED category)' }, src: TB031(16) },
+  { name: { tr: 'Bench press', en: 'Bench press' }, site: { tr: 'ISS ARED egzersiz kategorisi; belgede kemik bölgesi belirtilmemiş', en: 'ISS ARED exercise category; no bone site stated' }, src: TB031(16) },
   { name: { tr: 'Parmak şınavı', en: 'Finger push-ups' }, site: { tr: 'Ön kol kemiklerinin bilek ucu (radius, ulna); önce duvara/masaya yaslanarak başlanabilir', en: 'Distal radius and ulna; may start leaning against a wall or table' }, src: MTB013(14) },
   { name: { tr: 'Sprint ve sıçrama', en: 'Sprinting and jumping' }, site: { tr: 'Femur boynunun alt kısmı', en: 'Inferior femoral neck' }, src: MTB013(14), note: { tr: 'Yerçekimli ortam bulgusu; mikrogravitede uygulanabilirliği belgede yok.', en: 'Gravity-environment finding; microgravity applicability not stated.' } },
 ];
@@ -52,18 +53,17 @@ export const EX_SOURCES: SourceRef[] = [TB031(10), MTB013(14)];
 
 /** Egzersiz modu: animasyonlu kartlar. YALNIZCA NASA belgesinde adı geçen hareketler; animasyon forge-motion (CC0), Dünya gösterimi.
  *  Benzer ama aynı olmayan hareket (ör. bölünmüş squat ≠ tek bacak squat, şınav ≠ parmak şınavı) bilerek eklenmedi. */
-export interface ExAnim { id: string; file: string; name: L; site: L; iss: L; src: SourceRef; note?: L }
+export interface ExAnim { id: string; file: string; name: L; site: L; iss: L; srcs: SourceRef[]; note?: L }
 export const EX_ANIM: ExAnim[] = [
-  { id: 'squat', file: 'exercise/squat_bb.webp', name: { tr: 'Squat (sırt)', en: 'Back squat' }, site: { tr: 'Femur boynunun alt kısmı', en: 'Inferior femoral neck' }, iss: { tr: 'ISS: ARED', en: 'ISS: ARED' }, src: MTB013(14) },
-  { id: 'deadlift', file: 'exercise/deadlift_bb.webp', name: { tr: 'Deadlift', en: 'Deadlift' }, site: { tr: 'Bel omurgası', en: 'Lumbar spine' }, iss: { tr: 'ISS: ARED', en: 'ISS: ARED' }, src: MTB013(14) },
-  { id: 'rdl', file: 'exercise/rdl_bb.webp', name: { tr: 'Romanian deadlift', en: 'Romanian deadlift' }, site: { tr: 'Bel omurgası (ARED deadlift kategorisi)', en: 'Lumbar spine (ARED deadlift category)' }, iss: { tr: 'ISS: ARED', en: 'ISS: ARED' }, src: TB031(16) },
-  { id: 'goodmorning', file: 'exercise/good_morning.webp', name: { tr: 'Barbell good morning', en: 'Barbell good morning' }, site: { tr: 'Bel omurgası', en: 'Lumbar spine' }, iss: { tr: 'ISS: ARED', en: 'ISS: ARED' }, src: MTB013(14) },
-  { id: 'heelraise', file: 'exercise/calf_raise.webp', name: { tr: 'Topuk kaldırma', en: 'Heel raise' }, site: { tr: 'Baldır; tek bacak duruşunda topuk kemiği', en: 'Calf; calcaneus in single-leg stance' }, iss: { tr: 'ISS: ARED', en: 'ISS: ARED' }, src: MTB013(14) },
-  { id: 'hipabd', file: 'exercise/side_leg_raise.webp', name: { tr: 'Kalça abdüktörleri (tek bacak duruşu)', en: 'Hip abductors (single-leg stance)' }, site: { tr: 'Büyük trokanter', en: 'Greater trochanter' }, iss: { tr: 'Belgede cihaz belirtilmemiş', en: 'Device not stated' }, src: MTB013(14) },
-  { id: 'bench', file: 'exercise/bench_bb.webp', name: { tr: 'Bench press', en: 'Bench press' }, site: { tr: 'Üst vücut kuvveti', en: 'Upper-body strength' }, iss: { tr: 'ISS: ARED', en: 'ISS: ARED' }, src: TB031(16) },
-  { id: 'treadmill', file: 'exercise/run.webp', name: { tr: 'Koşu (aerobik)', en: 'Running (aerobic)' }, site: { tr: 'Aerobik kapasite; %70–100 maksimum nabız', en: 'Aerobic capacity; 70–100% HRmax' }, iss: { tr: 'ISS: T2/COLBERT koşu bandı, kemerle yüklenir', en: 'ISS: T2/COLBERT treadmill with harness' }, src: TB031(11) },
-  { id: 'cycle', file: 'exercise/bike.webp', name: { tr: 'Bisiklet (aerobik)', en: 'Cycling (aerobic)' }, site: { tr: 'Aerobik kapasite; %70–100 VO₂peak', en: 'Aerobic capacity; 70–100% VO₂peak' }, iss: { tr: 'ISS: CEVIS bisiklet', en: 'ISS: CEVIS cycle' }, src: TB031(11) },
-  { id: 'jump', file: 'exercise/jump_squat.webp', name: { tr: 'Sıçrama', en: 'Jumping' }, site: { tr: 'Femur boynunun alt kısmı', en: 'Inferior femoral neck' }, iss: { tr: 'Yerçekimli ortam bulgusu', en: 'Gravity-environment finding' }, src: MTB013(14), note: { tr: 'Mikrogravitede uygulanabilirliği belgede yok.', en: 'Microgravity applicability not stated.' } },
+  { id: 'squat', file: 'exercise/squat_bb.webp', name: { tr: 'Squat (sırt)', en: 'Back squat' }, site: { tr: 'Femur boynunun alt kısmı', en: 'Inferior femoral neck' }, iss: { tr: 'ISS: ARED squat kategorisi', en: 'ISS: ARED squat category' }, srcs: [MTB013(14), TB031(16)] },
+  { id: 'deadlift', file: 'exercise/deadlift_bb.webp', name: { tr: 'Deadlift', en: 'Deadlift' }, site: { tr: 'Bel omurgası; yükü kavrama kuvveti sınırlayabilir', en: 'Lumbar spine; load may be limited by grip strength' }, iss: { tr: 'ISS: ARED deadlift kategorisi', en: 'ISS: ARED deadlift category' }, srcs: [MTB013(14), TB031(16)] },
+  { id: 'rdl', file: 'exercise/rdl_bb.webp', name: { tr: 'Romanian deadlift', en: 'Romanian deadlift' }, site: { tr: 'Bel omurgası (deadlift için)', en: 'Lumbar spine (stated for deadlifts)' }, iss: { tr: 'ISS: ARED deadlift kategorisinin bir çeşidi', en: 'ISS: variant in the ARED deadlift category' }, srcs: [MTB013(14), TB031(16)] },
+  { id: 'goodmorning', file: 'exercise/good_morning.webp', name: { tr: 'Barbell good morning', en: 'Barbell good morning' }, site: { tr: 'Bel omurgası', en: 'Lumbar spine' }, iss: { tr: 'Belgede cihaz belirtilmemiş', en: 'Device not stated' }, srcs: [MTB013(14)] },
+  { id: 'heelraise', file: 'exercise/calf_raise.webp', name: { tr: 'Topuk kaldırma (heel raise)', en: 'Heel raise' }, site: { tr: 'Baldır (gastro-soleus); tek bacak duruşunda topuk kemiği yoğunluğu arttı', en: 'Gastro-soleus; single-leg stance increased calcaneus BMD' }, iss: { tr: 'ISS: ARED heel raise kategorisi', en: 'ISS: ARED heel raise category' }, srcs: [MTB013(14), TB031(16)] },
+  { id: 'bench', file: 'exercise/bench_bb.webp', name: { tr: 'Bench press', en: 'Bench press' }, site: { tr: 'Belgede kemik bölgesi belirtilmemiş', en: 'No bone site stated' }, iss: { tr: 'ISS: ARED egzersiz kategorisi', en: 'ISS: ARED exercise category' }, srcs: [TB031(16)] },
+  { id: 'treadmill', file: 'exercise/run.webp', name: { tr: 'Koşu (aerobik)', en: 'Running (aerobic)' }, site: { tr: 'Aerobik kapasite; %70–100 maksimum nabız', en: 'Aerobic capacity; 70–100% HRmax' }, iss: { tr: 'ISS: T2 koşu bandı', en: 'ISS: T2 treadmill' }, srcs: [TB031(11)] },
+  { id: 'cycle', file: 'exercise/bike.webp', name: { tr: 'Bisiklet (aerobik)', en: 'Cycling (aerobic)' }, site: { tr: 'Aerobik kapasite; %70–100 VO₂peak', en: 'Aerobic capacity; 70–100% VO₂peak' }, iss: { tr: 'ISS: CEVIS bisiklet', en: 'ISS: CEVIS cycle' }, srcs: [TB031(11)] },
+  { id: 'jump', file: 'exercise/jump_squat.webp', name: { tr: 'Sıçrama', en: 'Jumping' }, site: { tr: 'Femur boynunun alt kısmı', en: 'Inferior femoral neck' }, iss: { tr: 'Yerçekimli ortam bulgusu; cihaz belirtilmemiş', en: 'Gravity-environment finding; device not stated' }, srcs: [MTB013(14)], note: { tr: 'Mikrogravitede uygulanabilirliği belgede yok.', en: 'Microgravity applicability not stated.' } },
 ];
 /** NASA'nın adını verdiği ama doğru animasyonu olmayan hareketler (yalnız yazı) */
 export const EX_TEXT_ONLY: L[] = [
@@ -71,6 +71,7 @@ export const EX_TEXT_ONLY: L[] = [
   { tr: 'Sumo squat, sumo deadlift', en: 'Sumo squat, sumo deadlift' },
   { tr: 'Tek bacak, derin ve kısa açılı squat (femur boynu üst-yan)', en: 'Single-leg deep short-arc squat (superior lateral femoral neck)' },
   { tr: 'Tek bacak topuk kaldırma', en: 'Single-leg heel raise' },
+  { tr: 'Kalça abdüktörleri, tek bacak duruşunda (büyük trokanter; NASA belirli bir hareket adı vermiyor)', en: 'Hip abductors in single-leg stance (greater trochanter; NASA names no specific movement)' },
   { tr: 'Parmak şınavı (ön kol kemikleri)', en: 'Finger push-ups (distal radius/ulna)' },
   { tr: 'Sprint', en: 'Sprinting' },
 ];

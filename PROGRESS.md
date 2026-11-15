@@ -171,6 +171,6 @@ Her adım buraya kısa notla eklenir (en yeni en altta).
 
 ## 2026-11-15 09:22 — Egzersiz modu: NASA hareketleri animasyonlu ayrı pencerede (Fable ile)
 - Kullanıcının iki reposu incelendi: forge-motion görüntüleri CC0 → kullanıldı; exercise-animations lisanssız → kullanılmadı.
-- Yalnızca NASA belgelerinde adı geçen 10 hareket animasyonlu (squat, deadlift, Romanian deadlift, good morning, topuk kaldırma, kalça abdüktörü tek bacak duruşu, bench press, koşu/T2, bisiklet/CEVIS, sıçrama). Animasyonu olmayan NASA hareketleri yalnız yazı (tek bacak/sumo/kısa açılı squat, tek bacak topuk kaldırma, parmak şınavı, sprint). Benzer-ama-farklı hareket konmadı.
+- Yalnızca NASA belgelerinde adı geçen 10 hareket animasyonlu (squat, deadlift, Romanian deadlift, good morning, topuk kaldırma, bench press, koşu/T2, bisiklet/CEVIS, sıçrama). Animasyonu olmayan NASA hareketleri yalnız yazı (tek bacak/sumo/kısa açılı squat, tek bacak topuk kaldırma, parmak şınavı, sprint). Benzer-ama-farklı hareket konmadı.
 - Ayrı "Egzersiz modu" penceresi (Hareketler / Plan ve hedefler sekmeleri); açılır: üst çubukta Egzersiz seçilince, Günlük rutin → Egzersiz modu, organ panelinde kemik/kas. Her kartta: kemik bölgesi, ISS cihazı, NASA sayfa bağlantısı; üstte "Dünya gösterimi; ISS'te ARED/T2/CEVIS" notu. Yük/set/tekrar yok.
 - Test: masaüstü + 390×844; 10 görüntü yüklendi, HTTP hatası yok.
