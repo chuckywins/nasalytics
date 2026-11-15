@@ -77,7 +77,14 @@ export function CrewView() {
   const [sel, setSel] = useState<string | null>(null);
   const mobile = useIsMobile();
   const alive = (k: string) => { const l = buf[k]; const last = l[l.length - 1]; return now - last.t < 180_000 + delayMsFor(last, role, compress); };
-  const keys = Object.keys(buf).filter((k) => buf[k].length && alive(k) && !(k.startsWith('local:') && buf[k.slice(6)]?.length)).sort((a, b) => Number(a.startsWith('local:')) - Number(b.startsWith('local:')) || a.localeCompare(b));
+  // Aynı kimlikte yerel ve uzak kopya varsa DAHA YENİ olan gösterilir: tek telefonda astronottan CMO'ya geçilince
+  // sunucunun tekrar oynattığı eski paket, cihazın kendi canlı verisini gizlemesin
+  const newestT = (k: string) => buf[k]?.[buf[k].length - 1]?.t ?? 0;
+  const keys = Object.keys(buf).filter((k) => {
+    if (!buf[k].length || !alive(k)) return false;
+    if (k.startsWith('local:')) { const r = k.slice(6); return !(buf[r]?.length && newestT(r) >= newestT(k) - 5000); }
+    const l = `local:${k}`; return !(buf[l]?.length && newestT(k) < newestT(l) - 5000);
+  }).sort((a, b) => Number(a.startsWith('local:')) - Number(b.startsWith('local:')) || a.localeCompare(b));
   // Seçili astronot: kullanıcı seçimi; yoksa en ciddi durumdaki (gösterilen pakete göre)
   const shownOf = (k: string) => { const l = buf[k]; const d = delayMsFor(l[l.length - 1], role, compress); return [...l].reverse().find((p) => p.t <= now - d); };
   // Belirti bildirimi de seçimi etkiler: yaşamsal değerleri normal ama "kendimi iyi hissetmiyorum" diyen astronot öne gelir

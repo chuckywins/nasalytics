@@ -179,3 +179,7 @@ Her adım buraya kısa notla eklenir (en yeni en altta).
 - Egzersiz modunda her animasyonlu kartın altında "Yaptım / Bugün yapıldı" düğmesi; gün bazında cihazda saklanır (son 14 gün), üstte "X/9 hareket bugün" sayacı; işaretlenenler AI anlık durumuna da girer (exerciseMovesDoneToday).
 - Telefonda yorgunluk kamerası AI sekmesinde; varsayılan KAPALI (açılışta izin istemi yok), kullanıcı "Aç" deyince başlar ve tercih saklanır. Masaüstü davranışı aynı.
 - Test (390×844, sahte kamera): kamera kapalı başladı, açınca görüntü aktı ve kalibrasyon başladı; 2 hareket işaretlendi, sayfa yenilenince korundu.
+
+## 2026-11-15 11:54 — Tek telefonda rol değişimi düzeltmesi
+- Astronottan CMO ekranına aynı telefonda geçilince sunucunun tekrar oynattığı eski paket cihazın canlı verisini gizliyordu (kart donuyordu). Artık yerel/uzak kopyadan daha yeni olan gösteriliyor; test edildi.
+- Sunucuda ses (TTS) denetlendi: /nasalytics/api/tts ve tts_stream 200 dönüyor (Gemini; önbellekte <1 sn).
