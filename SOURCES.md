@@ -184,6 +184,11 @@ data.nasa.gov bu bilgisayardan curl ile bağlantıyı sıfırlıyor, WebFetch il
 - LOS kuralı: NASA JSC-48031 Shuttle Medical Checklist Rev K, "Medication side effects" s. 6-2: "Contact Surgeon before giving any medication marked w/asterisk. In emergency or when orbiter LOS, begin appropriate treatment; call Surgeon as soon as possible" (yerel metin: docs/refs/shuttle_med_checklist_revK.txt).
 - Yanıtsız alarm süresi (60 sn) ve alerji eş-ad listesi bizim varsayımımızdır; NASA kaynağı yoktur, ekranda böyle etiketlidir.
 
+## Mürettebat kaydı ve kişisel program (2026-11-15)
+- CDC Adult BMI Categories (zayıf <18,5; sağlıklı 18,5–<25; fazla kilolu 25–<30; obezite ≥30; sayfadan doğrulandı): https://www.cdc.gov/bmi/adult-calculator/bmi-categories.html
+- Maks. nabız ≈ 220 − yaş: AHA Target Heart Rates (yukarıda kayıtlı). T2 hedefi %70–100 HRmax: NASA OCHMO-TB-031 s. 11; ARED kategorileri s. 16; sıklık MTB-013 s. 14.
+- Mürettebat (Elif Arslan, Mateo Ruiz, Hana Sato) kurgusaldır; gerçek kişiler değildir.
+
 ## Kullanılan yapay zekâ modelleri, servisler ve yazılım (açıklama)
 Uygulama ve bu repo yapay zekâ yardımıyla geliştirildi; dosyalarda "AI notu" satırı var. NASA logosu veya markası AI ile üretilmedi.
 - **Anthropic Claude API**: sağlık değerlendirmesi, müdahale sıralaması, görüntü yorumu → `claude-sonnet-5-5`; VEGA sesli asistanı ve belirti sınıflandırma → `claude-haiku-5-5` (`backend/server.py`). Geliştirmede Claude Code (Claude Opus 5.5) kullanıldı.

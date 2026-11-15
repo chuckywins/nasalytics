@@ -193,3 +193,10 @@ Her adım buraya kısa notla eklenir (en yeni en altta).
 - **Kişisel taban**: dinlenmede ve senaryo dışında 10 sn'de bir örneklenen nabzın oturum medyanı; nabız satırında "taban 67 (−2)", CMO kartında da. Yalnız bağlam, alarm eşikleri değişmedi.
 - Düzeltme: CMO başka mürettebatı seçince önceki AI önerisi kalıyordu, artık sıfırlanıyor.
 - Test (4 tarayıcı: astronot, kritik astronot, CMO, yer; ayrıca 390×844): hepsi beklendiği gibi; sayfa hatası yok, telefonda yatay taşma yok.
+
+## 2026-11-15 12:50 — Kurgusal mürettebat, kişisel egzersiz programı, okuma geçmişi
+- Rastgele C-xx kimlikleri kaldırıldı; 3 kişilik kurgusal ekip (C-01 Elif Arslan, C-02 Mateo Ruiz, C-03 Hana Sato) yaş, boy, kütle, kan grubu, alerji, dinlenme nabzı ile hazır. Kimlik seçicide adlarıyla; CMO kartında ad görünür. Kayıt üye başına cihazda saklanır, "Örnek kayda dön" ile sıfırlanır.
+- Kayıt penceresi üç sekme: Profil (BMI anlık, CDC sınıfı), Kişisel egzersiz programı, Geçmiş ve dışa aktar.
+- Kişisel program yalnız kaynaklı hesap: BMI (CDC), tahmini maks. nabız 220−yaş (AHA), T2 hedef nabız bandı %70–100 HRmax (TB-031 s. 11), ARED hareketleri (TB-031 s. 16) ve bugün işaretlenenler, haftada 6–7 seans (MTB-013 s. 14), ortama göre cihaz. CEVIS hedefi VO₂peak testi olmadığı için hesaplanmadı; kütleden yük hesaplanmaz; yük/set/tekrar ASCR'ye bırakıldı. Program AI anlık durumuna da girer.
+- Geçmiş: 2 sn'de bir satır (24 saate kadar), 15 dk / 1 sa / 6 sa / tümü, her okuma / 1 dk ortalama, nabız çizgisi, tablo (kritik satırlar kırmızı, LOS işaretli), CSV ve JSON indirme (SİMÜLE etiketli).
+- Test: masaüstü ve 390×844; CSV indirildi, sayfa hatası yok, telefonda taşma yok.

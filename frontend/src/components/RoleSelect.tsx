@@ -2,6 +2,7 @@
 import { useApp } from '../store';
 import { t } from '../i18n';
 import { useTelemetry } from '../telemetry';
+import { ROSTER } from '../crew';
 
 export function RoleSelect() {
   const lang = useApp((s) => s.lang);
@@ -14,7 +15,7 @@ export function RoleSelect() {
         <option value="ground">{t('view.ground', lang)}</option>
       </select>
       <select value={crewId} onChange={(e) => setCrewId(e.target.value)} aria-label="crew id">
-        {Array.from(new Set([crewId, 'C-01', 'C-02', 'C-03', 'C-04'])).map((c) => <option key={c} value={c}>{c}</option>)}
+        {ROSTER.map((c) => <option key={c.id} value={c.id}>{c.id} · {c.rec.name}</option>)}
       </select>
     </div>
   );

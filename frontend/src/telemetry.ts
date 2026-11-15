@@ -13,6 +13,8 @@ import type { Escalation, Status } from './engine/types';
 import { setSymptomHook, type SymptomReport } from './symptoms';
 import { useLink } from './link';
 import { sampleBaseline } from './baseline';
+import { sampleHistory } from './history';
+import { ROSTER_IDS, useRecord } from './crew';
 
 export type Role = 'astronaut' | 'cmo' | 'ground';
 export interface UiExtra {
@@ -30,8 +32,9 @@ const q = typeof location !== 'undefined' ? new URLSearchParams(location.search)
 /** Her cihaz ilk açılışta kendi kimliğini alır (jüri telefonları aynı "C-01"i paylaşıp birbirinin üzerine yazmasın) */
 function deviceCrewId() {
   const saved = ls('ahm.crew', '');
-  if (saved) return saved;
-  const id = `C-${String(10 + Math.floor(Math.random() * 90))}`;
+  if (ROSTER_IDS.includes(saved)) return saved;
+  // Kurgusal 3 kişilik ekipten biri (eski rastgele C-xx kimlikleri artık kullanılmaz)
+  const id = ROSTER_IDS[Math.floor(Math.random() * ROSTER_IDS.length)];
   try { localStorage.setItem('ahm.crew', id); } catch { /* yok */ }
   return id;
 }
@@ -46,7 +49,7 @@ export const useTelemetry = create<TelState>((set) => ({
   crewId: q.get('crew') || deviceCrewId(),
   connected: false, compress: false, buf: {}, held: {},
   setRole: (role) => { try { localStorage.setItem('ahm.role', role); } catch { /* yok */ } set({ role }); },
-  setCrewId: (crewId) => { try { localStorage.setItem('ahm.crew', crewId); } catch { /* yok */ } set({ crewId }); },
+  setCrewId: (crewId) => { try { localStorage.setItem('ahm.crew', crewId); } catch { /* yok */ } useRecord.getState().setCrew(crewId); set({ crewId }); },
   setCompress: (compress) => set({ compress }),
 }));
 
@@ -142,6 +145,7 @@ export function startTelemetry() {
   setInterval(() => {
     connect();
     sampleBaseline();
+    sampleHistory();
     const p = makePacket();
     ingest(`local:${p.crewId}`, { ...p, local: true });
     if (useTelemetry.getState().role === 'astronaut' && ws?.readyState === 1) ws.send(JSON.stringify(p));
@@ -154,3 +158,5 @@ export function delayMsFor(p: Packet | undefined, role: Role, compress: boolean)
   const [lo] = p.snap.commDelayOneWaySec;
   return (lo * 1000) / (compress ? 60 : 1);
 }
+
+useRecord.getState().setCrew(useTelemetry.getState().crewId); // açılışta seçili üyenin kaydı

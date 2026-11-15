@@ -563,3 +563,26 @@ li.allergy b { text-decoration: line-through; }
 
 .m-tools { display: flex; gap: 8px; }
 .m-tools button { flex: 1; min-height: 38px; }
+
+.rec-box { width: min(900px, 96vw); max-height: 92dvh; overflow: auto; }
+.rec-form { display: flex; flex-direction: column; gap: 8px; }
+.rec-actions { display: flex; gap: 8px; justify-content: flex-end; }
+.rec-bmi b { font-size: 18px; margin: 0 4px; }
+.prog { display: flex; flex-direction: column; gap: 8px; }
+.prog-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.prog-c { border: 1px solid var(--line); border-radius: 6px; padding: 8px; display: flex; flex-direction: column; gap: 2px; }
+.prog-c b { font-size: 20px; }
+.prog-c.hi { border-color: var(--accent); }
+.prog-day { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; }
+.prog-mv { display: inline-block; margin: 0 4px 2px 0; padding: 1px 6px; border: 1px solid var(--line-2); border-radius: 999px; }
+.prog-mv.on { border-color: #3fb950; color: #3fb950; }
+.hist { display: flex; flex-direction: column; gap: 6px; }
+.hist-ctl { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.hist-exp { margin-left: auto; display: flex; gap: 6px; }
+.hist-spark { width: 100%; height: 40px; }
+.hist-tbl { max-height: 300px; overflow: auto; border: 1px solid var(--line); border-radius: 4px; }
+.hist-tbl table { width: 100%; border-collapse: collapse; }
+.hist-tbl th, .hist-tbl td { padding: 3px 6px; text-align: left; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.hist-tbl th { position: sticky; top: 0; background: var(--panel); }
+.hist-tbl tr.al td { color: #ff6b6b; }
+@media (max-width: 760px) { .prog-cards { grid-template-columns: 1fr 1fr; } .hist-exp { margin-left: 0; } }

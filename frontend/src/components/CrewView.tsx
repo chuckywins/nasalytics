@@ -27,7 +27,7 @@ function CrewCard({ k, list, now, sel, onSel }: { k: string; list: Packet[]; now
   const local = k.startsWith('local:');
   const head = (
     <div className="cc-h">
-      <b>{newest.crewId}</b>{local && <span className="muted"> · {t('view.thisDevice', lang)}</span>}
+      <b>{newest.crewId}</b>{newest.snap.crewRecord?.name ? <span> · {String(newest.snap.crewRecord.name)}</span> : null}{local && <span className="muted"> · {t('view.thisDevice', lang)}</span>}
       <span className="muted">{ENV_LABEL[ENV_BY_LABEL[newest.snap.environment] ?? 'iss'][lang]} · {t(`act.${newest.snap.activity}`, lang)}</span>
     </div>
   );
