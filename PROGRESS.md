@@ -183,3 +183,13 @@ Her adım buraya kısa notla eklenir (en yeni en altta).
 ## 2026-11-15 11:54 — Tek telefonda rol değişimi düzeltmesi
 - Astronottan CMO ekranına aynı telefonda geçilince sunucunun tekrar oynattığı eski paket cihazın canlı verisini gizliyordu (kart donuyordu). Artık yerel/uzak kopyadan daha yeni olan gösteriliyor; test edildi.
 - Sunucuda ses (TTS) denetlendi: /nasalytics/api/tts ve tts_stream 200 dönüyor (Gemini; önbellekte <1 sn).
+
+## 2026-11-15 12:40 — Altı yeni özellik
+- **Dokun-bildir çipleri** (sol sütun; telefonda Yaşamsal sekmesinin üstü): İyiyim / Biraz kötüyüm / Kötüyüm / Baş dönmesi / Baş ağrısı / Bulantı / Göğüs ağrısı. VEGA'ya konuşmadan tek dokunuşla CMO ve mürettebata bildirim; "İyiyim" kendi dokunuş bildirimlerini kapatır. Bildirimlerde kaynak yazılı: VEGA / dokun-bildir / sistem / senaryo.
+- **Yer bağlantısı kesintisi (LOS)**: astronot ekranında "Yer bağlantısı" düğmesi (telefonda Görevler sekmesi). LOS sırasında CMO (gemi içi) canlı sürer; yer kontrol yeni veri görmez, kartta "N paket gemide bekliyor" yazar, bağlantı dönünce paketler sırayla aktarılır. Bulut AI (değerlendirme, VEGA, müdahale önerisi) çağrılmaz; kural motoru ve kaynaklı kartlar çalışır. Müdahale panelinde NASA LOS kuralı öne çıkar: yıldızlı ilaçta önce cerrah, acil durumda veya LOS'ta tedaviye başla ve cerrahı en kısa sürede ara (JSC-48031 s. 6-2, yerel metinden doğrulandı).
+- **Yanıtsız alarm**: astronot cihazında onaylanmayan kritik alarm 60 sn sürerse CMO ve mürettebata otomatik "yanıt vermiyor olabilir" bildirimi. Alarmda geri sayım ve "süre varsayımımız, NASA değeri değil" etiketi. Senaryo sürerken duraklatılır.
+- **Mürettebat sağlık kaydı** (üst çubukta "Kayıt"): yaş, cinsiyet, boy, kütle, kan grubu, dinlenme nabzı, alerjiler, ilaçlar; cihazda saklanır, CMO kartına ve AI'ye gider. Alerji, önerilen ilaç/kit kalemiyle ad veya eş adla eşleşirse satır üstü çizili ve "ALERJİ KAYDIYLA EŞLEŞİYOR, VERME" uyarısı (ör. aspirin → Aspirin). AI kuralına da eklendi.
+- **NASA DONKI uzay havası (canlı)**: Görev paneline "Uzay havası" sekmesi. Sunucu son 7 günün FLR/SEP/CME/GST kayıtlarını NASA API'den alır (30 dk önbellek), alınma saati gösterilir. Yalnız NASA'nın olay türleri ve alanları; yorum veya risk kararı yok. Bir tür alınamazsa "NASA'dan alınamadı" yazar (bugün FLR uç noktası 404 döndü).
+- **Kişisel taban**: dinlenmede ve senaryo dışında 10 sn'de bir örneklenen nabzın oturum medyanı; nabız satırında "taban 67 (−2)", CMO kartında da. Yalnız bağlam, alarm eşikleri değişmedi.
+- Düzeltme: CMO başka mürettebatı seçince önceki AI önerisi kalıyordu, artık sıfırlanıyor.
+- Test (4 tarayıcı: astronot, kritik astronot, CMO, yer; ayrıca 390×844): hepsi beklendiği gibi; sayfa hatası yok, telefonda yatay taşma yok.

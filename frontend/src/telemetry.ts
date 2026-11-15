@@ -11,6 +11,8 @@ import { INDICATOR_ORDER, INDICATORS } from './engine/indicators';
 import { useScenario, SCEN_META, type L } from './scenario';
 import type { Escalation, Status } from './engine/types';
 import { setSymptomHook, type SymptomReport } from './symptoms';
+import { useLink } from './link';
+import { sampleBaseline } from './baseline';
 
 export type Role = 'astronaut' | 'cmo' | 'ground';
 export interface UiExtra {
@@ -19,6 +21,7 @@ export interface UiExtra {
   scenario: { title: L; caption: L | null } | null;
   extra: { id: string; title: L; value: string; label: L; status: Status; escalate: Escalation }[];
   bp: string;
+  linkDown?: boolean;
 }
 export interface Packet { crewId: string; t: number; snap: ReturnType<typeof buildSnapshot>; ui: UiExtra; local?: boolean }
 
@@ -34,12 +37,14 @@ function deviceCrewId() {
 }
 interface TelState {
   role: Role; crewId: string; connected: boolean; compress: boolean; buf: Record<string, Packet[]>;
+  /** Yer kontrol: LOS süresince gemide bekleyen paket sayısı (anahtar → adet) */
+  held: Record<string, number>;
   setRole: (r: Role) => void; setCrewId: (c: string) => void; setCompress: (b: boolean) => void;
 }
 export const useTelemetry = create<TelState>((set) => ({
   role: (q.get('role') as Role) || (ls('ahm.role', 'astronaut') as Role),
   crewId: q.get('crew') || deviceCrewId(),
-  connected: false, compress: false, buf: {},
+  connected: false, compress: false, buf: {}, held: {},
   setRole: (role) => { try { localStorage.setItem('ahm.role', role); } catch { /* yok */ } set({ role }); },
   setCrewId: (crewId) => { try { localStorage.setItem('ahm.crew', crewId); } catch { /* yok */ } set({ crewId }); },
   setCompress: (compress) => set({ compress }),
@@ -51,6 +56,28 @@ function push(key: string, p: Packet) {
     const arr = [...(s.buf[key] ?? []), p].filter((x) => p.t - x.t < KEEP_MS);
     return { buf: { ...s.buf, [key]: arr } };
   });
+}
+
+/** LOS: yer kontrol ekranı yeni paketi göstermez, gemide tutulmuş gibi saklar; bağlantı dönünce hepsi sırayla aktarılır.
+ * CMO (gemi içi) etkilenmez. */
+const heldQ: Record<string, Packet[]> = {};
+function ingest(key: string, p: Packet) {
+  if (useTelemetry.getState().role === 'ground') {
+    if (p.ui.linkDown) {
+      const q = (heldQ[key] = [...(heldQ[key] ?? []), p].filter((x) => p.t - x.t < KEEP_MS));
+      useTelemetry.setState((s) => ({ held: { ...s.held, [key]: q.length } }));
+      return;
+    }
+    const q = heldQ[key];
+    if (q?.length) {
+      heldQ[key] = [];
+      useTelemetry.setState((s) => {
+        const arr = [...(s.buf[key] ?? []), ...q].filter((x) => p.t - x.t < KEEP_MS);
+        return { buf: { ...s.buf, [key]: arr }, held: { ...s.held, [key]: 0 } };
+      });
+    }
+  }
+  push(key, p);
 }
 
 function makePacket(): Packet {
@@ -67,6 +94,7 @@ function makePacket(): Packet {
       scenario: sc.id ? { title: SCEN_META[sc.id].title, caption: sc.caption } : null,
       extra: sc.extra.map((x) => ({ id: x.id, title: x.title, value: x.value, label: x.label, status: x.status, escalate: x.escalate })),
       bp: `${evalLatest(a.readings, 'systolic').reading.value.toFixed(0)}/${evalLatest(a.readings, 'diastolic').reading.value.toFixed(0)}`,
+      linkDown: useLink.getState().down,
     },
   };
 }
@@ -104,7 +132,7 @@ function connect() {
         if (n.crewId !== useTelemetry.getState().crewId) useNotices.setState((st) => ({ list: [...st.list.filter((x) => x.id !== n.id), { ...n, t: Date.now() }].slice(-3) }));
         return;
       }
-      const p = d as Packet; if (p?.crewId && p.snap) push(p.crewId, { ...p, t: Date.now() });
+      const p = d as Packet; if (p?.crewId && p.snap) ingest(p.crewId, { ...p, t: Date.now() });
     } catch { /* yok */ }
   };
 }
@@ -113,8 +141,9 @@ function connect() {
 export function startTelemetry() {
   setInterval(() => {
     connect();
+    sampleBaseline();
     const p = makePacket();
-    push(`local:${p.crewId}`, { ...p, local: true });
+    ingest(`local:${p.crewId}`, { ...p, local: true });
     if (useTelemetry.getState().role === 'astronaut' && ws?.readyState === 1) ws.send(JSON.stringify(p));
   }, 2000);
 }

@@ -179,6 +179,11 @@ data.nasa.gov bu bilgisayardan curl ile bağlantıyı sıfırlıyor, WebFetch il
 - NASA Standard Measures — `engine/measurement.ts`: https://www.nasa.gov/reference/standard-measures/
 - CSA Bio-Analyzer (yerinde kan/idrar analizi; ölçüm yöntemi notu) — `engine/measurement.ts`: https://www.asc-csa.gc.ca/eng/iss/bio-analyzer.asp
 
+## Canlı veri ve LOS kuralı (2026-11-15)
+- NASA DONKI (Space Weather Database Of Notifications, Knowledge, Information), NASA CCMC: https://kauai.ccmc.gsfc.nasa.gov/DONKI/ · API: https://api.nasa.gov/ (DONKI FLR, SEP, CME, GST uç noktaları; olay bağlantıları ccmc.gsfc.nasa.gov/DONKI/view/...). Uzay havası sekmesi.
+- LOS kuralı: NASA JSC-48031 Shuttle Medical Checklist Rev K, "Medication side effects" s. 6-2: "Contact Surgeon before giving any medication marked w/asterisk. In emergency or when orbiter LOS, begin appropriate treatment; call Surgeon as soon as possible" (yerel metin: docs/refs/shuttle_med_checklist_revK.txt).
+- Yanıtsız alarm süresi (60 sn) ve alerji eş-ad listesi bizim varsayımımızdır; NASA kaynağı yoktur, ekranda böyle etiketlidir.
+
 ## Kullanılan yapay zekâ modelleri, servisler ve yazılım (açıklama)
 Uygulama ve bu repo yapay zekâ yardımıyla geliştirildi; dosyalarda "AI notu" satırı var. NASA logosu veya markası AI ile üretilmedi.
 - **Anthropic Claude API**: sağlık değerlendirmesi, müdahale sıralaması, görüntü yorumu → `claude-sonnet-5-5`; VEGA sesli asistanı ve belirti sınıflandırma → `claude-haiku-5-5` (`backend/server.py`). Geliştirmede Claude Code (Claude Opus 5.5) kullanıldı.

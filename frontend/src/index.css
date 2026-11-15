@@ -527,3 +527,39 @@ a { color: var(--accent); }
   .m-main .fcam-v { aspect-ratio: 4/3; }
   .m-main .fcam-tg { min-height: 34px; padding: 4px 10px; }
 }
+
+/* hızlı bildirim, kayıt, LOS, uzay havası, taban */
+.qc { border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; background: var(--panel); display: flex; flex-direction: column; gap: 5px; }
+.qc-h { color: var(--ink-2); }
+.qc-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+.qc-chip { font-size: 12px; padding: 4px 8px; border-radius: 999px; border: 1px solid var(--line-2); background: transparent; color: var(--ink); }
+.qc-chip.ok { border-color: #3fb950; color: #3fb950; }
+.qc-chip.hi { border-color: #f0883e; color: #f0883e; }
+.qc-sent { color: #3fb950; }
+.rec-btn, .los-btn { font-size: 12px; padding: 4px 8px; white-space: nowrap; }
+.los-btn.on { border-color: #f0883e; color: #f0883e; background: rgba(240,136,62,.1); }
+.los-banner { margin: 6px; padding: 6px 10px; border: 1px solid #f0883e; border-radius: 6px; background: rgba(240,136,62,.1); color: var(--ink); position: relative; z-index: 6; }
+.rec-box { width: min(520px, 96vw); }
+.rec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.rec-grid label { display: flex; flex-direction: column; gap: 2px; }
+.rec-grid label.wide { grid-column: 1 / -1; }
+.rec-grid input, .rec-grid select { width: 100%; }
+.intv-allergy { color: #ff6b6b; font-weight: 600; font-size: 12px; }
+.intv-drug.allergy { border-color: #ff6b6b; opacity: .85; }
+.intv-drug.allergy code { text-decoration: line-through; }
+li.allergy b { text-decoration: line-through; }
+.intv-drug.los .intv-lock { color: #f0883e; }
+.intv-los, .cc-los { border: 1px solid #f0883e; border-radius: 4px; padding: 4px 6px; background: rgba(240,136,62,.08); }
+.intv-rec, .cc-rec { color: var(--ink-2); }
+.noresp { color: #ffd166; }
+.base-hint { display: block; font-size: 10px; color: var(--ink-2); font-weight: 400; }
+.wx { display: flex; flex-direction: column; gap: 6px; }
+.wx-counts { display: flex; flex-wrap: wrap; gap: 10px; font-size: 12px; }
+.wx-list { margin: 0; padding-left: 16px; max-height: 120px; overflow: auto; }
+@media (max-width: 760px), (max-height: 500px) and (pointer: coarse) {
+  .qc-chip { padding: 7px 10px; font-size: 13px; }
+  .rec-grid { grid-template-columns: 1fr; }
+}
+
+.m-tools { display: flex; gap: 8px; }
+.m-tools button { flex: 1; min-height: 38px; }

@@ -7,7 +7,7 @@ import { create } from 'zustand';
 
 export type SymptomCategory = 'chestPain' | 'breathing' | 'nausea' | 'pain' | 'allergy' | 'dizzy' | 'unwell' | 'other';
 export const SYMPTOM_CATEGORIES: SymptomCategory[] = ['chestPain', 'breathing', 'nausea', 'pain', 'allergy', 'dizzy', 'unwell', 'other'];
-export interface SymptomReport { id: string; t: number; category: SymptomCategory; quote: string; source: 'vega' | 'scenario' }
+export interface SymptomReport { id: string; t: number; category: SymptomCategory; quote: string; source: 'vega' | 'scenario' | 'tap' | 'system' }
 
 const KEEP_MS = 30 * 60_000;
 interface SymState { list: SymptomReport[] }

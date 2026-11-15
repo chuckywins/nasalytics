@@ -2,6 +2,9 @@
 // Kural: AI uyarıyı YÜKSELTEBİLİR, asla kapatamaz (eskalasyon = max(kural, AI)). Proxy yoksa kural kartları kalır.
 // AI notu: Claude (Anthropic) yardımıyla yazılmıştır.
 import { useEffect, useRef } from 'react';
+import { useLink, linkDown } from './link';
+import { recordForSnapshot } from './crew';
+import { hrBaseline } from './baseline';
 import { API } from './base';
 import { INDICATORS, INDICATOR_ORDER } from './engine/indicators';
 import { ENVS, ENV_LABEL, equivUSvH, cumulativeMSv, boneLossPct } from './engine/environment';
@@ -41,6 +44,9 @@ export function buildSnapshot() {
     })(),
     cabin: { o2Pct: +s.cabin.o2Pct.toFixed(1), pressurePsia: +s.cabin.pressurePsia.toFixed(2) },
     reportedSymptoms: recentSymptoms(), // astronotun kendi bildirimi (VEGA/senaryo); tanı değil
+    crewRecord: recordForSnapshot(), // astronotun kendi girdiği kayıt (yaş, alerji, ilaç…)
+    personalBaseline: (() => { const b = hrBaseline(); return b ? { restingHrMedian: b.median, samples: b.n, minutes: b.minutes, deltaNow: b.delta, note: 'session median at rest, context only; alarm thresholds unchanged' } : null; })(),
+    groundLink: useLink.getState().down ? 'LOS (no ground contact)' : 'nominal',
 
     scenario: (() => {
       const sc = useScenario.getState();
@@ -75,12 +81,14 @@ export function useAiAssessment() {
   const activity = useApp((s) => s.activity);
   const env = useApp((s) => s.env);
   const extraSig = useScenario((s) => s.extra.map((x) => `${x.id}:${x.status}`).join('|'));
-  const symSig = useSymptoms((s) => s.list.map((x) => x.id).join(','));  // yeni belirti bildirimi → yeni AI değerlendirmesi
-  const sig = extraSig + '#' + symSig + '#' + INDICATOR_ORDER.map((id) => [id, stableStatus(readings, id)] as const).filter(([, s]) => s !== 'ok' && s !== 'unknown').map(([id, s]) => `${id}:${s}`).join('|') + `#${lang}#${activity}#${env}`;
+  const symSig = useSymptoms((s) => s.list.map((x) => x.id).join(','));
+  const los = useLink((s) => s.down);  // yeni belirti bildirimi → yeni AI değerlendirmesi
+  const sig = extraSig + '#' + symSig + '#' + INDICATOR_ORDER.map((id) => [id, stableStatus(readings, id)] as const).filter(([, s]) => s !== 'ok' && s !== 'unknown').map(([id, s]) => `${id}:${s}`).join('|') + `#${lang}#${activity}#${env}#${los}`;
   const ctrl = useRef<AbortController | null>(null);
   useEffect(() => {
     const st = useApp.getState();
     if (st.ai.signature === sig) return;
+    if (los) { st.setAi({ status: 'error', error: 'LOS', signature: sig }); return; } // yer bağlantısı yok → bulut AI yok
     const h = setTimeout(async () => {
       ctrl.current?.abort();
       const c = new AbortController(); ctrl.current = c;
@@ -104,6 +112,7 @@ export function useAiAssessment() {
 export interface VegaAction { indicator: string; value: number; glucose_context?: 'fasting' | 'postprandial'; }
 export interface VegaSymptom { category: SymptomCategory; quote: string }
 export async function askVega(text: string, history: { role: 'user' | 'assistant'; content: string }[], onDelta: (full: string) => void, onSentence: (s: string) => void, signal?: AbortSignal, image?: string | null, onAction?: (a: VegaAction) => void, onSymptom?: (x: VegaSymptom) => void) {
+  if (linkDown()) throw new Error('LOS');
   const { lang } = useApp.getState();
   const r = await fetch(`${API}/api/vega`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lang, text, history, snapshot: buildSnapshot(), image: image ?? undefined }), signal });
   if (!r.ok || !r.body) throw new Error(`HTTP ${r.status}`);

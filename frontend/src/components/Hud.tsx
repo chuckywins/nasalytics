@@ -1,6 +1,8 @@
 // HUD kabuğu parçaları: panel çerçevesi, üst bar, yaşamsal bulgular, EKG, ölçüm girişi.
 // Tasarım: docs/design_system.md (v2, kullanıcının HUD tercihi + 4 değişmez kural). AI notu: Claude (Anthropic) yardımıyla yazılmıştır.
 import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { LinkToggle, RecordButton } from './Extras';
+import { useBaseline, hrBaseline } from '../baseline';
 import { INDICATORS, VITAL_ROWS, worst, type VitalRow } from '../engine/indicators';
 import type { GlucoseCtx, IndicatorId, Provenance, Status } from '../engine/types';
 import { useScenario } from '../scenario';
@@ -76,6 +78,7 @@ export function TopBar() {
       </div>
       </>}
       <div className="tb-spacer" />
+      {role === 'astronaut' && <><LinkToggle /><RecordButton /></>}
       <RoleSelect />
       <span className="disc">{t('app.disclaimer', lang)}</span>
       <button className="lang" onClick={() => setLang(lang === 'tr' ? 'en' : 'tr')}>{lang === 'tr' ? 'EN' : 'TR'}</button>
@@ -110,7 +113,7 @@ export function VitalsPanel() {
               <span className="vname"><b className="vglyph" style={{ color: STATUS_COLOR[r.status] }} aria-label={t(r.labelKey, lang)}>{STATUS_GLYPH[r.status]}</b>{t(row === 'bp' ? 'ind.bp' : `ind.${row}`, lang)}
                 <small>{spot ? ago(Date.now() - r.reading.t, lang) : t('ui.live', lang)}{r.reading.ctx ? ` · ${t(`ui.${r.reading.ctx}`, lang)}` : ''}</small>
               </span>
-              <span className="vval num">{r.value}<small>{r.unit}</small></span>
+              <span className="vval num">{r.value}<small>{r.unit}</small>{row === 'heartRate' && <BaseHint />}</span>
               <span className="vstat" style={{ color: STATUS_COLOR[r.status] }} title={t(r.labelKey, lang)}>{STATUS_GLYPH[r.status]} {t(r.labelKey, lang)}</span>
               <span className="vtags"><InfoTip k={row} /><ProvTag p={r.reading.provenance} compact /></span>
             </div>
@@ -119,6 +122,15 @@ export function VitalsPanel() {
       </div>
     </Panel>
   );
+}
+
+/** Nabız satırı: bu oturumun dinlenme medyanına göre fark (yalnız bağlam; alarm eşiği değişmez) */
+function BaseHint() {
+  const lang = useApp((s) => s.lang);
+  useBaseline((s) => s.hr.length);
+  const b = hrBaseline();
+  if (!b) return null;
+  return <small className="base-hint" title={t('base.help', lang)}>{t('base.short', lang)} {b.median} ({b.delta >= 0 ? '+' : ''}{b.delta})</small>;
 }
 
 /* ---------------- EKG şeridi (sentetik, nabza bağlı) ---------------- */

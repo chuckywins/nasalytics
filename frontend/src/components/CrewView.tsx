@@ -20,6 +20,7 @@ const ESC_RANK: Record<Escalation, number> = { self: 0, crew: 1, ground: 2 };
 function CrewCard({ k, list, now, sel, onSel }: { k: string; list: Packet[]; now: number; sel: boolean; onSel: () => void }) {
   const lang = useApp((s) => s.lang);
   const { role, compress } = useTelemetry();
+  const held = useTelemetry((s) => s.held[k] ?? 0);
   const newest = list[list.length - 1];
   const delay = delayMsFor(newest, role, compress);
   const shown = [...list].reverse().find((p) => p.t <= now - delay);
@@ -30,6 +31,9 @@ function CrewCard({ k, list, now, sel, onSel }: { k: string; list: Packet[]; now
       <span className="muted">{ENV_LABEL[ENV_BY_LABEL[newest.snap.environment] ?? 'iss'][lang]} · {t(`act.${newest.snap.activity}`, lang)}</span>
     </div>
   );
+  const losLine = role === 'ground' && held > 0
+    ? <div className="cc-los small">📡 <b>{t('los.title', lang)}</b> · {held} {t('los.held', lang)}</div>
+    : newest.ui.linkDown ? <div className="cc-los small">📡 {t('los.cmo', lang)}</div> : null;
   if (!shown) {
     const eta = list[0].t + delay - now;
     return <div className={`crew-card ${sel ? 'sel' : ''}`} onClick={onSel}>{head}<p className="cc-wait">{t('view.inTransit', lang)} <b className="num">{fmtDur(eta)}</b></p><p className="muted small">{t('view.transitNote', lang)}</p></div>;
@@ -45,11 +49,14 @@ function CrewCard({ k, list, now, sel, onSel }: { k: string; list: Packet[]; now
   return (
     <div className={`crew-card ${sel ? 'sel' : ''}`} onClick={onSel} style={{ borderColor: worst === 'ok' ? undefined : STATUS_COLOR[worst] }}>
       {head}
+      {losLine}
       <div className="cc-meta muted small num">
         {t('view.dataAge', lang)}: {fmtDur(now - shown.t)}{delay > 0 && <> · {t('view.delay', lang)} {fmtDur(delay)}{compress ? ` (${t('view.compressed', lang)})` : ''}</>}
       </div>
       {ui.alarm.length > 0 && <div className="cc-alarm">✖ {t('alarm.critical', lang)}: {ui.alarm.map((id) => ui.extra.find((x) => x.id === id)?.title[lang] ?? t(`ind.${id}`, lang)).join(', ')}</div>}
-      {(s.reportedSymptoms ?? []).length > 0 && <div className="cc-sym small">🔔 {t('iv.reported', lang)}: “{s.reportedSymptoms[s.reportedSymptoms.length - 1].quote}”</div>}
+      {s.crewRecord && (s.crewRecord.allergies || s.crewRecord.blood) && <div className="cc-rec small">🩺 {s.crewRecord.allergies ? <><b>{t('rec.allergies', lang)}:</b> {String(s.crewRecord.allergies)} </> : null}{s.crewRecord.blood ? <span className="muted">· {t('rec.blood', lang)} {String(s.crewRecord.blood)}</span> : null}</div>}
+      {s.personalBaseline && <div className="cc-meta muted small num">{t('base.short', lang)} ♥ {s.personalBaseline.restingHrMedian} → {s.personalBaseline.deltaNow >= 0 ? '+' : ''}{s.personalBaseline.deltaNow} bpm ({t('base.ctx', lang)})</div>}
+      {(s.reportedSymptoms ?? []).length > 0 && <div className="cc-sym small">🔔 {t('iv.reported', lang)} ({t(`src.${s.reportedSymptoms[s.reportedSymptoms.length - 1].source}`, lang)}): “{s.reportedSymptoms[s.reportedSymptoms.length - 1].quote}”</div>}
       {ui.scenario && <div className="cc-scen"><b className="scen-tag">{t('scen.tag', lang)}</b> {ui.scenario.title[lang]}{ui.scenario.caption && <div className="muted small">{ui.scenario.caption[lang]}</div>}</div>}
       <div className="cc-grid">
         <span className="cc-l">{t('ind.systolic', lang).split(' ')[0]}</span><b className="num">{ui.bp}</b>
@@ -70,13 +77,13 @@ function CrewCard({ k, list, now, sel, onSel }: { k: string; list: Packet[]; now
 
 export function CrewView() {
   const lang = useApp((s) => s.lang);
-  const { role, buf, connected, compress, setCompress } = useTelemetry();
+  const { role, buf, connected, compress, setCompress, held } = useTelemetry();
   const [now, setNow] = useState(Date.now());
   useEffect(() => { const h = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(h); }, []);
   // Uzak cihazlar önce; aynı kimlikli uzak cihaz varsa yerel kopya gizlenir
   const [sel, setSel] = useState<string | null>(null);
   const mobile = useIsMobile();
-  const alive = (k: string) => { const l = buf[k]; const last = l[l.length - 1]; return now - last.t < 180_000 + delayMsFor(last, role, compress); };
+  const alive = (k: string) => { const l = buf[k]; const last = l[l.length - 1]; return (held[k] ?? 0) > 0 || now - last.t < 180_000 + delayMsFor(last, role, compress); };
   // Aynı kimlikte yerel ve uzak kopya varsa DAHA YENİ olan gösterilir: tek telefonda astronottan CMO'ya geçilince
   // sunucunun tekrar oynattığı eski paket, cihazın kendi canlı verisini gizlemesin
   const newestT = (k: string) => buf[k]?.[buf[k].length - 1]?.t ?? 0;

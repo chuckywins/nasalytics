@@ -11,6 +11,7 @@ import { FatigueCam } from './components/FatigueCam';
 import { ScenarioBanner } from './components/Scenario';
 import { CrewView, CrewNotices } from './components/CrewView';
 import { ExerciseModal } from './components/ExercisePlan';
+import { QuickCheck, RecordModal, LosBanner, RecordButton, LinkToggle } from './components/Extras';
 import { useTelemetry, startTelemetry } from './telemetry';
 
 let telStarted = false;
@@ -66,10 +67,11 @@ export default function App() {
     <div className="app m-app">
       <TopBar />
       <AlarmBanner />
+      <LosBanner />
       <ScenarioBanner />
       <CrewNotices />
       <main className={`m-main m-${mTab}`}>
-        {mTab === 'vitals' && <><VitalsPanel /><EcgStrip /><EntryForm /><CabinPanel /></>}
+        {mTab === 'vitals' && <><QuickCheck /><VitalsPanel /><EcgStrip /><EntryForm /><CabinPanel /></>}
         {mTab === 'body' && <>
           <div className="m-body">
             <div className="layer-ctl" role="group" aria-label={t('ui.layers', lang)}>
@@ -83,7 +85,7 @@ export default function App() {
           <RegionPanel />
         </>}
         {mTab === 'ai' && <><AssessmentPanel /><FatigueCam /><TrendChart /></>}
-        {mTab === 'more' && <MissionPanel />}
+        {mTab === 'more' && <><div className="m-tools"><RecordButton /><LinkToggle /></div><MissionPanel /></>}
       </main>
       <Vega />
       <nav className="m-tabs" aria-label="sections">
@@ -93,13 +95,14 @@ export default function App() {
       </nav>
       <CheckinModals />
       <ExerciseModal />
+      <RecordModal />
       <SessionGate />
     </div>
   );
   return (
     <div className="app">
       <TopBar />
-      <aside className="col-left"><VitalsPanel /><EcgStrip /><EntryForm /></aside>
+      <aside className="col-left"><VitalsPanel /><EcgStrip /><QuickCheck /><EntryForm /></aside>
       <main className="col-center">
         <div className="hud-frame" aria-hidden />
         <div className="layer-ctl" role="group" aria-label={t('ui.layers', lang)}>
@@ -110,6 +113,7 @@ export default function App() {
         </div>
         <Body3D statuses={statuses} selected={selectedRegion} onSelect={selectRegion} layers={layers} callouts={callouts} />
         <AlarmBanner />
+        <LosBanner />
         <ScenarioBanner />
         <CrewNotices />
         <FatigueCam />
@@ -120,6 +124,7 @@ export default function App() {
       <footer className="row-bottom"><CabinPanel /><MissionPanel /><TrendChart /></footer>
       <CheckinModals />
       <ExerciseModal />
+      <RecordModal />
       <SessionGate />
     </div>
   );

@@ -32,7 +32,7 @@ export function AiCard() {
         {ai.status === 'ok' && <span className="muted">{age}s · {((ai.latencyMs ?? 0) / 1000).toFixed(1)}s</span>}
         {(ai.status === 'ok' || alerts.length > 0) && <span className={`esc esc-${esc}`}>{t(`esc.${esc}`, lang)}</span>}
       </div>
-      {ai.status === 'error' && <p className="muted">{t('ai.offline', lang)}</p>}
+      {ai.status === 'error' && <p className="muted">{t(ai.error === 'LOS' ? 'los.aiOff' : 'ai.offline', lang)}</p>}
       {ai.status === 'idle' && <p className="muted">{t('ai.waiting', lang)}</p>}
       {ai.data && (
         <>
@@ -78,6 +78,7 @@ const radPhrase = (lang: 'tr' | 'en') => `${t('alarm.critical', lang)}. ${t('ala
 const suitPhrase = (lang: 'tr' | 'en') => `${t('alarm.critical', lang)}. ${t('alarm.suitCO2', lang)}. ${t('alarm.suitAction', lang)}.`;
 const extraPhrase = (id: string, lang: 'tr' | 'en') => (id === 'suitCO2' ? suitPhrase(lang) : radPhrase(lang));
 
+const NO_RESP_S = 60; // varsayım
 export function AlarmBanner() {
   const { readings, acked, ack, lang, sessionStarted } = useApp();
   // Mandallı alarm: son 30 sn'de kritik okuma varsa alarm sürer (eşikte salınan değer alarmı aç-kapa yapmaz, tekrar konuşmaz)
@@ -89,6 +90,11 @@ export function AlarmBanner() {
   const xcrit = extra.filter((x) => x.status === 'critical' && !ackedExtra.includes(x.id));
   const key = [...unacked.map((a) => a.id), ...xcrit.map((x) => x.id)].join(',');
   const spokenFor = useRef('');
+  // Yanıtsız alarm: onaylanmayan kritik alarm NO_RESP_S sn sürerse CMO ve mürettebata otomatik bildirim (bir kez / alarm kümesi).
+  // Süre bizim VARSAYIMIMIZ (NASA'dan alınmış bir değer değil). Demo senaryosu sürerken duraklatılır.
+  const role = useTelemetry((s) => s.role);
+  const scenOn = useScenario((s) => !!s.id);
+  const firstAt = useRef<{ key: string; at: number; sent: boolean } | null>(null);
   // Oturum başında tüm alarm anonslarının sesini önceden üret (bir kez; sonrası disk önbelleği)
   useEffect(() => {
     if (!sessionStarted || prewarmed === lang || location.search.includes('test')) return; // otomatik testler kota harcamasın
@@ -112,6 +118,17 @@ export function AlarmBanner() {
     const critIds = crit.map((a) => a.id);
     if (st.acked.some((id) => !critIds.includes(id))) useApp.setState({ acked: st.acked.filter((id) => critIds.includes(id)) });
   });
+  const watch = role === 'astronaut' && sessionStarted && !scenOn && key !== '';
+  if (!watch) firstAt.current = null;
+  else if (!firstAt.current || firstAt.current.key !== key) firstAt.current = { key, at: Date.now(), sent: false };
+  const left = firstAt.current ? Math.max(0, NO_RESP_S - Math.floor((Date.now() - firstAt.current.at) / 1000)) : null;
+  useEffect(() => {
+    const f = firstAt.current;
+    if (!f || f.sent || left !== 0) return;
+    f.sent = true;
+    const what = [...xcrit.map((x) => x.title[lang]), ...unacked.map((a) => t(`ind.${a.id}`, lang))].join(', ');
+    reportSymptom('unwell', `${t('noresp.quote', lang)} (${what}, ${NO_RESP_S} ${t('noresp.sec', lang)})`, 'system');
+  });
   if (unacked.length === 0 && xcrit.length === 0) return null;
   return (
     <div className="alarm" role="alert">
@@ -121,6 +138,7 @@ export function AlarmBanner() {
         {xcrit.map((x) => <span key={x.id}>{x.title[lang]}: <b className="num">{x.value}</b> · {x.label[lang]}</span>)}
         {unacked.slice(0, 3).map((a) => <span key={a.id}>{t(`ind.${a.id}`, lang)}: <b className="num">{a.reading.value.toFixed(INDICATORS[a.id].decimals)} {INDICATORS[a.id].unit}</b> · {t(a.labelKey, lang)}</span>)}
         {unacked.length > 3 && <span className="muted">+{unacked.length - 3} {t('alarm.more', lang)}</span>}
+        {left != null && <span className="noresp small">{left > 0 ? `${t('noresp.count', lang)} ${left} ${t('noresp.sec', lang)}` : `✓ ${t('noresp.sent', lang)}`} <span className="muted">({t('noresp.assume', lang)})</span></span>}
       </div>
       <button className="ack" onClick={() => { ack(unacked.map((a) => a.id) as IndicatorId[]); useScenario.setState((s) => ({ ackedExtra: [...s.ackedExtra, ...xcrit.map((x) => x.id)] })); stopAlarm(); stopVoice(); }}>{t('alarm.ack', lang)}</button>
     </div>
@@ -195,7 +213,7 @@ export function Vega() {
       // Değer kaydedildiyse VEGA konuşmaz (analizi AI değerlendirme kartı yapar); geçmişe kısa not düşülür
       hist.current = [...hist.current, { role: 'user' as const, content: q }, { role: 'assistant' as const, content: full || `[recorded: ${done.join(', ')}]` }].slice(-8);
     } catch (e) {
-      if ((e as Error).name !== 'AbortError') setErr(t('ai.offline', lang));
+      if ((e as Error).name !== 'AbortError') setErr(t((e as Error).message === 'LOS' ? 'los.vega' : 'ai.offline', lang));
     } finally { setBusy(false); }
   };
 

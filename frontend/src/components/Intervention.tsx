@@ -11,6 +11,7 @@ import { PROTOCOLS, allDrugs, matchProtocols, ISS_KIT, KIT_BY_ID, type ProtocolI
 import type { Packet, Role } from '../telemetry';
 import { ProvTag } from './Hud';
 import { SourceTags } from './Info';
+import { allergyHit } from '../crew';
 
 const fmt = (s: number) => (s < 60 ? `${Math.round(s)} s` : `${Math.floor(s / 60)} min ${String(Math.round(s % 60)).padStart(2, '0')} s`);
 const DRUGS = allDrugs();
@@ -30,12 +31,14 @@ function libraryForAi() {
   }));
 }
 
-function DrugLine({ id, lang }: { id: string; lang: 'tr' | 'en' }) {
+function DrugLine({ id, lang, allergies, los }: { id: string; lang: 'tr' | 'en'; allergies?: string; los?: boolean }) {
   const d = DRUGS[id];
   if (!d) return null;
   const pr = PROTOCOLS[d.protocol];
+  const hit = allergyHit(d.drug.verbatim, allergies);
   return (
-    <div className={`intv-drug ${d.drug.locked ? 'locked' : ''}`}>
+    <div className={`intv-drug ${d.drug.locked ? 'locked' : ''} ${hit ? 'allergy' : ''} ${los && d.drug.locked ? 'los' : ''}`}>
+      {hit && <div className="intv-allergy">⛔ {t('iv.allergyHit', lang)}: <b>{hit}</b></div>}
       <code>{d.drug.verbatim}</code>{d.drug.dose && <> <code>{d.drug.dose}</code></>}
       <span className="muted small"> · {pr.source.page}</span>
       {d.drug.locked && <div className="intv-lock">🔒 {t(pr.kind === 'NASA_ISS' ? 'iv.lockedIss' : 'iv.locked', lang)}</div>}
@@ -62,17 +65,21 @@ export function InterventionPanel({ p, role, compress }: { p: Packet; role: Role
   const [confirmed, setConfirmed] = useState<Record<string, boolean[]>>({});
   const ticked = Object.entries(confirmed).filter(([k]) => k.startsWith(`${p.crewId}:`)).flatMap(([k, arr]) => { const pid = k.split(':')[1] as ProtocolId; return arr.map((b, i) => (b ? PROTOCOLS[pid].confirm[i].en : '')).filter(Boolean); });
   const reported = p.snap.reportedSymptoms ?? [];
-  const sig = `${p.crewId}|${matched.map((m) => m.id).sort().join(',')}|${sentSymptoms}|${ticked.join(',')}|${reported.map((x) => x.id).join(',')}|${lang}`;
+  const allergies = p.snap.crewRecord?.allergies ? String(p.snap.crewRecord.allergies) : '';
+  const los = !!p.ui.linkDown;
+  const sig = `${p.crewId}|${matched.map((m) => m.id).sort().join(',')}|${sentSymptoms}|${ticked.join(',')}|${reported.map((x) => x.id).join(',')}|${lang}|${los}|${allergies}`;
   const [ai, setAi] = useState<AiRank | null>(null);
   const [aiErr, setAiErr] = useState('');
   const [approved, setApproved] = useState<Record<string, number>>({});
   const [now, setNow] = useState(Date.now());
   useEffect(() => { const h = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(h); }, []);
   const ctrl = useRef<AbortController | null>(null);
+  useEffect(() => { ctrl.current?.abort(); setAi(null); setAiErr(''); }, [p.crewId]); // başka mürettebat seçilince eski AI önerisi kalmasın
 
   // AI: durum imzası değişince (kart kümesi, belirtiler), 2 sn debounce
   useEffect(() => {
     if (!matched.length && !sentSymptoms && !ticked.length && !reported.length) { setAi(null); return; }
+    if (los) return; // yer bağlantısı yok → bulut AI yok; kaynaklı kartlar çalışır
     const h = setTimeout(async () => {
       ctrl.current?.abort(); const c = new AbortController(); ctrl.current = c;
       try {
@@ -107,8 +114,10 @@ export function InterventionPanel({ p, role, compress }: { p: Packet; role: Role
           <button type="submit">{t('iv.analyze', lang)}</button>
         </form>
       )}
-      {reported.length > 0 && <div className="intv-reported"><b>🔔 {t('iv.reported', lang)}</b>{reported.slice().reverse().map((x) => <div key={x.id} className="small">“{x.quote}” <span className="muted">· {t(`sym.${x.category}`, lang)} · {x.minutesAgo} {t('iv.minAgo', lang)}{x.source === 'scenario' ? ` · ${t('scen.tag', lang)}` : ''}</span></div>)}</div>}
+      {reported.length > 0 && <div className="intv-reported"><b>🔔 {t('iv.reported', lang)}</b>{reported.slice().reverse().map((x) => <div key={x.id} className="small">“{x.quote}” <span className="muted">· {t(`sym.${x.category}`, lang)} · {x.minutesAgo} {t('iv.minAgo', lang)} · {t(`src.${x.source}`, lang)}</span></div>)}</div>}
       {(p.snap.commDelayOneWaySec?.[0] ?? 0) >= 60 && <div className="intv-auto small">⏱ {t('iv.autonomy', lang)} <a href="https://www.nasa.gov/wp-content/uploads/2023/07/ochmo-tb-033-spaceflight-experience-medical-care-rev-c.pdf" target="_blank" rel="noreferrer">OCHMO-TB-033 ↗</a></div>}
+      {allergies && <div className="intv-rec small">🩺 <b>{t('rec.allergies', lang)}:</b> {allergies}</div>}
+      {los && <div className="intv-los small">📡 <b>{t('los.title', lang)}</b> · {t('los.aiOff', lang)}<div>{t('iv.losRule', lang)}</div></div>}
       {aiErr && <div className="muted small">{t('iv.aiOffline', lang)}</div>}
       {ai && (ai.summary || ai.plan.length > 0) && (
         <div className="intv-rx">
@@ -117,7 +126,7 @@ export function InterventionPanel({ p, role, compress }: { p: Packet; role: Role
           <ol className="steps">
             {ai.plan.map((it, i) => (
               <li key={i}>
-                {it.drugId && DRUGS[it.drugId] ? <><b>{DRUGS[it.drugId].cond ? `${DRUGS[it.drugId].cond![lang]}: ` : ''}</b><DrugLine id={it.drugId} lang={lang} /></> : it.protocol && PROTOCOLS[it.protocol] ? <b>{PROTOCOLS[it.protocol].title[lang]}</b> : null}
+                {it.drugId && DRUGS[it.drugId] ? <><b>{DRUGS[it.drugId].cond ? `${DRUGS[it.drugId].cond![lang]}: ` : ''}</b><DrugLine id={it.drugId} lang={lang} allergies={allergies} los={los} /></> : it.protocol && PROTOCOLS[it.protocol] ? <b>{PROTOCOLS[it.protocol].title[lang]}</b> : null}
                 {it.why && <div className="small muted">{it.why}</div>}
               </li>
             ))}
@@ -126,7 +135,7 @@ export function InterventionPanel({ p, role, compress }: { p: Packet; role: Role
             <div className="intv-off">
               <div className="small"><b>{t('iv.offTitle', lang)}</b></div>
               <ul className="small">{ai.offFormulary.map((o, i) => { const k = o.kitId ? KIT_BY_ID[o.kitId] : undefined; return (
-                <li key={i}>{k ? <><b>{k.name}</b> <span className="tag-kit">{t('iv.kitTag', lang)}</span> <span className="muted">· {k.strength} {k.route} ({t('iv.kitStrength', lang)}) · {k.pack}{k.comment ? ` · “${k.comment}”` : ''}</span></> : <><b>{o.name}</b> <span className="tag-unverified">{t('iv.offTag', lang)}</span></>} · {t('iv.amountBySurgeon', lang)}{o.why ? ` — ${o.why}` : ''}</li>); })}</ul>
+                <li key={i} className={allergyHit(k ? k.name : o.name, allergies) ? 'allergy' : ''}>{allergyHit(k ? k.name : o.name, allergies) && <span className="intv-allergy">⛔ {t('iv.allergyHit', lang)}: {allergyHit(k ? k.name : o.name, allergies)} · </span>}{k ? <><b>{k.name}</b> <span className="tag-kit">{t('iv.kitTag', lang)}</span> <span className="muted">· {k.strength} {k.route} ({t('iv.kitStrength', lang)}) · {k.pack}{k.comment ? ` · “${k.comment}”` : ''}</span></> : <><b>{o.name}</b> <span className="tag-unverified">{t('iv.offTag', lang)}</span></>} · {t('iv.amountBySurgeon', lang)}{o.why ? ` — ${o.why}` : ''}</li>); })}</ul>
             </div>
           )}
           <div className="muted small">{t('iv.rxNote', lang)}</div>
@@ -160,7 +169,7 @@ export function InterventionPanel({ p, role, compress }: { p: Packet; role: Role
             <ol className="steps">
               {pr.steps.filter((st) => !st.gravity || (st.gravity === 'zeroG') === zeroG).map((st, i) => (
                 <li key={i}>{st.cond && <b className="intv-cond">{st.cond[lang]}: </b>}{st.text[lang]}
-                  {st.drug && <DrugLine id={st.drug.id} lang={lang} />}
+                  {st.drug && <DrugLine id={st.drug.id} lang={lang} allergies={allergies} los={los} />}
                 </li>
               ))}
             </ol>

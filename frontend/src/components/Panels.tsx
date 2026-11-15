@@ -1,6 +1,7 @@
 // Sağ ve alt paneller: değerlendirme, bölge bilgisi, kabin, görev zaman çizelgesi, trend.
 // AI notu: Claude (Anthropic) yardımıyla yazılmıştır.
 import { AnimatePresence, motion } from 'motion/react';
+import { SpaceWeather } from './Extras';
 import { INDICATORS, statusRank } from '../engine/indicators';
 import { REGIONS } from '../engine/regions';
 import { adviceFor } from '../engine/guidance';
@@ -135,14 +136,15 @@ export function MissionPanel() {
   const cum = cumulativeMSv(e, day);
   const bone = boneLossPct(e, day);
   const h = equivUSvH(e);
-  const [tab, setTab] = useState<'routine' | 'mission' | 'scen' | 'lab'>('routine');
+  const [tab, setTab] = useState<'routine' | 'mission' | 'scen' | 'lab' | 'wx'>('routine');
   const tabs = (
     <div className="tabs" role="tablist">
-      {(['routine', 'scen', 'lab', 'mission'] as const).map((k) => <button key={k} role="tab" aria-selected={tab === k} className={tab === k ? 'on' : ''} onClick={() => setTab(k)}>{t(`tab.${k}`, lang)}</button>)}
+      {(['routine', 'scen', 'lab', 'mission', 'wx'] as const).map((k) => <button key={k} role="tab" aria-selected={tab === k} className={tab === k ? 'on' : ''} onClick={() => setTab(k)}>{t(`tab.${k}`, lang)}</button>)}
     </div>
   );
   if (tab === 'routine') return <Panel title={t('tab.routine', lang)} right={tabs} className="mission"><RoutinePanel /></Panel>;
   if (tab === 'lab') return <Panel title={t('tab.labTitle', lang)} right={tabs} className="mission"><LabPanel /></Panel>;
+  if (tab === 'wx') return <Panel title={t('tab.wx', lang)} right={tabs} className="mission"><SpaceWeather /></Panel>;
   if (tab === 'scen') return <Panel title={t('tab.scen', lang)} right={tabs} className="mission"><ScenarioList /></Panel>;
   return (
     <Panel title={t('ui.timeline', lang)} right={tabs} className="mission">

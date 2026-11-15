@@ -232,6 +232,56 @@ def account(model: str, usage) -> None:
           f"cache_r={getattr(usage, 'cache_read_input_tokens', 0)} out={usage.output_tokens} day=${_spend['usd']:.3f}", flush=True)
 
 
+# ---- NASA DONKI uzay havası (canlı; sunucu tarafı, 30 dk önbellek). Yalnız NASA'nın olay türleri ve alanları; yorum yok ----
+_DONKI = {"at": 0.0, "data": None}
+_DONKI_TYPES = ("FLR", "SEP", "CME", "GST")
+
+
+def _donki_fetch():
+    key = os.environ.get("NASA_API_KEY") or "DEMO_KEY"
+    end = time.strftime("%Y-%m-%d", time.gmtime())
+    start = time.strftime("%Y-%m-%d", time.gmtime(time.time() - 7 * 86400))
+    events, failed = [], []
+    with httpx.Client(timeout=15) as hc:
+        for typ in _DONKI_TYPES:
+            try:
+                r = hc.get(f"https://api.nasa.gov/DONKI/{typ}", params={"startDate": start, "endDate": end, "api_key": key})
+                r.raise_for_status()
+                rows = r.json() or []
+            except Exception:  # tür bazında: biri düşerse diğerleri gösterilir, düşen tür ekranda "alınamadı"
+                failed.append(typ)
+                continue
+            for e in rows:
+                if typ == "FLR":
+                    t0, detail = e.get("peakTime") or e.get("beginTime"), e.get("classType")
+                elif typ == "SEP":
+                    t0, detail = e.get("eventTime"), None
+                elif typ == "CME":
+                    t0, detail = e.get("startTime"), None
+                else:
+                    kps = [k.get("kpIndex") for k in (e.get("allKpIndex") or []) if k.get("kpIndex") is not None]
+                    t0, detail = e.get("startTime"), (f"Kp {max(kps):g}" if kps else None)
+                events.append({"type": typ, "time": t0, "detail": detail, "link": e.get("link")})
+    if len(failed) == len(_DONKI_TYPES):
+        raise RuntimeError("all DONKI types failed")
+    events.sort(key=lambda x: x.get("time") or "", reverse=True)
+    return {"start": start, "end": end, "events": events, "failed": failed}
+
+
+@app.get("/api/spaceweather")
+async def spaceweather():
+    now = time.time()
+    if _DONKI["data"] is None or now - _DONKI["at"] > 1800:
+        try:
+            _DONKI["data"] = await run_in_threadpool(_donki_fetch)
+            _DONKI["at"] = now
+        except Exception as e:  # NASA erişilemezse eski önbellek (zamanıyla) döner
+            if _DONKI["data"] is None:
+                raise HTTPException(502, f"DONKI unavailable: {type(e).__name__}")
+            return {**_DONKI["data"], "fetchedAt": _DONKI["at"], "stale": True, "source": "NASA DONKI (CCMC)"}
+    return {**_DONKI["data"], "fetchedAt": _DONKI["at"], "stale": False, "source": "NASA DONKI (CCMC)"}
+
+
 @app.get("/api/health")
 def health():
     return {"ok": True, "models": {"assess": MODEL_ASSESS, "vega": MODEL_VEGA}, "spentTodayUsd": round(_spend["usd"], 4), "budgetUsd": DAILY_BUDGET_USD}
@@ -395,6 +445,7 @@ async def interventions(req: Request):
         messages=[{"role": "user", "content": f"Library: {json.dumps(lib)}\nCandidates: {json.dumps(cands)}\nRole viewing: {body.get('role')}\n"
                                                 f"ISS kit: {json.dumps(kit)}\n"
                                                 f"Astronaut-reported via VEGA (self-report, not a diagnosis): {json.dumps(body.get('reported', []), ensure_ascii=False)[:800]}\n"
+                                                f"Crew medical record allergies (self-entered; NEVER put a drugId or kit item matching these in plan/offFormulary, say so in summary): {json.dumps(((body.get('snapshot') or {}).get('crewRecord') or {}).get('allergies', ''), ensure_ascii=False)[:200]}\n"
                                                 f"CMO-typed symptoms: {str(body.get('symptoms', ''))[:400]}\nCMO-confirmed signs: {json.dumps(body.get('confirmedSigns', []))}\n"
                                                 f"Snapshot: {json.dumps(body.get('snapshot', {}), ensure_ascii=False)}\nCall rank_interventions."}])
     account(MODEL_ASSESS, msg.usage)
