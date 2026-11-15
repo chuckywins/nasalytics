@@ -10,6 +10,7 @@ import { CheckinModals } from './components/Checkin';
 import { FatigueCam } from './components/FatigueCam';
 import { ScenarioBanner } from './components/Scenario';
 import { CrewView, CrewNotices } from './components/CrewView';
+import { ExerciseModal } from './components/ExercisePlan';
 import { useTelemetry, startTelemetry } from './telemetry';
 
 let telStarted = false;
@@ -91,6 +92,7 @@ export default function App() {
         ))}
       </nav>
       <CheckinModals />
+      <ExerciseModal />
       <SessionGate />
     </div>
   );
@@ -117,6 +119,7 @@ export default function App() {
       <aside className="col-right"><AssessmentPanel /><RegionPanel /></aside>
       <footer className="row-bottom"><CabinPanel /><MissionPanel /><TrendChart /></footer>
       <CheckinModals />
+      <ExerciseModal />
       <SessionGate />
     </div>
   );

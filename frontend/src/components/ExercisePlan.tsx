@@ -1,10 +1,11 @@
 // Kemik ve kas kaybına karşı NASA egzersiz özeti (organ paneli ve günlük rutin). Yük/set/tekrar YOK; her satır kaynaklı.
 // AI notu: Claude (Anthropic) yardımıyla yazılmıştır.
-import { useState } from 'react';
+import { create } from 'zustand';
+import { asset } from '../base';
 import { createPortal } from 'react-dom';
 import { useApp } from '../store';
 import { t } from '../i18n';
-import { EX_TARGETS, EX_SESSION, EX_MOVES, EX_NOTE, exEquipment } from '../engine/exercise';
+import { EX_TARGETS, EX_SESSION, EX_MOVES, EX_NOTE, EX_ANIM, EX_TEXT_ONLY, EX_ANIM_CREDIT, exEquipment, type ExAnim } from '../engine/exercise';
 import { ProvTag } from './Hud';
 
 export function ExercisePlan({ compact = false }: { compact?: boolean }) {
@@ -28,22 +29,57 @@ export function ExercisePlan({ compact = false }: { compact?: boolean }) {
   );
 }
 
-/** Günlük rutindeki egzersiz görevinin yanındaki "NASA planı" düğmesi → pencere */
+/** Egzersiz modu penceresi: tek yerden açılır (rutin düğmesi, organ paneli, üst çubukta "Egzersiz" seçimi) */
+export const useExModal = create<{ open: boolean; tab: 'moves' | 'plan'; show: (tab?: 'moves' | 'plan') => void; hide: () => void }>((set) => ({
+  open: false, tab: 'moves', show: (tab = 'moves') => set({ open: true, tab }), hide: () => set({ open: false }),
+}));
+
+function MoveCard({ a, lang }: { a: ExAnim; lang: 'tr' | 'en' }) {
+  return (
+    <figure className="ex-card">
+      <img src={asset(a.file)} alt={a.name[lang]} loading="lazy" width={200} height={200} />
+      <figcaption>
+        <b>{a.name[lang]}</b>
+        <span className="small">→ {a.site[lang]}</span>
+        <span className="small muted">{a.iss[lang]} · <a href={a.src.url} target="_blank" rel="noreferrer">{(a.src.label.match(/M?TB-0\d\d/)?.[0] ?? 'NASA')} {a.src.label.split('·')[1]?.trim()}</a></span>
+        {a.note && <span className="small muted">{a.note[lang]}</span>}
+      </figcaption>
+    </figure>
+  );
+}
+
+export function ExerciseModal() {
+  const lang = useApp((s) => s.lang);
+  const { open, tab, show, hide } = useExModal();
+  if (!open) return null;
+  return createPortal(
+    <div className="gate soft" role="dialog" aria-modal="true" aria-label={t('ex.mode', lang)} onClick={hide} onKeyDown={(e) => e.key === 'Escape' && hide()}>
+      <div className="rem-box ex-box" onClick={(e) => e.stopPropagation()}>
+        <header className="panel-h"><span>{t('ex.mode', lang)}</span><button className="x" aria-label="close" onClick={hide} autoFocus>×</button></header>
+        <div className="seg small ex-tabs" role="tablist">
+          <button role="tab" aria-selected={tab === 'moves'} className={tab === 'moves' ? 'on' : ''} onClick={() => show('moves')}>{t('ex.tabMoves', lang)}</button>
+          <button role="tab" aria-selected={tab === 'plan'} className={tab === 'plan' ? 'on' : ''} onClick={() => show('plan')}>{t('ex.tabPlan', lang)}</button>
+        </div>
+        {tab === 'moves' ? (
+          <>
+            <p className="small ex-earth">{t('ex.earthNote', lang)}</p>
+            <div className="ex-grid">{EX_ANIM.map((a) => <MoveCard key={a.id} a={a} lang={lang} />)}</div>
+            <div className="small"><b>{t('ex.textOnly', lang)}:</b> {EX_TEXT_ONLY.map((x) => x[lang]).join(' · ')}</div>
+            <p className="small muted">{EX_NOTE[lang]}</p>
+            <p className="small muted"><a href={EX_ANIM_CREDIT.url} target="_blank" rel="noreferrer">{EX_ANIM_CREDIT.label}</a> · {t('ex.docs', lang)}: NASA OCHMO-TB-031 (2023), OCHMO-MTB-013 Rev D (2026)</p>
+          </>
+        ) : <ExercisePlan />}
+      </div>
+    </div>, document.body);
+}
+
+/** Günlük rutindeki egzersiz görevinin yanındaki düğme → egzersiz modu penceresi */
 export function ExercisePlanButton() {
   const lang = useApp((s) => s.lang);
-  const [open, setOpen] = useState(false);
+  const show = useExModal((s) => s.show);
   return (
-    <>
-      {/* görev düğmesinin içinde: iç içe <button> olmasın diye role=button */}
-      <span role="button" tabIndex={0} className="ex-btn small" onClick={(e) => { e.stopPropagation(); setOpen(true); }}
-        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); setOpen(true); } }}>ⓘ {t('ex.button', lang)}</span>
-      {open && createPortal(
-        <div className="gate soft" role="dialog" aria-modal="true" onClick={() => setOpen(false)} onKeyDown={(e) => e.key === 'Escape' && setOpen(false)}>
-          <div className="rem-box ex-box" onClick={(e) => e.stopPropagation()}>
-            <header className="panel-h"><span>{t('ex.title', lang)}</span><button className="x" aria-label="close" onClick={() => setOpen(false)} autoFocus>×</button></header>
-            <ExercisePlan />
-          </div>
-        </div>, document.body)}
-    </>
+    // görev düğmesinin içinde: iç içe <button> olmasın diye role=button
+    <span role="button" tabIndex={0} className="ex-btn small" onClick={(e) => { e.stopPropagation(); show('moves'); }}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); show('moves'); } }}>▶ {t('ex.button', lang)}</span>
   );
 }

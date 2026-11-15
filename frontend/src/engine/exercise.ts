@@ -49,3 +49,29 @@ export const EX_NOTE: L = {
   en: 'Prescriptions are individual: each astronaut\'s strength and conditioning specialist (ASCR) sets and adjusts the program from device data. No loads, sets or reps are given here.',
 };
 export const EX_SOURCES: SourceRef[] = [TB031(10), MTB013(14)];
+
+/** Egzersiz modu: animasyonlu kartlar. YALNIZCA NASA belgesinde adı geçen hareketler; animasyon forge-motion (CC0), Dünya gösterimi.
+ *  Benzer ama aynı olmayan hareket (ör. bölünmüş squat ≠ tek bacak squat, şınav ≠ parmak şınavı) bilerek eklenmedi. */
+export interface ExAnim { id: string; file: string; name: L; site: L; iss: L; src: SourceRef; note?: L }
+export const EX_ANIM: ExAnim[] = [
+  { id: 'squat', file: 'exercise/squat_bb.webp', name: { tr: 'Squat (sırt)', en: 'Back squat' }, site: { tr: 'Femur boynunun alt kısmı', en: 'Inferior femoral neck' }, iss: { tr: 'ISS: ARED', en: 'ISS: ARED' }, src: MTB013(14) },
+  { id: 'deadlift', file: 'exercise/deadlift_bb.webp', name: { tr: 'Deadlift', en: 'Deadlift' }, site: { tr: 'Bel omurgası', en: 'Lumbar spine' }, iss: { tr: 'ISS: ARED', en: 'ISS: ARED' }, src: MTB013(14) },
+  { id: 'rdl', file: 'exercise/rdl_bb.webp', name: { tr: 'Romanian deadlift', en: 'Romanian deadlift' }, site: { tr: 'Bel omurgası (ARED deadlift kategorisi)', en: 'Lumbar spine (ARED deadlift category)' }, iss: { tr: 'ISS: ARED', en: 'ISS: ARED' }, src: TB031(16) },
+  { id: 'goodmorning', file: 'exercise/good_morning.webp', name: { tr: 'Barbell good morning', en: 'Barbell good morning' }, site: { tr: 'Bel omurgası', en: 'Lumbar spine' }, iss: { tr: 'ISS: ARED', en: 'ISS: ARED' }, src: MTB013(14) },
+  { id: 'heelraise', file: 'exercise/calf_raise.webp', name: { tr: 'Topuk kaldırma', en: 'Heel raise' }, site: { tr: 'Baldır; tek bacak duruşunda topuk kemiği', en: 'Calf; calcaneus in single-leg stance' }, iss: { tr: 'ISS: ARED', en: 'ISS: ARED' }, src: MTB013(14) },
+  { id: 'hipabd', file: 'exercise/side_leg_raise.webp', name: { tr: 'Kalça abdüktörleri (tek bacak duruşu)', en: 'Hip abductors (single-leg stance)' }, site: { tr: 'Büyük trokanter', en: 'Greater trochanter' }, iss: { tr: 'Belgede cihaz belirtilmemiş', en: 'Device not stated' }, src: MTB013(14) },
+  { id: 'bench', file: 'exercise/bench_bb.webp', name: { tr: 'Bench press', en: 'Bench press' }, site: { tr: 'Üst vücut kuvveti', en: 'Upper-body strength' }, iss: { tr: 'ISS: ARED', en: 'ISS: ARED' }, src: TB031(16) },
+  { id: 'treadmill', file: 'exercise/run.webp', name: { tr: 'Koşu (aerobik)', en: 'Running (aerobic)' }, site: { tr: 'Aerobik kapasite; %70–100 maksimum nabız', en: 'Aerobic capacity; 70–100% HRmax' }, iss: { tr: 'ISS: T2/COLBERT koşu bandı, kemerle yüklenir', en: 'ISS: T2/COLBERT treadmill with harness' }, src: TB031(11) },
+  { id: 'cycle', file: 'exercise/bike.webp', name: { tr: 'Bisiklet (aerobik)', en: 'Cycling (aerobic)' }, site: { tr: 'Aerobik kapasite; %70–100 VO₂peak', en: 'Aerobic capacity; 70–100% VO₂peak' }, iss: { tr: 'ISS: CEVIS bisiklet', en: 'ISS: CEVIS cycle' }, src: TB031(11) },
+  { id: 'jump', file: 'exercise/jump_squat.webp', name: { tr: 'Sıçrama', en: 'Jumping' }, site: { tr: 'Femur boynunun alt kısmı', en: 'Inferior femoral neck' }, iss: { tr: 'Yerçekimli ortam bulgusu', en: 'Gravity-environment finding' }, src: MTB013(14), note: { tr: 'Mikrogravitede uygulanabilirliği belgede yok.', en: 'Microgravity applicability not stated.' } },
+];
+/** NASA'nın adını verdiği ama doğru animasyonu olmayan hareketler (yalnız yazı) */
+export const EX_TEXT_ONLY: L[] = [
+  { tr: 'Tek bacak squat (büyük trokanter)', en: 'Single-leg squat (greater trochanter)' },
+  { tr: 'Sumo squat, sumo deadlift', en: 'Sumo squat, sumo deadlift' },
+  { tr: 'Tek bacak, derin ve kısa açılı squat (femur boynu üst-yan)', en: 'Single-leg deep short-arc squat (superior lateral femoral neck)' },
+  { tr: 'Tek bacak topuk kaldırma', en: 'Single-leg heel raise' },
+  { tr: 'Parmak şınavı (ön kol kemikleri)', en: 'Finger push-ups (distal radius/ulna)' },
+  { tr: 'Sprint', en: 'Sprinting' },
+];
+export const EX_ANIM_CREDIT = { label: 'Animasyon: forge-motion (CC0)', url: 'https://github.com/Dante3750/forge-motion' };

@@ -13,6 +13,7 @@ import { t } from '../i18n';
 import { useScenario, allCaptions } from '../scenario';
 import { reportSymptom } from '../symptoms';
 import { VegaWave, waveBump } from './VegaWave';
+import { useExModal } from './ExercisePlan';
 import { startMicMeter, stopMicMeter } from '../audio';
 import { useTelemetry } from '../telemetry';
 
@@ -132,7 +133,7 @@ export function ActivitySelect() {
   return (
     <div className="tb-item"><span>{t('ui.activity', lang)}</span>
       <div className="seg small" role="group">
-        {(['rest', 'exercise', 'eva'] as Activity[]).map((a) => <button key={a} aria-pressed={activity === a} className={activity === a ? 'on' : ''} onClick={() => setActivity(a)}>{t(`act.${a}`, lang)}</button>)}
+        {(['rest', 'exercise', 'eva'] as Activity[]).map((a) => <button key={a} aria-pressed={activity === a} className={activity === a ? 'on' : ''} onClick={() => { setActivity(a); if (a === 'exercise') useExModal.getState().show('moves'); }}>{t(`act.${a}`, lang)}</button>)}
       </div>
     </div>
   );
