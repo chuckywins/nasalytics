@@ -16,6 +16,7 @@ import { useState } from 'react';
 import { InfoTip, SourceTags, toSteps } from './Info';
 import { ScenarioList, ExtraAlertCards } from './Scenario';
 import { LabPanel } from './Lab';
+import { ExercisePlan } from './ExercisePlan';
 import { useScenario, suitCO2Status } from '../scenario';
 
 // Uyarı görünürlüğü animasyona BAĞLI DEĞİL: yalnızca konum kayar, opaklık her zaman 1 (animasyon çalışmasa da okunur).
@@ -82,6 +83,7 @@ export function RegionPanel() {
           return <button key={id} className="chip" style={{ borderColor: STATUS_COLOR[ev.status] }} onClick={() => selectIndicator(id)}>{STATUS_GLYPH[ev.status]} {t(`ind.${id}`, lang)}</button>;
         })}
       </div>
+      {(selectedRegion === 'bone' || selectedRegion === 'bone_load' || selectedRegion === 'muscle') && <ExercisePlan compact />}
       <SourceTags sources={info.sources} />
     </Panel>
   );

@@ -161,3 +161,10 @@ Her adım buraya kısa notla eklenir (en yeni en altta).
 - deploy/: systemd hizmeti, Apache (cPanel dahil) ve nginx ayarı (önek soyma, WebSocket, akış tamponsuz), update.sh. DEPLOY.md AlmaLinux 8 adımlarıyla yeniden yazıldı (deploy key, SELinux httpd_can_network_connect, Node 20, Python 3.11).
 - Yerel deneme: /nasalytics önekini soyan küçük bir ters vekil arkasında telefon boyutunda uçtan uca: yönlendirme, arayüz, 3D model, VEGA akışı, WebSocket canlı aktarım, belirti bildirimi; HTTP hatası yok.
 - VEGA iç terim ("snapshot") söylemesin kuralı eklendi.
+
+## 2026-11-15 09:08 — Kemik/kas kaybına karşı egzersiz (NASA; Fable ile)
+- Kullanıcı: belgelerde astronot egzersiz hareketleri var mı, yoksa NASA kaynaklarında araştır. Var: OCHMO-MTB-013 Bone Loss (zaten indirilmişti) + yeni indirilen OCHMO-TB-031 Exercise Overview.
+- Yeni "NASA egzersiz planı" (engine/exercise.ts + ExercisePlan): hedefler V1 4003/4024/4027; seans ~30 dk aerobik + 30–60 dk direnç, CEVIS %70–100 VO₂peak / T2 %70–100 HRmax, haftada 6–7 seans; hareket → kemik bölgesi (squat, tek bacak squat, deadlift, good morning, topuk kaldırma, kalça abdüktörü, bench press, parmak şınavı, sprint/sıçrama); ortama göre cihaz (ISS: ARED/T2/CEVIS; Orion: volan; Ay/Mars yüzeyi: yayımlanmış protokol yok). Yük/set/tekrar bilerek yok (ASCR kişiye özel belirler).
+- Yerleri: kemik/kas seçilince organ paneli; Günlük rutin → Egzersiz satırındaki "NASA planı" (telefonda da). Görev adı "Egzersiz ~1–1,5 sa" (TB-031: 30 + 30–60 dk).
+- VEGA egzersiz sorusunu yalnız bu özetten cevaplıyor (test edildi).
+- Düzeltmeler: kemik özetinin kodda tahmin edilmiş adresi 404'tü → ochmo-tb-030-bone-loss.pdf; "deep short-arc squat" yanlış çevrilmişti, düzeltildi. ochmo_bone.txt UTF-8 ile yeniden çıkarıldı.

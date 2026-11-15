@@ -498,3 +498,12 @@ a { color: var(--accent); }
 .body-chip.on { box-shadow: 0 0 0 1px var(--accent) inset; }
 .body-chip .c-t { font-size: 10px; color: var(--ink-2); }
 .body-chip .c-v { font-size: 13px; font-weight: 600; }
+
+.ex-plan { display: flex; flex-direction: column; gap: 6px; border-top: 1px solid var(--line); padding-top: 6px; }
+.ex-plan ul { margin: 2px 0 0; padding-left: 18px; display: flex; flex-direction: column; gap: 3px; }
+.ex-plan .ex-src { font-size: 11px; color: var(--ink-3); white-space: nowrap; }
+.ex-plan p { margin: 0; }
+.ex-h { display: flex; gap: 8px; align-items: center; }
+.ex-box { width: min(640px, 94vw); max-height: 88dvh; overflow-y: auto; }
+.ex-btn { margin-left: 6px; font-size: 11px; padding: 1px 6px; border: 1px solid var(--accent-dim, #2a6f7c); border-radius: 3px; color: var(--accent); cursor: pointer; }
+.region .panel-b { overflow-y: auto; }

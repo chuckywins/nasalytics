@@ -18,13 +18,13 @@ time, much research both terrestrially and on ISS   [V1 3017] Post-Mission Recon
 has occurred to address this risk. Thus far, there  [V1 3018] Post-Mission Long-Term
 have been no spaceflight in-mission bone
 fractures, but NASA has identified the risk as           Monitoring
-"given the skeletal changes that occur during       [V1 4020] In-Mission Nutrient Intake
+‚Äúgiven the skeletal changes that occur during       [V1 4020] In-Mission Nutrient Intake
 space missions there is a possibility that crew     [V1 4026] Pre-Mission Bone Mineral Density
 bones during and after spaceflight are not as       [V1 4027] Pre-mission Bone
 strong as they were before the mission and
 fracture may occur for activities otherwise              Countermeasures
 unlikely to induce fracture prior to space          [V1 4028] Post-Mission Bone Reconditioning
-missions". This medical technical brief details
+missions‚Äù. This medical technical brief details
 bone physiology, spaceflight effects on bone,       NASA-STD-3001 Volume 2, Rev E
 countermeasures that minimize bone loss, and        [V2 7038] Physiological Countermeasures
 requirements which provide limits and
@@ -53,11 +53,11 @@ loading on muscles and bones. This reduction in the
 
 weightbearing function of muscles/bones in space may cause
 
-the tissue to atrophy ≠ changing its form in response to not
+the tissue to atrophy ‚Äì changing its form in response to not
 
 needing to be as strong to resist forces. The decrease in
 
-mechanical forces (i.e., the reduction in bone's weightbearing
+mechanical forces (i.e., the reduction in bone‚Äôs weightbearing
 
 function) alters the balance in the bone remodeling cycle,      Source: Scott et al. (1998) Collagen
 ultimately resulting in decreased bone density and possible     Cross-Link Excretion during Space
@@ -172,7 +172,7 @@ OCHMO-MTB-013
 Physiology
 
 Bone Cellular Signals
-On Earth, gravity is a constant force that imparts mechanical resistance to the body's activities. This
+On Earth, gravity is a constant force that imparts mechanical resistance to the body‚Äôs activities. This
 resistance is perceived by osteocytes (cells that regulate bone remodeling) and translated into cellular
 signals that regulate the balance between tissue formation (growth) and tissue resorption (breakdown),
 termed bone remodeling. ISS National Laboratory.
@@ -210,7 +210,7 @@ bisphosphonate pharmaceuticals which
 adhere to bone surfaces and inhibit bone
 degradation. Gena (2021) The Effect of Space
 Travel on Bone Metabolism: considerations on
-Today's Major Challenges
+Today‚Äôs Major Challenges
 
 NASA Office of the Chief Health & Medical Officer (OCHMO)                                                     4
 This Medical Technical Brief is derived from NASA-STD-3001 and NASA medical operations and is      11-Feb-26
@@ -225,10 +225,10 @@ Bone characterization Dual Energy X-ray Absorptiometry
 Maintaining bone strength and quality during spaceflight is significant as bone loss can increase risk of
 fracture, compromising crew health and mission objectives. NASA bone mineral density (BMD) monitoring
 has evolved to be more protective for crew as knowledge is available:
-∑ Bone mineral density using the Dual Energy X-ray absorptiometry (DXA) pre- and post-flight became a
+‚Ä¢ Bone mineral density using the Dual Energy X-ray absorptiometry (DXA) pre- and post-flight became a
 
    medical requirement in 1997.
-∑ Medical requirement for specific BMD for selection to long duration missions was addressed in 2001.
+‚Ä¢ Medical requirement for specific BMD for selection to long duration missions was addressed in 2001.
 DXA uses two different X-ray energies that are differentially absorbed by bone and soft tissue, allowing
 separation of tissue into bone, lean, and fat tissues and eliminating the restriction of measurement to
 regions with minimal soft tissue presence. DXA scans were used initially as a research tool to assess BMD
@@ -266,7 +266,7 @@ Quantitative Computed Tomography QCT BMD Testing
 QCT distinguishes between cortical and trabecular bone compartments which can allow for improved
 assessment of fracture risk. QCT scans are conducted on the hip and spine to provide measurements of the
 whole bone (e.g., geometry, cross-sectional areas) and measurements for separate and combined bone
-compartments (cortical bone, cancellous or "trabecular" bone, and integral bone) NASA Bone Fracture
+compartments (cortical bone, cancellous or ‚Äútrabecular‚Äù bone, and integral bone) NASA Bone Fracture
 Evidence Report (2024). QCT data from astronauts may be used to assess impact of spaceflight on whole
 bone strength and estimate bone strength for specific loading orientations and help better determine long
 term astronaut risk of fracture. QCT may therefore be used as a supplemental tool.
@@ -278,7 +278,7 @@ proven to be a good measure of cortical bone
 density but may not detect the full skeletal effects
 of spaceflight, as demonstrated on the hip bone,
 predisposed to age-related bone loss and skeletal
-fragility (Lang et. al., 2004, 2006). "It is estimated
+fragility (Lang et. al., 2004, 2006). ‚ÄúIt is estimated
 that more than 50% of women and 70% of men
 who sustain a low trauma fragility fracture actually
 have a diagnosis of osteopenia rather than
@@ -287,19 +287,19 @@ such as the size (cross-sectional area), structure
 (macro- and micro-architecture) and intrinsic
 properties (porosity, matrix mineralization, collagen
 traits) of bone also play an important role in
-determining bone strength and fracture risk" Beck
+determining bone strength and fracture risk‚Äù Beck
 2017.
 
 The updated 2024 NASA Fracture Evidence Report has expanded the description of skeletal changes to
 capture the full effects of spaceflight on bone. This includes some Bone QCT testing information:
-∑ Routine preflight-to-postflight surveillance by DXA does not provide the full detection of loss and recovery
+‚Ä¢ Routine preflight-to-postflight surveillance by DXA does not provide the full detection of loss and recovery
 in the long-duration (LD) astronaut nor of hip trabecular bone.
-∑ The inclusion of hip quantitative computed tomography (QCT) in flight studies delineates effects of
-spaceflight, countermeasures, and of post-flight recovery on cortical and trabecular bone parameters--
+‚Ä¢ The inclusion of hip quantitative computed tomography (QCT) in flight studies delineates effects of
+spaceflight, countermeasures, and of post-flight recovery on cortical and trabecular bone parameters‚Äî
 some of which are verified predictors of hip fracture in the aged.
-∑ QCT detects and compares the distinct countermeasure effects of the pharmaceutical alendronate and of
+‚Ä¢ QCT detects and compares the distinct countermeasure effects of the pharmaceutical alendronate and of
 resistive exercise (on the Advanced Resistive Exercise Device, ARED) in specific cortical and trabecular bone.
-∑ A published comparison of QCT-determined loss rates of hip trabecular bone in LD astronauts compared
+‚Ä¢ A published comparison of QCT-determined loss rates of hip trabecular bone in LD astronauts compared
 to terrestrial cohorts suggest that accelerated loss rates in trabecular volumetric BMD during spaceflight
 might be analogous to skeletal effects of accelerated loss rates in females due to menopause, potentially
 leading to disruptions in trabecular microarchitecture.
@@ -316,9 +316,9 @@ Application
 Measurement/Monitoring
 In 1994, the World Health Organization (WHO) developed guidelines using DXA to diagnose menopause-
 related osteoporosis. T-score guidelines (below) are grounded in the epidemiology of fracture frequency
-and distribution based upon measurements of the hip and spine T-score results compare an individual's
+and distribution based upon measurements of the hip and spine T-score results compare an individual‚Äôs
 bone density to the group mean value of healthy young adults (30-year-old). Guidelines state that
-menopausal females with T-scores  to -2.5 have a greater association with fragility fractures. NASA
+menopausal females with T-scores ‚â§ to ‚àí2.5 have a greater association with fragility fractures. NASA
 considers that this evidence-based test could help determine whether spaceflight induces a similar level of
 fragility and whether astronauts require protection against these changes during spaceflight. While the
 osteoporosis cut-point (T-score < -2.5) may be diagnostic in younger humans, it does not predict fragility
@@ -390,9 +390,9 @@ with bone anabolic agents or bone resorption inhibitors. For spaceflight, the fi
 and exercise interventions, with pharmaceuticals reserved for both failure to respond to diet and exercise
 
 and a risk of osteoporosis based on BMD value.               Two fracture categories:
-                                                             Atraumatic (fragility) ≠ low trauma fracture
+                                                             Atraumatic (fragility) ‚Äì low trauma fracture
 Presence of a fracture with no history of trauma and BMD     due to fragility of bones, osteoporosis.
-lower than expected for age or low BMD may indicate an       Traumatic ≠ fractures caused by applied
+lower than expected for age or low BMD may indicate an       Traumatic ‚Äì fractures caused by applied
 underlying skeletal fragility that requires medical          mechanical load to bones exceeding bone
 management. Persons with this history should not perform     strength.
 any long duration missions until the disorder is corrected   These two types provide extremes, there is a
@@ -457,9 +457,9 @@ evaluation are given in the
 
 decision flow diagram
 
-"Bone Metabolic and
+‚ÄúBone Metabolic and
 
-Endocrine Evaluation". This
+Endocrine Evaluation‚Äù. This
 
 overview is used in
 
@@ -546,12 +546,12 @@ that enable them to meet NASA 3001 requirements. ISS currently uses the Advanced
 Device (ARED) for resistance and loading exercises. Load bearing exercise stimulates osteoblasts, leading to
 bone growth and bone density increase. Current ISS exercise equipment that assists with bone loss
 includes:
-∑ Advanced Resistive Exercise Device (ARED) Capable of higher concentric resistance and eccentric-to-
+‚Ä¢ Advanced Resistive Exercise Device (ARED) Capable of higher concentric resistance and eccentric-to-
 
    concentric ratio close to that recommended by expert panels and confirmed effective by exercise
    scientists. The ARED also collects data regarding the parameters associated with crew exercise and
    transmits it to the ground.
-∑ Treadmill 2 (COLBERT) An exercise treadmill that can also be used to collect data such as body loading,
+‚Ä¢ Treadmill 2 (COLBERT) An exercise treadmill that can also be used to collect data such as body loading,
    duration of session, and speed for each crewmember.
 
    Left: ESA astronaut Luca
@@ -566,7 +566,7 @@ Cassidy using the ARED device
 
   Since 2009, ARED exercise countermeasure on the ISS have provided new spaceflight BMD data. The
    ARED provides weight-bearing exercises with up to 600 pound-force resistance which more closely
-simulates the lifting of free weights on Earth. This capability provides the 2x≠3x body weight resistance
+simulates the lifting of free weights on Earth. This capability provides the 2x‚Äì3x body weight resistance
  typically required to maintain bone mass (Kohrt et. al., 2004). Before ARED, only 300 pound-force was
 provided by the Interim Resistive Exercise Device (IRED), which was found to be insufficient to maintain
 ISS astronauts at their pre-flight skeletal BMD measurements (Lang et. al., 2004). Reference OCHMO-TB-
@@ -586,13 +586,13 @@ Activity Effects on BMD
 Weight bearing activity is critical for bone health. The stress on the bones that results from weight bearing
 activities like running, jumping, and weightlifting, stimulates bone building. Weight slightly compresses the
 bone matrix and triggers the cells to assimilate more calcium and other minerals, and ultimately to increase
-bone density. The amount of weight that causes this response from the bone is called "osteogenic loading"
-because it takes a certain "load" to stimulate the bone building cells. In contrast, "unloading" the bones
+bone density. The amount of weight that causes this response from the bone is called ‚Äúosteogenic loading‚Äù
+because it takes a certain ‚Äúload‚Äù to stimulate the bone building cells. In contrast, ‚Äúunloading‚Äù the bones
 from prolonged bed rest or space travel can result in loss of bone density. While normal daily activities are
-sufficient to prevent the harmful effects of unloading, significant "loading" appears to be required to
+sufficient to prevent the harmful effects of unloading, significant ‚Äúloading‚Äù appears to be required to
 increase bone mineral density. Bone Health and Osteoporosis foundation 2023
 
-Source: Osteogenic Loading (americanbonehealth.org)  "While there are some reports that brisk
+Source: Osteogenic Loading (americanbonehealth.org)  ‚ÄúWhile there are some reports that brisk
                                                      walking or walking combined with other
                                                      impact loading activities may help
                                                      postmenopausal women offset age-related
@@ -600,21 +600,21 @@ Source: Osteogenic Loading (americanbonehealth.org)  "While there are some repor
                                                      studies reveals minimal or no effect of
                                                      regular walking and other low intensity
                                                      activities on bone in peri- and post-
-                                                     menopausal women." (Wu 2013, Beck 2017)
-                                                     "Exercise training involving certain forms of
+                                                     menopausal women.‚Äù (Wu 2013, Beck 2017)
+                                                     ‚ÄúExercise training involving certain forms of
                                                      weight-bearing impact exercise, such as
                                                      hopping and jumping, and/or progressive
                                                      resistance training (PRT), can improve bone
-                                                     health." (Beck 2017)
+                                                     health.‚Äù (Beck 2017)
 
 Beck 2015 reports the relevance of exercise quality in bone loss prevention and that bone responds most
 positively to impact activities and high intensity progressive resistance training.
 Beck describes that exercise can be beneficial to bone but must be characterized by adequate loading.
-∑ Be dynamic not static (i.e., cyclic not continuous) induce relatively high bone strains.
-∑ Be applied rapidly with relatively few loading cycles, short bouts separated by periods of rest are more
+‚Ä¢ Be dynamic not static (i.e., cyclic not continuous) induce relatively high bone strains.
+‚Ä¢ Be applied rapidly with relatively few loading cycles, short bouts separated by periods of rest are more
 
    effective than the same number of loads performed all at once.
-∑ Diversification of loading (e.g., multidirectional movements) is required to stimulate an adaptive
+‚Ä¢ Diversification of loading (e.g., multidirectional movements) is required to stimulate an adaptive
 
    skeletal response.
 Greatest benefits to spine and hip shown when resistance (weight) increased over time, magnitude of
@@ -676,12 +676,12 @@ practices, not to deliver direct medical care recommendations or guidance for in
 Application                                                                      Challenges to
 
 Pharmaceutical Countermeasures                                                   pharmaceutical use in space:
-Terrestrially, pharmaceuticals are a commonly used countermeasure to             ∑ Limited storage conditions
-bone loss. NASA continues to study the application of pharmaceuticals            ∑ Volume and weight
+Terrestrially, pharmaceuticals are a commonly used countermeasure to             ‚Ä¢ Limited storage conditions
+bone loss. NASA continues to study the application of pharmaceuticals            ‚Ä¢ Volume and weight
 as countermeasures to spaceflight related bone loss. To date, NASA has
 not used bisphosphonates, other than in research. Side effects including            considerations
-GI concerns and jaw necrosis have caused concerns and limited use, but           ∑ Possible side effects
-NASA is considering how pharmaceuticals may have a role in BMD loss              ∑ Expiration dates for long
+GI concerns and jaw necrosis have caused concerns and limited use, but           ‚Ä¢ Possible side effects
+NASA is considering how pharmaceuticals may have a role in BMD loss              ‚Ä¢ Expiration dates for long
 
                                                                                     duration flights
 
@@ -770,21 +770,21 @@ adjustments to nutrient and micronutrient dietary composition for future mission
 
 Bone                   If 25-OH Vitamin D results are:                     Vitamin D3 Treatment
 demineralization in    35 ng/ml or higher
-spaceflight increases  20 to 34 ng/ml                   ∑ Prescribe 1000 I.U. daily or 5,000 I.U. weekly
+spaceflight increases  20 to 34 ng/ml                   ‚Ä¢ Prescribe 1000 I.U. daily or 5,000 I.U. weekly
 urinary calcium                                            (Maintenance dose)
 excretion leading to   Less than 20 ng/ml
-calcium released into                                   ∑ Prescribe 50,000 I.U. once a week or 5000 I.U. once
+calcium released into                                   ‚Ä¢ Prescribe 50,000 I.U. once a week or 5000 I.U. once
 the urine for                                              a day for 4 weeks and then revert to maintenance
 excretion, as urine                                        dosing (1,000 I.U. daily or 5000 I.U. once a week).
 processes through
-the kidneys there is                                    ∑ May recheck 25-OH Vitamin D levels in 3 months.
+the kidneys there is                                    ‚Ä¢ May recheck 25-OH Vitamin D levels in 3 months.
 an increased risk of
-calcium renal stones.                                   ∑ Prescribe 50,000 I.U. once a week or 5000 I.U. a day
+calcium renal stones.                                   ‚Ä¢ Prescribe 50,000 I.U. once a week or 5000 I.U. a day
 See OCHMO-MTB-                                             for 6 to 9 weeks and then revert to maintenance
 003 Urinary Health.                                        dosing (1,000 I.U. daily or 5000 I.U. once a week).
 
-                                                        ∑ Recheck 25-OH Vitamin D levels in 3 months
-                                                        ∑ Note: Rule out other causes such as celiac sprue or
+                                                        ‚Ä¢ Recheck 25-OH Vitamin D levels in 3 months
+                                                        ‚Ä¢ Note: Rule out other causes such as celiac sprue or
 
                                                            other malabsorption maladies.
 
@@ -867,9 +867,9 @@ enough to meet the T-score based
 BMD selection standard                May be referred to the Astronaut Bone Health specialist for diagnosis and
 Astronauts requiring evaluation       management, or referral as needed.
 and/or intervention
-Astronauts found to have              Disqualified separate from the issue of "bone density lower than expected for
-disqualifying metabolic or endocrine  age and ethnicity". Preparation of waiver requests (as required for the specific
-disorders by NASA aeromedical         diagnosis) to the AMB may be by the astronaut's primary flight medicine
+Astronauts found to have              Disqualified separate from the issue of ‚Äúbone density lower than expected for
+disqualifying metabolic or endocrine  age and ethnicity‚Äù. Preparation of waiver requests (as required for the specific
+disorders by NASA aeromedical         diagnosis) to the AMB may be by the astronaut‚Äôs primary flight medicine
 standards                             physician or the astronaut bone health specialist, whichever is preferred by the
                                       astronaut and Flight Medicine Clinic physician.
 In the absence of a disqualifying     (1) Waiver requests should follow the guidelines for the specific disorder.
@@ -900,14 +900,14 @@ BMD loss is a condition not usually detectable until a problem occurs. NASA moni
 pre- and post-flight but no system to date measures bone density in-flight. NASA addresses this challenge
 by ensuring practices are in place that protect bone through requirements.
 NASA-STD-3001 bone related requirements:
-[V1 4026] Pre-Mission Bone Mineral Density Crewmembers' pre-mission bone mineral density (BMD) T-
+[V1 4026] Pre-Mission Bone Mineral Density Crewmembers‚Äô pre-mission bone mineral density (BMD) T-
 scores for total hip and lumbar spine (L1-L4), as measured by mass dual energy X-ray absorptiometry
 (DXA) shall be consistent with an age, sex, gender, and ethnic-matched population.
 
-         ∑ Bone density is screened at selection, any applicant who has low BMD (below -2.5 T score) will
+         ‚Ä¢ Bone density is screened at selection, any applicant who has low BMD (below -2.5 T score) will
             not be selected into the astronaut core.
 
-         ∑ All selected astronauts are tested every 3 years to ensure they have appropriate BMD, and
+         ‚Ä¢ All selected astronauts are tested every 3 years to ensure they have appropriate BMD, and
             astronauts selected for flight will follow Med B schedule (below), to ensure they have bones
             strong enough for the rigors of spaceflight and will not be too vulnerable upon return.
 
@@ -919,7 +919,7 @@ feasible), R+ < 30 days, at R+1 year, then as clinically indicated to assess BMD
 [V1 4027] Pre-mission Bone Countermeasures Countermeasures shall maintain bone mineral density of the
 hip and spine at or above 95% of pre-mission values and at or above 90% for the femoral neck.
 [V1 4020] In-Mission Nutrient Intake Programs shall provide each crewmember with 100% of their
-calculated nutrient and energy requirements, based on an individual's age, sex, body mass (kg), height (m),
+calculated nutrient and energy requirements, based on an individual‚Äôs age, sex, body mass (kg), height (m),
 and appropriate activity factor.
 [V1 4028] Post-Mission Bone Reconditioning Post-mission reconditioning shall be aimed at returning bone
 mineral density to pre-mission baseline values.
@@ -937,7 +937,7 @@ a guided, phased reconditioning protocol. The goals of the reconditioning progra
 
   a. To ensure the health and safety of returning crew.
   b. To actively assist the crew's return to full functional abilities and return-to-flight status.
-  c. To actively assist in the crew's return to pre-mission fitness
+  c. To actively assist in the crew‚Äôs return to pre-mission fitness
 [V1 3018] Post-Mission Long-Term Monitoring Crewmembers returning from spaceflight shall be
 monitored longitudinally for health, behavioral health, and well-being parameters in a standardized manner.
 
@@ -968,7 +968,7 @@ during or immediately after exercise. Suspected stress fractures in other bones 
 
 activity adjusted according to results. Post-flight activities to recover BMD must be designed with
 
-consideration of bone's nutritional and loading/strain experience. The first step in initiating a bone exercise
+consideration of bone‚Äôs nutritional and loading/strain experience. The first step in initiating a bone exercise
 
 program is to assure the endocrine and nutritional status of the astronaut will support bone formation in
 
@@ -980,25 +980,25 @@ result in stress fractures.
 
 Post-flight Reconditioning Timeline                                                                Reconditioning is a
 
-∑ Re-adaption to gravity begins upon re-entry and landing (R+0)                                    dynamic program
+‚Ä¢ Re-adaption to gravity begins upon re-entry and landing (R+0)                                    dynamic program
 
-∑ Reconditioning program lasts 45 days starting R+1                                                using functional
+‚Ä¢ Reconditioning program lasts 45 days starting R+1                                                using functional
 
-∑ Reconditioning is scheduled for 2 hours per day/7 days a week                                    movement patterns,
+‚Ä¢ Reconditioning is scheduled for 2 hours per day/7 days a week                                    movement patterns,
 
-∑ Crewmember, Flight Surgeon and ACSR can request additional time past 45 days                     multiple
+‚Ä¢ Crewmember, Flight Surgeon and ACSR can request additional time past 45 days                     multiple
 
 if needed                                                                                          planes/joints, and is
 
-∑ Data is used to determine conditioning status compared to pre-flight levels                      tailored to individual
+‚Ä¢ Data is used to determine conditioning status compared to pre-flight levels                      tailored to individual
 
-∑ Post-flight performed at R+7 and R+30                                                            deficits
+‚Ä¢ Post-flight performed at R+7 and R+30                                                            deficits
 
-∑ Crewmembers are reassessed across the span of their lifetime
+‚Ä¢ Crewmembers are reassessed across the span of their lifetime
 
 ACTIVITY        DURATION SCHEDULE                    FLEXIBILITY                                   PERSONNEL REQUIRED
 
-Post-flight     120 minutes R+0 ≠ R+45   Schedules should make                 ASCR, Crewmember and Crew
+Post-flight     120 minutes R+0 ‚Äì R+45   Schedules should make                 ASCR, Crewmember and Crew
 Reconditioning                           every effort to schedule              Surgeon
                                          activities in the morning
                                          prior to any other
@@ -1009,12 +1009,12 @@ Reconditioning                           every effort to schedule              S
                                          staff.
 
 CONSTRAINTS
-∑ Duty days will include 2 hours of reconditioning for the first 45 days.
-∑ Weekends and one-day within R+0+R+1 will include only reconditioning and medical status checks.
-∑ The ASCR will make recommendations to the crew surgeon regarding certification of the crewmember for
+‚Ä¢ Duty days will include 2 hours of reconditioning for the first 45 days.
+‚Ä¢ Weekends and one-day within R+0+R+1 will include only reconditioning and medical status checks.
+‚Ä¢ The ASCR will make recommendations to the crew surgeon regarding certification of the crewmember for
 
    maximal muscle strength testing.
-∑ Upon review of physical progress the crewmember, crew surgeon, and ASCR will determine if the
+‚Ä¢ Upon review of physical progress the crewmember, crew surgeon, and ASCR will determine if the
 
    crewmember will need to extend formal reconditioning past the required 45 days.
 
@@ -1036,37 +1036,37 @@ OCHMO-MTB-013
 
 Major Changes Between Revisions
 
-Rev C  Rev D
-∑ Updated content throughout to include information from the NASA
+Rev C ‚Üí Rev D
+‚Ä¢ Updated content throughout to include information from the NASA
 
     Clinical Practice Guideline.
 
-Rev B  Rev C
-∑ Updated information to reflect the revisions to language throughout both
+Rev B ‚Üí Rev C
+‚Ä¢ Updated information to reflect the revisions to language throughout both
 
     volumes of NASA-STD-3001.
-∑ Updated/added website links due to new NASA website launch
+‚Ä¢ Updated/added website links due to new NASA website launch
 
-Rev A  Rev B
-∑ Updated information to be consistent with NASA-STD-3001 Volume 1 Rev
+Rev A ‚Üí Rev B
+‚Ä¢ Updated information to be consistent with NASA-STD-3001 Volume 1 Rev
 
     B and Volume 2 Rev C.
 
-Original  Rev A
-∑ Overview
+Original ‚Üí Rev A
+‚Ä¢ Overview
 
-      ∑ Added executive summary
-      ∑ Updated standards to Volume 2 Rev B
-∑ Background
-      ∑ Added subcategory "Exercise as a countermeasure" after
+      ‚Ä¢ Added executive summary
+      ‚Ä¢ Updated standards to Volume 2 Rev B
+‚Ä¢ Background
+      ‚Ä¢ Added subcategory ‚ÄúExercise as a countermeasure‚Äù after
 
            description in order to have more separation in the information
-      ∑ Added picture to support subcategory for more visual interest
-∑ Application
-      ∑ Added diagrams of exercise equipment for more visual interest
-∑ Other
-      ∑ Added revision page
-      ∑ Added referenced standards page
+      ‚Ä¢ Added picture to support subcategory for more visual interest
+‚Ä¢ Application
+      ‚Ä¢ Added diagrams of exercise equipment for more visual interest
+‚Ä¢ Other
+      ‚Ä¢ Added revision page
+      ‚Ä¢ Added referenced standards page
 
 NASA Office of the Chief Health & Medical Officer (OCHMO)                                                   22
 This Medical Technical Brief is derived from NASA-STD-3001 and NASA medical operations and is      11-Feb-26
@@ -1123,7 +1123,7 @@ a. To ensure the health and safety of returning crew.
 
 b. To actively assist the crew's return to full functional abilities and return-to-flight status.
 
-c. To actively assist in the crew's return to pre-mission fitness
+c. To actively assist in the crew‚Äôs return to pre-mission fitness
 
 [V1 3018] Post-Mission Long-Term Monitoring Crewmembers returning from spaceflight shall be
 
@@ -1131,11 +1131,11 @@ monitored longitudinally for health, behavioral health, and well-being parameter
 
 [V1 4020] In-Mission Nutrient Intake Programs shall provide each crewmember with 100% of their
 
-calculated nutrient and energy requirements, based on an individual's age, sex, body mass (kg), height (m),
+calculated nutrient and energy requirements, based on an individual‚Äôs age, sex, body mass (kg), height (m),
 
 and appropriate activity factor.
 
-[V1 4026] Pre-Mission Bone Mineral Density Crewmembers' pre-mission bone mineral density (BMD) T-
+[V1 4026] Pre-Mission Bone Mineral Density Crewmembers‚Äô pre-mission bone mineral density (BMD) T-
 
 scores for total hip and lumbar spine (L1-L4), as measured by mass dual energy X-ray absorptiometry (DXA)
 
@@ -1176,7 +1176,7 @@ requirements of NASA-STD-3001, Volume 1.
 
 nutrient composition that is indicated in the Dietary Reference Intake (DRI) values as recommended by the
 
-National Institutes of Health, with the exception of those adjusted for spaceflight as noted in Table 7.1-2--
+National Institutes of Health, with the exception of those adjusted for spaceflight as noted in Table 7.1-2‚Äî
 
 Nutrient Guidelines for Spaceflight.
 
@@ -1198,10 +1198,10 @@ Reference List
 2. Apollo Medical Summit, NASA/TM-2007-214755
 3. Shackelford et al. Resistance exercise as a countermeasure to disuse-induced bone loss. J Appl Physiol
 
-    97: 119≠129, 2004.
+    97: 119‚Äì129, 2004.
 4. D Grimm, J Grosse, M Wehland, V Mann, JE Reseland, A Sundaresan and TJ Corydon. The impact of
 
-    microgravity on bone in humans. Bone 87 (2016) 44≠56
+    microgravity on bone in humans. Bone 87 (2016) 44‚Äì56
 5. Holick, M.F. 2000. Microgravity-induced bone loss - will it limit human space exploration? Lancet,
 
     355:1569-70.
@@ -1212,14 +1212,14 @@ Reference List
 8. Schneider SM, Amonette WE, Blazine K, Bentley J, Lee SM, Loehr JA, Moore AD Jr, Rapley M, Mulder
 
     ER, Smith SM (2003) Training with the International Space Station interim resistive exercise device.
-    Med Sci Sports Exerc 35(11):1935≠1945
+    Med Sci Sports Exerc 35(11):1935‚Äì1945
 9. Hilliard-Robertson PC, Schneider SM, Bishop SL, Guilliams ME (2003) Strength gains following different
-    combined concentric and eccentric exercise regimens. Aviat Space EnvironMed 74(4):342≠347
+    combined concentric and eccentric exercise regimens. Aviat Space EnvironMed 74(4):342‚Äì347
 10. Smith SM, Heer MA, Shackelford L, Sibonga JD, Ploutz-Snyder L, Zwart SR (2012) Benefits for bone
     from resistance exercise and nutrition in long-duration spaceflight: evidence from biochemistry and
-    densitometry. J Bone Miner Res 27(9):1896≠1906
-11. R. Ambrose, P. Bevill, M. Murray, S. Reddy, D. Blank, and H. Goetz, "Sustaining Engineering Description
-    for the Treadmill with Vibration Isolation and Stabilization (TVIS) System," NASA JSC63712, Rev. B, 2011
+    densitometry. J Bone Miner Res 27(9):1896‚Äì1906
+11. R. Ambrose, P. Bevill, M. Murray, S. Reddy, D. Blank, and H. Goetz, ‚ÄúSustaining Engineering Description
+    for the Treadmill with Vibration Isolation and Stabilization (TVIS) System,‚Äù NASA JSC63712, Rev. B, 2011
 12. Human Integration Design Handbook (HIDH), Revision 1. (2014).
     https://www.nasa.gov/sites/default/files/atoms/files/human_integration_design_handbook_revision_
     1.pdf
@@ -1247,13 +1247,13 @@ OCHMO-MTB-013
 Reference List
 
 17. Carpenter et al. Long-term changes in the density and structure of the human hip and spine after long-
-    duration spaceflight. Acta Astronaut. 67:71≠81. 2010. 
+    duration spaceflight. Acta Astronaut. 67:71‚Äì81. 2010. ÔÅ∂
 
 18. Cooper C, Melton LJ. Epidemiology of osteoporosis. Trends in Endocrinology & Metabolism. 1992 Aug
     1;3(6):224-9.
 
 19. Kennel KA, Drake MT. Adverse effects of bisphosphonates: implications for osteoporosis management.
-    Mayo Clin Proc. 2009; 84(7):632≠7; quiz 638
+    Mayo Clin Proc. 2009; 84(7):632‚Äì7; quiz 638
 
 20. Keyak JH. Improved prediction of proximal femoral fracture load using nonlinear finite element
     models. Medical engineering & physics. 2001 Apr 1;23(3):165-73.
@@ -1269,7 +1269,7 @@ Reference List
     recommendations from the NASA Bone Summit. J Bone Miner Res. 2013 28(6):1243-1255.
 
 23. Shackelford LC. Musculoskeletal Response to Space Flight. In: Principles of Clinical Medicine for Space
-    Flight. Pg 595. New York, NY: Springer; 2019. 2nd Edition.  Sibonga J, Matsumoto T, Jones J, Shapiro J,
+    Flight. Pg 595. New York, NY: Springer; 2019. 2nd Edition. ÔÅ∂ Sibonga J, Matsumoto T, Jones J, Shapiro J,
     Lang T, Shackelford L, Smith SM, Young M, Keyak J, Kohri K, Ohshima H, Spector E, LeBlanc A. Resistive
     Exercise in Astronauts on Prolonged Spaceflights Provides Partial Protection against Spaceflight-
     induced Bone Loss. Bone. 2019 Nov;128:112037. doi: 10.1016/j.bone.2019.07.013. Epub 2019 Aug 7.

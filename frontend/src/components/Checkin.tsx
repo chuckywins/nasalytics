@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { API } from '../base';
 import { createPortal } from 'react-dom';
+import { ExercisePlanButton } from './ExercisePlan';
 import { useScenario } from '../scenario';
 import { useApp, activeAlerts } from '../store';
 import { useCheckin, TASKS, syncToday, doneToday, streak, totalXp, badges, type TaskId, type ReactionResult, type VoiceResult } from '../checkin';
@@ -47,6 +48,7 @@ export function RoutinePanel() {
               <span className="t-check">{ok ? '✓' : '○'}</span>
               <span className="t-name">{t(`task.${task}`, lang)}</span>
               {!ok && <span className="t-cta">{t(TASK_IND[task] ? 'ck.measure' : task === 'exercise' ? 'ck.mark' : 'ck.start', lang)}</span>}
+              {task === 'exercise' && <ExercisePlanButton />}
             </button>
           );
         })}
