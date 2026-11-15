@@ -203,3 +203,10 @@ Her adım buraya kısa notla eklenir (en yeni en altta).
 
 ## 2026-11-15 13:00 — Üst çubuk düzeltmesi
 - Başlık daralınca "Ortam" seçiminin altına taşıyordu; 2100 px altında başlık iki satıra bölünüyor, 1750 px altında rol/kimlik seçicileri daraltıldı. 1920 ve 1536 genişlikte çakışma ve taşma yok (tasarım hedefi 1536+).
+
+## 2026-11-15 13:50 — Teslim hazırlığı
+- README.md (İngilizce: fikir, özellikler, veri, yerel kurulum, anahtarlar, AI kullanımı, sınırlar) ve .env.example eklendi; Vite şablon README silindi.
+- Sunumlar: sunum/ altında Türkçe ve İngilizce 7 slaytlık PDF (kaynak HTML ve ekran görüntüleriyle).
+- Oturum başlatma penceresine "VEGA sesi ve sesli alarmlar yapay zekâ ile üretilmiş sentetik sestir" notu (TR/EN).
+- ADA hipoglisemi makalesi depodan çıkarıldı (telifli; bağlantısı SOURCES.md içinde kalıyor).
+- SOURCES.md başlıkları: "benzer projeler" olarak yeniden adlandırıldı.

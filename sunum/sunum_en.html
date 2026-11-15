@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Project NASAlytics · Astronaut Health Monitor</title>
+<style>
+  @page { size: 1280px 720px; margin: 0; }
+  :root { --bg: #070b12; --panel: #0d1420; --line: #1f2c3f; --ink: #e8eef6; --ink2: #9fb0c4; --acc: #5ad1e6; --ok: #3fb950; --warn: #f0883e; --crit: #ff6b6b; }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--bg); color: var(--ink); font-family: 'Segoe UI', Arial, sans-serif; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .s { width: 1280px; height: 720px; padding: 44px 56px 52px; position: relative; overflow: hidden; page-break-after: always; display: flex; flex-direction: column; background: radial-gradient(1100px 500px at 85% -10%, #10283a 0%, transparent 60%), var(--bg); }
+  .s:last-child { page-break-after: auto; }
+  .kick { font: 600 13px Consolas, monospace; letter-spacing: .22em; color: var(--acc); text-transform: uppercase; }
+  h1 { font-size: 58px; line-height: 1.02; font-weight: 700; letter-spacing: -.01em; }
+  h2 { font-size: 34px; line-height: 1.12; font-weight: 650; margin: 8px 0 18px; max-width: 1000px; }
+  h2 em, h1 em { font-style: normal; color: var(--acc); }
+  p, li { font-size: 17px; line-height: 1.45; color: var(--ink2); }
+  b { color: var(--ink); font-weight: 600; }
+  .foot { position: absolute; left: 56px; right: 56px; bottom: 16px; display: flex; justify-content: space-between; font: 11px Consolas, monospace; color: #5f7186; letter-spacing: .08em; }
+  .row { display: flex; gap: 28px; flex: 1; min-height: 0; }
+  .col { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+  .shot { border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: #000; box-shadow: 0 14px 50px rgba(0,0,0,.55); }
+  .shot img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top left; }
+  .card { border: 1px solid var(--line); border-radius: 8px; background: var(--panel); padding: 14px 16px; }
+  .grow > .card, .grow > .flow { flex: 1; } .grow > .card { display: flex; flex-direction: column; justify-content: center; }
+  .card h3 { font-size: 16px; font-weight: 650; margin-bottom: 4px; color: var(--ink); }
+  .card p { font-size: 14.5px; line-height: 1.4; }
+  .num { font: 700 44px Consolas, monospace; color: var(--acc); line-height: 1; }
+  .tag { display: inline-block; font: 600 10.5px Consolas, monospace; letter-spacing: .08em; padding: 2px 7px; border: 1px solid var(--line); border-radius: 3px; color: var(--ink2); margin: 0 4px 4px 0; text-transform: uppercase; }
+  .tag.a { border-color: var(--acc); color: var(--acc); } .tag.o { border-color: var(--ok); color: var(--ok); } .tag.w { border-color: var(--warn); color: var(--warn); }
+  ul { padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 9px; }
+  ul li { padding-left: 20px; position: relative; font-size: 15.5px; }
+  ul li::before { content: ''; position: absolute; left: 2px; top: 9px; width: 7px; height: 7px; border: 1.5px solid var(--acc); border-radius: 50%; }
+  .n { display: inline-flex; width: 22px; height: 22px; border-radius: 50%; background: var(--acc); color: #04121a; font: 700 12px Consolas, monospace; align-items: center; justify-content: center; margin-right: 8px; flex: none; }
+  .flow { display: flex; align-items: stretch; gap: 10px; }
+  .flow .card { flex: 1; }
+  .arrow { align-self: center; color: var(--acc); font-size: 22px; }
+  table { width: 100%; border-collapse: collapse; }
+  td { font-size: 13px; line-height: 1.33; color: var(--ink2); padding: 6px 10px 6px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  td:first-child { color: var(--ink); font-weight: 600; width: 33%; }
+</style>
+</head>
+<body>
+
+<!-- 1 -->
+<section class="s">
+  <div class="row" style="align-items:center">
+    <div class="col" style="flex:0 0 500px; gap:16px">
+      <div class="kick">NASA Space Apps Challenge 2026 · Sivas</div>
+      <h1>Project<br><em>NASAlytics</em></h1>
+      <p style="font-size:22px; color:var(--ink)">Astronaut Health Monitor</p>
+      <p>A visual, voice-enabled and fully sourced decision-support tool that lets astronauts monitor and manage <b>their own</b> health when Earth is minutes away.</p>
+      <div>
+        <span class="tag a">Challenge: Create Health Monitoring Software for Astronauts on Space Missions</span>
+      </div>
+      <p style="font-size:14.5px">Team: <b>NASAlytics</b><br>Live demo: <b>asicservices.com/nasalytics</b></p>
+    </div>
+    <div class="shot" style="flex:1; height:440px"><img src="img_en/main.jpg" alt=""></div>
+  </div>
+  <div class="foot"><span>PROJECT NASALYTICS</span><span>1 / 7</span></div>
+</section>
+
+<!-- 2 -->
+<section class="s">
+  <div class="kick">The problem</div>
+  <h2>When an astronaut on Mars says "I don't feel well", Earth's answer can take <em>44 minutes.</em></h2>
+  <div class="row">
+    <div class="col grow" style="flex:1; gap:14px">
+      <div class="flow">
+        <div class="card"><div class="num">3–22 min</div><h3 style="margin-top:8px">One-way communication delay</h3><p>On a Mars mission. Double it for a question and its answer. On the ISS it is under 1 second.</p></div>
+        <div class="card"><div class="num">LOS</div><h3 style="margin-top:8px">The link can drop completely</h3><p>During loss of signal the crew is on its own. NASA's checklist tells them to begin treatment.</p></div>
+        <div class="card"><div class="num">5</div><h3 style="margin-top:8px">NASA's 5 hazards</h3><p>Radiation, isolation and confinement, distance from Earth, gravity fields, hostile closed environments.</p></div>
+      </div>
+      <div class="card" style="border-color:var(--acc)">
+        <h3>What the challenge asks for</h3>
+        <p>A visual tool that helps astronauts <b>assess their own health</b>: a clickable body, routine prompts, gamification, charts, color coding, simple explanations and multiple mission environments.</p>
+      </div>
+      <div class="card">
+        <h3>Our answer</h3>
+        <p>One screen with the body, the vitals and what to do next. Decisions come from <b>rules built on NASA thresholds</b>; AI only explains. <b>Every number shows its source</b>, and nothing that is not real is presented as real.</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Delay: environment data, 180–1320 s one way (Mars) · NASA HRP "5 Hazards of Human Spaceflight"</span><span>2 / 7</span></div>
+</section>
+
+<!-- 3 -->
+<section class="s">
+  <div class="kick">The solution · astronaut screen</div>
+  <h2>Status at a glance, a report in one tap, help in <em>one sentence.</em></h2>
+  <div class="row">
+    <div class="shot" style="flex:0 0 760px; height:428px"><img src="img_en/alarm.jpg" alt=""></div>
+    <div class="col" style="flex:1; gap:9px">
+      <p style="display:flex"><span class="n">1</span><span><b>Clickable 3D body.</b> Organ, skeleton and muscle layers; click an organ to see what happens in space, with the NASA source.</span></p>
+      <p style="display:flex"><span class="n">2</span><span><b>10 indicators: color + icon + label.</b> Color-blind friendly; thresholds from NASA-STD-3001 and clinical guidelines.</span></p>
+      <p style="display:flex"><span class="n">3</span><span><b>VEGA voice assistant.</b> Speaks Turkish and English, logs readings, and reports symptoms to the crew on its own.</span></p>
+      <p style="display:flex"><span class="n">4</span><span><b>Tap to report.</b> One tap on "Chest pain"; the CMO and crew see it instantly.</span></p>
+      <p style="display:flex"><span class="n">5</span><span><b>Daily routine + gamification.</b> Streaks, XP, badges; reaction test, voice log, NASA exercise mode.</span></p>
+      <p style="display:flex"><span class="n">6</span><span><b>Fatigue camera.</b> Runs on the device; video never leaves it.</span></p>
+      <div><span class="tag o">6 mission environments</span><span class="tag o">Works on phones</span><span class="tag o">TR + EN</span></div>
+    </div>
+  </div>
+  <div class="foot"><span>Screenshot: live app, critical-state test. Vital signs are labelled SIMULATED.</span><span>3 / 7</span></div>
+</section>
+
+<!-- 4 -->
+<section class="s">
+  <div class="kick">Safety architecture</div>
+  <h2>Rules decide, <em>AI explains.</em> Never the other way round.</h2>
+  <div class="flow" style="margin-bottom:14px">
+    <div class="card"><span class="tag a">Layer 1</span><h3>Deterministic rule engine</h3><p>Only this layer raises alarms. Thresholds from NASA-STD-3001 and clinical guidelines; it runs in the browser, <b>even without internet or AI</b>.</p></div>
+    <div class="arrow">→</div>
+    <div class="card"><span class="tag a">Layer 2</span><h3>Sourced intervention cards</h3><p>13 cards: ISS emergency medical procedures, NASA JSC-48031 checklist, AHA 2024 first aid. Drug name, dose and page are <b>verbatim from the document</b>.</p></div>
+    <div class="arrow">→</div>
+    <div class="card"><span class="tag a">Layer 3</span><h3>AI</h3><p>Summarizes the situation and ranks the cards. It can reference a drug <b>only by library ID</b>; any dose number it writes is stripped on the server.</p></div>
+  </div>
+  <div class="row">
+    <div class="col grow" style="flex:1">
+      <div class="card">
+        <h3>The origin of every number is on screen</h3>
+        <p style="margin-bottom:8px">Judges and astronauts alike can tell at a glance what is real and what is simulated.</p>
+        <span class="tag a">NASA measurement</span><span class="tag a">NASA standard</span><span class="tag">Clinical guideline</span><span class="tag">Published</span><span class="tag w">Projection</span><span class="tag w">Assumption</span><span class="tag w">Simulated</span>
+      </div>
+      <div class="card">
+        <h3>If the link drops (LOS)</h3>
+        <p>Cloud AI goes quiet; rules and cards keep working. Data is held on board and delivered to ground in order once the link returns.</p>
+      </div>
+    </div>
+    <div class="col grow" style="flex:1">
+      <div class="card">
+        <h3>Personal safety</h3>
+        <p>If an allergy in the crew record matches a suggested drug, the line is struck through: <b style="color:var(--crit)">"MATCHES RECORDED ALLERGY, DO NOT GIVE"</b>.</p>
+      </div>
+      <div class="card">
+        <h3>What we did not invent</h3>
+        <p>No loads, sets or reps for exercise (NASA leaves that to each astronaut's specialist). No risk judgement on space weather. Our own assumptions are labelled "assumption".</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>NASA-STD-3001 · NASA ISS Emergency Medical Procedures (2016 release) · NASA JSC-48031 Rev K · AHA/Red Cross First Aid 2024</span><span>4 / 7</span></div>
+</section>
+
+<!-- 5 -->
+<section class="s">
+  <div class="kick">Three screens · emergency flow</div>
+  <h2>Astronaut → medical officer <em>instantly</em> → ground control <em>with the real delay.</em></h2>
+  <div class="row">
+    <div class="shot" style="flex:0 0 780px; height:439px"><img src="img_en/cmo.jpg" alt=""></div>
+    <div class="col" style="flex:1">
+      <ul>
+        <li><b>Crew medical officer (CMO)</b> sees the whole crew live; the critical card stands out.</li>
+        <li><b>Ground control / flight surgeon</b> sees the same data late by the environment's real communication delay and approves locked medications.</li>
+        <li><b>Symptom reports</b> by voice or tap; the astronaut does not have to notify anyone separately.</li>
+        <li><b>No-response alarm:</b> if a critical alarm is not acknowledged, the crew is alerted automatically (the timeout is our assumption and is labelled so).</li>
+        <li><b>10 scenarios:</b> the ISS September 2017 and Mars May 2024 solar storms replay <b>real NASA measurements</b>; also suit CO₂ during a spacewalk, decompression sickness, allergy, cabin pressure drop and more.</li>
+      </ul>
+      <div><span class="tag a">Fictional 3-person crew</span><span class="tag">Medical record + BMI</span><span class="tag">CSV / JSON export</span></div>
+    </div>
+  </div>
+  <div class="foot"><span>Screen: CMO view. Because of the recorded aspirin allergy, the AI left aspirin out of the plan. The crew is fictional.</span><span>5 / 7</span></div>
+</section>
+
+<!-- 6 -->
+<section class="s">
+  <div class="kick">Data sources · what we pulled, how we processed it</div>
+  <h2>We pulled the data from NASA and processed it ourselves; <em>100+ logged sources.</em></h2>
+  <div class="row">
+    <div class="col" style="flex:0 0 640px">
+      <table>
+        <tr><td>ISS TEPC dose measurements<br><span class="tag a">data.nasa.gov</span></td><td>Raw 10-second measurements downloaded. The ISS baseline dose rate (16.8 µGy/h) was computed from the storm-free days of September 2017; the storm days are replayed as measured.</td></tr>
+        <tr><td>NASA OSDR RadLab <span class="tag a">API</span></td><td>438 MB of raw data from Artemis I, Mars transit and Mars surface instruments, reduced to hourly means; the May 2024 Mars storm comes from here.</td></tr>
+        <tr><td>NASA OSDR OSD-569 / OSD-575</td><td>Inspiration4: blood count and metabolic panel for 4 crew × 7 time points; each value shown against that person's own reference range.</td></tr>
+        <tr><td>NASA DONKI <span class="tag o">live API</span></td><td>Space weather events of the last 7 days, fetched by our server; shown with fetch time and no interpretation.</td></tr>
+        <tr><td>NASA-STD-3001, OCHMO technical briefs</td><td>CO₂, pressure, oxygen, radiation, decompression and bone-loss thresholds, read one by one and coded into the rule engine.</td></tr>
+        <tr><td>ISS emergency medical procedures, JSC-48031</td><td>Intervention cards, medication kit, the LOS rule; with page numbers.</td></tr>
+        <tr><td>OCHMO-TB-031, MTB-013 · NASA HRP</td><td>Exercise movements and targets; the 5 hazards and organ explanations.</td></tr>
+      </table>
+      <p style="font-size:13px; margin-top:8px">Non-NASA: AHA, ADA, CDC guidelines · CSA resources · BodyParts3D / Z-Anatomy (CC BY-SA) · forge-motion (CC0). The full list is in <b>SOURCES.md</b>; an audit script checks that every link in the code is logged there.</p>
+    </div>
+    <div class="col" style="flex:1; gap:10px">
+      <div class="shot" style="height:180px"><img src="img_en/program.jpg" alt="" style="object-fit:contain; background:#0d1420"></div>
+      <div class="shot" style="height:118px"><img src="img_en/wx.jpg" alt="" style="object-fit:cover"></div>
+      <div class="shot" style="flex:1; min-height:0"><img src="img_en/exercise.jpg" alt=""></div>
+    </div>
+  </div>
+  <div class="foot"><span>Right: personal exercise program (AHA + NASA TB-031) · live DONKI · NASA exercise mode</span><span>6 / 7</span></div>
+</section>
+
+<!-- 7 -->
+<section class="s">
+  <div class="kick">Impact · technology · the role of AI</div>
+  <h2>From Earth-dependent medicine to a crew that can <em>take care of itself.</em></h2>
+  <div class="row">
+    <div class="col grow" style="flex:1; gap:14px">
+      <div class="card"><h3>Impact</h3><p>Medical autonomy for Moon and Mars missions. The same approach helps on Earth: Antarctic stations, submarines, remote sites, rural healthcare.</p></div>
+      <div class="card"><h3>Why it is different</h3><p>A speaking assistant, replays of real storms, three screens with the real communication delay and, above all, a safety design in which <b>the AI cannot write a dose</b>.</p></div>
+      <div class="card"><h3>Technology</h3><p>React 19 + TypeScript + three.js (rule engine and 3D in the browser) · FastAPI + WebSocket · MediaPipe (on-device camera) · live on our own server.</p></div>
+    </div>
+    <div class="col grow" style="flex:1; gap:14px">
+      <div class="card" style="border-color:var(--warn)">
+        <h3>AI does not do everything</h3>
+        <p><b>Works without AI:</b> alarms and thresholds (rule engine), radiation and lab data (NASA measurements), drugs and doses (NASA checklists), the fatigue camera (MediaPipe on the device).<br>
+        <b>What AI does:</b> summarize the situation in plain language, rank the cards, speak. Models: Claude Sonnet 5.5 and Haiku 5.5 (text), Gemini (VEGA's voice).</p>
+      </div>
+      <div class="card">
+        <h3>Limits</h3>
+        <p>Not a medical device and not a diagnosis. Vital signs are simulated and labelled as such; connecting real sensors is the next step.</p>
+      </div>
+      <div class="card" style="border-color:var(--acc)">
+        <h3>Try it</h3>
+        <p><b>asicservices.com/nasalytics</b> · also works on phones<br>Source code: github.com/chuckywins/nasalytics</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>PROJECT NASALYTICS · THANK YOU</span><span>7 / 7</span></div>
+</section>
+
+</body>
+</html>

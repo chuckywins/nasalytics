@@ -122,7 +122,7 @@ const D = {
   'ai.confirm': { tr: 'Doğrula', en: 'Confirm' },
   'ai.disclaimer': { tr: 'AI üretimi; teşhis değildir. Alarmları kurallar verir, AI yalnızca yükseltebilir.', en: 'AI-generated; not a diagnosis. Rules raise alarms; AI can only escalate.' },
   'ai.confidence': { tr: 'güven', en: 'confidence' },
-  'gate.text': { tr: 'Sesli alarm ve sesli asistan için oturumu başlatın. Mikrofon yalnızca VEGA tuşuna basılıyken dinler.', en: 'Start the session to enable audible alarms and the voice assistant. The microphone listens only while the VEGA button is held.' },
+  'gate.text': { tr: "Sesli alarm ve sesli asistan için oturumu başlatın. Mikrofon yalnızca VEGA dinlerken açıktır. VEGA'nın sesi ve sesli alarmlar yapay zekâ ile üretilmiş sentetik sestir.", en: "Start the session to enable audible alarms and the voice assistant. The microphone is on only while VEGA is listening. VEGA's voice and the spoken alarms are AI-generated synthetic speech." },
   'gate.start': { tr: 'OTURUMU BAŞLAT', en: 'START SESSION' },
   'alarm.critical': { tr: 'KRİTİK UYARI', en: 'CRITICAL ALERT' },
   'alarm.more': { tr: 'kritik bulgu daha (sağ panel)', en: 'more critical findings (right panel)' },

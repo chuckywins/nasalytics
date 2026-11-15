@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Project NASAlytics · Astronot Sağlık Monitörü</title>
+<style>
+  @page { size: 1280px 720px; margin: 0; }
+  :root { --bg: #070b12; --panel: #0d1420; --line: #1f2c3f; --ink: #e8eef6; --ink2: #9fb0c4; --acc: #5ad1e6; --ok: #3fb950; --warn: #f0883e; --crit: #ff6b6b; }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--bg); color: var(--ink); font-family: 'Segoe UI', Arial, sans-serif; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .s { width: 1280px; height: 720px; padding: 44px 56px 52px; position: relative; overflow: hidden; page-break-after: always; display: flex; flex-direction: column; background: radial-gradient(1100px 500px at 85% -10%, #10283a 0%, transparent 60%), var(--bg); }
+  .s:last-child { page-break-after: auto; }
+  .kick { font: 600 13px Consolas, monospace; letter-spacing: .22em; color: var(--acc); text-transform: uppercase; }
+  h1 { font-size: 58px; line-height: 1.02; font-weight: 700; letter-spacing: -.01em; }
+  h2 { font-size: 34px; line-height: 1.12; font-weight: 650; margin: 8px 0 18px; max-width: 1000px; }
+  h2 em, h1 em { font-style: normal; color: var(--acc); }
+  p, li { font-size: 17px; line-height: 1.45; color: var(--ink2); }
+  b { color: var(--ink); font-weight: 600; }
+  .foot { position: absolute; left: 56px; right: 56px; bottom: 16px; display: flex; justify-content: space-between; font: 11px Consolas, monospace; color: #5f7186; letter-spacing: .08em; }
+  .row { display: flex; gap: 28px; flex: 1; min-height: 0; }
+  .col { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+  .shot { border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: #000; box-shadow: 0 14px 50px rgba(0,0,0,.55); }
+  .shot img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top left; }
+  .card { border: 1px solid var(--line); border-radius: 8px; background: var(--panel); padding: 14px 16px; }
+  .grow > .card, .grow > .flow { flex: 1; } .grow > .card { display: flex; flex-direction: column; justify-content: center; }
+  .card h3 { font-size: 16px; font-weight: 650; margin-bottom: 4px; color: var(--ink); }
+  .card p { font-size: 14.5px; line-height: 1.4; }
+  .num { font: 700 44px Consolas, monospace; color: var(--acc); line-height: 1; }
+  .tag { display: inline-block; font: 600 10.5px Consolas, monospace; letter-spacing: .08em; padding: 2px 7px; border: 1px solid var(--line); border-radius: 3px; color: var(--ink2); margin: 0 4px 4px 0; text-transform: uppercase; }
+  .tag.a { border-color: var(--acc); color: var(--acc); } .tag.o { border-color: var(--ok); color: var(--ok); } .tag.w { border-color: var(--warn); color: var(--warn); }
+  ul { padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 9px; }
+  ul li { padding-left: 20px; position: relative; font-size: 15.5px; }
+  ul li::before { content: ''; position: absolute; left: 2px; top: 9px; width: 7px; height: 7px; border: 1.5px solid var(--acc); border-radius: 50%; }
+  .n { display: inline-flex; width: 22px; height: 22px; border-radius: 50%; background: var(--acc); color: #04121a; font: 700 12px Consolas, monospace; align-items: center; justify-content: center; margin-right: 8px; flex: none; }
+  .flow { display: flex; align-items: stretch; gap: 10px; }
+  .flow .card { flex: 1; }
+  .arrow { align-self: center; color: var(--acc); font-size: 22px; }
+  table { width: 100%; border-collapse: collapse; }
+  td { font-size: 13px; line-height: 1.33; color: var(--ink2); padding: 6px 10px 6px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  td:first-child { color: var(--ink); font-weight: 600; width: 33%; }
+</style>
+</head>
+<body>
+
+<!-- 1 -->
+<section class="s">
+  <div class="row" style="align-items:center">
+    <div class="col" style="flex:0 0 500px; gap:16px">
+      <div class="kick">NASA Space Apps Challenge 2026 · Sivas</div>
+      <h1>Project<br><em>NASAlytics</em></h1>
+      <p style="font-size:22px; color:var(--ink)">Astronot Sağlık Monitörü</p>
+      <p>Dünya dakikalarca uzaktayken astronotun kendi sağlığını <b>kendisinin</b> izleyip yönetebilmesi için görsel, sesli ve kaynaklı bir karar destek aracı.</p>
+      <div>
+        <span class="tag a">Challenge: Create Health Monitoring Software for Astronauts on Space Missions</span>
+      </div>
+      <p style="font-size:14.5px">Takım: <b>NASAlytics</b><br>Canlı demo: <b>asicservices.com/nasalytics</b></p>
+    </div>
+    <div class="shot" style="flex:1; height:440px"><img src="img/main.jpg" alt=""></div>
+  </div>
+  <div class="foot"><span>PROJECT NASALYTICS</span><span>1 / 7</span></div>
+</section>
+
+<!-- 2 -->
+<section class="s">
+  <div class="kick">Sorun</div>
+  <h2>Mars'ta bir astronot "kendimi iyi hissetmiyorum" dediğinde, Dünya'nın cevabı <em>44 dakika</em> sonra gelebilir.</h2>
+  <div class="row">
+    <div class="col grow" style="flex:1; gap:14px">
+      <div class="flow">
+        <div class="card"><div class="num">3–22 dk</div><h3 style="margin-top:8px">Tek yön iletişim gecikmesi</h3><p>Mars görevinde. Soru ve cevap için iki katı. ISS'te 1 saniyenin altında.</p></div>
+        <div class="card"><div class="num">LOS</div><h3 style="margin-top:8px">Bağlantı tamamen kopabilir</h3><p>Sinyal kaybında mürettebat yalnızdır. NASA kontrol listesi bu durumda tedaviye başlamayı söyler.</p></div>
+        <div class="card"><div class="num">5</div><h3 style="margin-top:8px">NASA'nın 5 tehlikesi</h3><p>Radyasyon, izolasyon, Dünya'dan uzaklık, yerçekimi değişimi, kapalı ve düşmanca ortam.</p></div>
+      </div>
+      <div class="card" style="border-color:var(--acc)">
+        <h3>Yarışmanın istediği</h3>
+        <p>Astronotun kendi sağlığını <b>kendi kendine değerlendirebileceği</b> görsel bir araç: tıklanabilir vücut, rutin hatırlatmalar, oyunlaştırma, grafikler, renk kodları, anlaşılır açıklamalar, farklı görev ortamları.</p>
+      </div>
+      <div class="card">
+        <h3>Bizim cevabımız</h3>
+        <p>Tek ekranda vücut, yaşamsal bulgular ve ne yapılacağı. Karar <b>NASA eşikleriyle çalışan kurallarda</b>, açıklama yapay zekâda. Ekrandaki <b>her sayının kaynağı</b> yanında yazıyor; gerçek olmayan hiçbir şey gerçekmiş gibi gösterilmiyor.</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Gecikme: ortam verisi, 180–1320 sn tek yön (Mars) · NASA HRP "5 Hazards of Human Spaceflight"</span><span>2 / 7</span></div>
+</section>
+
+<!-- 3 -->
+<section class="s">
+  <div class="kick">Çözüm · astronot ekranı</div>
+  <h2>Bir bakışta durum, bir dokunuşta bildirim, <em>bir cümleyle</em> yardım.</h2>
+  <div class="row">
+    <div class="shot" style="flex:0 0 760px; height:428px"><img src="img/alarm.jpg" alt=""></div>
+    <div class="col" style="flex:1; gap:9px">
+      <p style="display:flex"><span class="n">1</span><span><b>Tıklanabilir 3B vücut.</b> Organ, iskelet, kas katmanları; organa tıklayınca uzayda ne olduğu ve NASA kaynağı.</span></p>
+      <p style="display:flex"><span class="n">2</span><span><b>10 gösterge, renk + simge + yazı.</b> Renk körü dostu; eşikler NASA-STD-3001 ve klinik kılavuzlardan.</span></p>
+      <p style="display:flex"><span class="n">3</span><span><b>VEGA sesli asistan.</b> Türkçe ve İngilizce konuşur, ölçüm kaydeder, belirtiyi kendiliğinden ekibe bildirir.</span></p>
+      <p style="display:flex"><span class="n">4</span><span><b>Dokun-bildir.</b> "Göğüs ağrısı" çipine tek dokunuş; CMO ve mürettebat anında görür.</span></p>
+      <p style="display:flex"><span class="n">5</span><span><b>Günlük rutin + oyunlaştırma.</b> Seri, XP, rozet; reaksiyon testi, sesli günlük, NASA egzersiz modu.</span></p>
+      <p style="display:flex"><span class="n">6</span><span><b>Yorgunluk kamerası.</b> Cihazın üstünde çalışır, görüntü dışarı çıkmaz.</span></p>
+      <div><span class="tag o">6 görev ortamı</span><span class="tag o">Telefon uyumlu</span><span class="tag o">TR + EN</span></div>
+    </div>
+  </div>
+  <div class="foot"><span>Ekran görüntüsü: canlı uygulama, kritik durum testi. Yaşamsal değerler SİMÜLE etiketlidir.</span><span>3 / 7</span></div>
+</section>
+
+<!-- 4 -->
+<section class="s">
+  <div class="kick">Güvenlik mimarisi</div>
+  <h2>Kurallar karar verir, <em>yapay zekâ açıklar.</em> Tersi asla.</h2>
+  <div class="flow" style="margin-bottom:14px">
+    <div class="card"><span class="tag a">Katman 1</span><h3>Deterministik kural motoru</h3><p>Alarmı yalnız bu katman verir. Eşikler NASA-STD-3001 ve klinik kılavuzlardan; tarayıcıda çalışır, <b>internet ve AI olmadan da</b> çalışır.</p></div>
+    <div class="arrow">→</div>
+    <div class="card"><span class="tag a">Katman 2</span><h3>Kaynaklı müdahale kartları</h3><p>13 kart: ISS acil tıbbi prosedürleri, NASA JSC-48031 kontrol listesi, AHA 2024 ilk yardım. İlaç adı, doz ve sayfa <b>belgeden birebir</b>.</p></div>
+    <div class="arrow">→</div>
+    <div class="card"><span class="tag a">Katman 3</span><h3>Yapay zekâ</h3><p>Durumu özetler, kartları sıralar. İlacı yalnız <b>kütüphane kimliğiyle</b> gösterebilir; yazdığı her doz sayısı sunucuda silinir.</p></div>
+  </div>
+  <div class="row">
+    <div class="col grow" style="flex:1">
+      <div class="card">
+        <h3>Her sayının kökeni ekranda</h3>
+        <p style="margin-bottom:8px">Jüri de astronot da neyin gerçek, neyin simülasyon olduğunu tek bakışta görür.</p>
+        <span class="tag a">NASA ölçümü</span><span class="tag a">NASA standardı</span><span class="tag">Klinik kılavuz</span><span class="tag">Yayın</span><span class="tag w">Tahmin</span><span class="tag w">Varsayım</span><span class="tag w">Simüle</span>
+      </div>
+      <div class="card">
+        <h3>Bağlantı kesilirse (LOS)</h3>
+        <p>Bulut AI susar, kurallar ve kartlar çalışmaya devam eder. Veri gemide tutulur, bağlantı dönünce yer kontrole sırayla aktarılır.</p>
+      </div>
+    </div>
+    <div class="col grow" style="flex:1">
+      <div class="card">
+        <h3>Kişiye özel güvenlik</h3>
+        <p>Sağlık kaydındaki alerji, önerilen ilaçla eşleşirse satır çizilir: <b style="color:var(--crit)">"ALERJİ KAYDIYLA EŞLEŞİYOR, VERME"</b>.</p>
+      </div>
+      <div class="card">
+        <h3>Uydurmadıklarımız</h3>
+        <p>Egzersizde yük/set/tekrar yok (NASA bunu kişinin uzmanına bırakır). Uzay havasında risk yorumu yok. Kendi varsayımlarımız "varsayım" etiketiyle gösterilir.</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>NASA-STD-3001 · NASA ISS Emergency Medical Procedures (2016 yayını) · NASA JSC-48031 Rev K · AHA/Red Cross First Aid 2024</span><span>4 / 7</span></div>
+</section>
+
+<!-- 5 -->
+<section class="s">
+  <div class="kick">Üç ekran · acil durum akışı</div>
+  <h2>Astronot → sağlık görevlisi <em>anında</em> → yer kontrol <em>gerçek gecikmeyle.</em></h2>
+  <div class="row">
+    <div class="shot" style="flex:0 0 780px; height:439px"><img src="img/cmo.jpg" alt=""></div>
+    <div class="col" style="flex:1">
+      <ul>
+        <li><b>Mürettebat sağlık görevlisi (CMO)</b> tüm ekibi canlı görür; kritik olan kart öne çıkar.</li>
+        <li><b>Yer kontrol / uçuş cerrahı</b> aynı veriyi ortamın gerçek iletişim gecikmesi kadar geç görür ve kilitli ilaçları onaylar.</li>
+        <li><b>Belirti bildirimi</b> sesle ya da dokunuşla; astronotun ayrıca kimseye haber vermesi gerekmez.</li>
+        <li><b>Yanıtsız alarm:</b> kritik alarm onaylanmazsa ekip otomatik uyarılır (süre bizim varsayımımız, ekranda yazıyor).</li>
+        <li><b>10 senaryo:</b> ISS Eylül 2017 ve Mars Mayıs 2024 güneş fırtınaları <b>gerçek NASA ölçümlerinin</b> tekrarıdır; ayrıca uzay yürüyüşünde CO₂, vurgun, alerji, kabin basıncı düşüşü ve diğerleri.</li>
+      </ul>
+      <div><span class="tag a">3 kişilik kurgusal ekip</span><span class="tag">Sağlık kaydı + BMI</span><span class="tag">CSV / JSON dışa aktarım</span></div>
+    </div>
+  </div>
+  <div class="foot"><span>Ekran: CMO görünümü. Kayıtlı aspirin alerjisi nedeniyle AI aspirini plana koymadı. Mürettebat kurgusaldır.</span><span>5 / 7</span></div>
+</section>
+
+<!-- 6 -->
+<section class="s">
+  <div class="kick">Veri kaynakları · ne çektik, nasıl işledik</div>
+  <h2>Veriyi NASA'dan biz çektik, biz işledik; <em>100'den fazla kayıtlı kaynak.</em></h2>
+  <div class="row">
+    <div class="col" style="flex:0 0 640px">
+      <table>
+        <tr><td>ISS TEPC doz ölçümleri<br><span class="tag a">data.nasa.gov</span></td><td>10 saniyelik ham ölçümler indirildi. Eylül 2017'nin fırtınasız günlerinden ISS taban doz hızı hesaplandı (16,8 µGy/sa); fırtına günleri senaryoda birebir tekrar oynatılıyor.</td></tr>
+        <tr><td>NASA OSDR RadLab <span class="tag a">API</span></td><td>Artemis I, Mars yolculuğu ve Mars yüzeyi aletlerinin 438 MB ham verisi çekilip saatlik ortalamaya indirildi; Mayıs 2024 Mars fırtınası buradan.</td></tr>
+        <tr><td>NASA OSDR OSD-569 / OSD-575</td><td>Inspiration4: 4 mürettebat × 7 zaman noktası kan sayımı ve metabolik panel; her değer kişinin kendi referans aralığıyla gösteriliyor.</td></tr>
+        <tr><td>NASA DONKI <span class="tag o">canlı API</span></td><td>Son 7 günün uzay havası olayları sunucumuzdan çekilir; alınma saatiyle, yorumsuz.</td></tr>
+        <tr><td>NASA-STD-3001, OCHMO teknik özetleri</td><td>CO₂, basınç, oksijen, radyasyon, vurgun, kemik kaybı eşikleri belgelerden tek tek okunup kural motoruna işlendi.</td></tr>
+        <tr><td>ISS acil tıbbi prosedürleri, JSC-48031</td><td>Müdahale kartları, ilaç kiti, LOS kuralı; sayfa numarasıyla.</td></tr>
+        <tr><td>OCHMO-TB-031, MTB-013 · NASA HRP</td><td>Egzersiz hareketleri ve hedefleri; 5 tehlike ve organ açıklamaları.</td></tr>
+      </table>
+      <p style="font-size:13px; margin-top:8px">NASA dışı: AHA, ADA, CDC kılavuzları · CSA kaynakları · BodyParts3D / Z-Anatomy (CC BY-SA) · forge-motion (CC0). Tam liste <b>SOURCES.md</b> dosyasında; koddaki her bağlantının kayıtlı olduğunu bir denetim betiği kontrol eder.</p>
+    </div>
+    <div class="col" style="flex:1; gap:10px">
+      <div class="shot" style="height:180px"><img src="img/program.jpg" alt="" style="object-fit:contain; background:#0d1420"></div>
+      <div class="shot" style="height:118px"><img src="img/wx.jpg" alt="" style="object-fit:cover"></div>
+      <div class="shot" style="flex:1; min-height:0"><img src="img/exercise.jpg" alt=""></div>
+    </div>
+  </div>
+  <div class="foot"><span>Sağda: kişisel egzersiz programı (AHA + NASA TB-031) · canlı DONKI · NASA egzersiz modu</span><span>6 / 7</span></div>
+</section>
+
+<!-- 7 -->
+<section class="s">
+  <div class="kick">Etki · teknoloji · yapay zekânın rolü</div>
+  <h2>Dünya'ya bağımlı tıptan, <em>mürettebatın kendi kendine yettiği</em> tıbba.</h2>
+  <div class="row">
+    <div class="col grow" style="flex:1; gap:14px">
+      <div class="card"><h3>Etki</h3><p>Ay ve Mars görevlerinde tıbbi özerklik. Aynı yaklaşım Dünya'da da işe yarar: Antarktika istasyonları, denizaltılar, uzak sahalar, kırsal sağlık.</p></div>
+      <div class="card"><h3>Neden farklı</h3><p>Sesle konuşan asistan, gerçek fırtına tekrarları, gerçek iletişim gecikmesiyle üç ekran ve en önemlisi <b>yapay zekânın doz yazamadığı</b> bir güvenlik tasarımı.</p></div>
+      <div class="card"><h3>Teknoloji</h3><p>React 19 + TypeScript + three.js (tarayıcıda kural motoru ve 3B) · FastAPI + WebSocket · MediaPipe (cihaz üstü kamera) · kendi sunucumuzda canlı.</p></div>
+    </div>
+    <div class="col grow" style="flex:1; gap:14px">
+      <div class="card" style="border-color:var(--warn)">
+        <h3>Her şeyi yapay zekâ yapmıyor</h3>
+        <p><b>Yapay zekâsız çalışan:</b> alarmlar ve eşikler (kural motoru), radyasyon ve laboratuvar verisi (NASA ölçümleri), ilaç ve dozlar (NASA kontrol listeleri), yorgunluk kamerası (cihaz üstünde MediaPipe).<br>
+        <b>Yapay zekânın işi:</b> durumu sade dille özetlemek, kartları sıralamak, sesle konuşmak. Modeller: Claude Sonnet 5.5 ve Haiku 5.5 (metin), Gemini (VEGA'nın sesi).</p>
+      </div>
+      <div class="card">
+        <h3>Sınırlar</h3>
+        <p>Tıbbi cihaz değildir, tanı koymaz. Yaşamsal değerler simülasyondur ve böyle etiketlidir; gerçek sensör bağlantısı sonraki adımdır.</p>
+      </div>
+      <div class="card" style="border-color:var(--acc)">
+        <h3>Deneyin</h3>
+        <p><b>asicservices.com/nasalytics</b> · telefondan da açılır<br>Kaynak kod: github.com/chuckywins/nasalytics</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>PROJECT NASALYTICS · TEŞEKKÜRLER</span><span>7 / 7</span></div>
+</section>
+
+</body>
+</html>

@@ -37,7 +37,7 @@ Erişim tarihi: 2026-11-14 (aksi belirtilmedikçe).
 - **NASA LSDA / NLSP Standard Measures**: HERA/CHAPEA analog fizyoloji verisi. Erişim için başvuru gerekiyor, hackathon süresine uygun değil. https://nlsp.nasa.gov/explore/home/lsda_sm
 - NASA Spaceflight Standard Measures: https://www.nasa.gov/humans-in-space/spaceflight-standard-measures-characterizing-how-humans-adapt-in-space
 
-## C. Rakip ve önceki projeler (fark yaratmak için incelendi)
+## C. Benzer ve önceki projeler (incelendi)
 - AURORA (2026): https://github.com/fabriciojunio/aurora-astronaut-health (RadLab + GOES, Isolation Forest, offline PWA, şifreleme)
 - Crew-Health-Monitor (2026): https://github.com/AdityaK0804/Crew-Health-Monitor (OSD-569 referans aralıkları, 3D vücut, kural tabanlı, simüle veri)
 - VITA: https://github.com/Nav33dCodes/vita-astronaut-health-monitor
@@ -79,7 +79,7 @@ Erişim tarihi: 2026-11-14 (aksi belirtilmedikçe).
 - Human Research Roadmap kanıt raporları (henüz indirilmedi): Cardio 2022, Fracture, Renal, BMed (sirkadiyen), Team, Cancer, Degen; https://humanresearchroadmap.nasa.gov/evidence/
 - Klinik karar destek, NTRS: https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/20200000567.pdf
 
-## D2. Rakiplerin kullandığı kaynaklar
+## D2. Benzer projelerde de geçen kaynaklar
 - NASA HRP, insan uzay uçuşunun 5 tehlikesi: https://www.nasa.gov/hrp/hazards/
 - NASA HRP riskleri: https://www.nasa.gov/hrp/risks/ (kemik kaybı ayda %1–1,5; ISS astronotlarının ~%70'inde göz arkasında ödem, SANS)
 - NASA HRP devam eden araştırmalar: https://www.nasa.gov/hrp/ongoing-hrp-research/ (ARCHeR: Artemis II'de aktivite, uyku ve ışık izleme)
@@ -120,7 +120,7 @@ data.nasa.gov bu bilgisayardan curl ile bağlantıyı sıfırlıyor, WebFetch il
 
 ## E. Yapılacak: eklenecek referanslar
 - Resmi yarışma sayfası: SSL hatası nedeniyle kullanıcı ekran görüntüsüyle iletti, `docs/challenge.md` içinde. (TAMAM)
-- Teslim kuralı (rakip README'sinden): "Project Demo" en fazla 7 slayt, İngilizce, herkese açık link (Drive/OneDrive) olarak proje sayfasına eklenir.
+- Teslim kuralı (benzer bir projenin README'sinden): "Project Demo" en fazla 7 slayt, İngilizce, herkese açık link (Drive/OneDrive) olarak proje sayfasına eklenir.
 - NASA-STD-3001 Vol.1 (mürettebat sağlığı standartları, radyasyon kariyer limiti 600 mSv)
 - NASA Human Research Program, Human Research Roadmap (5 tehlike: radyasyon, izolasyon, uzaklık, yerçekimi, kapalı ortam)
 - Resmi yarışma sayfası metni (spaceappschallenge.org 2026), WebFetch SSL hatası verdi
